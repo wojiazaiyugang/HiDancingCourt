@@ -1,0 +1,107 @@
+  /**
+   * Start public class
+   */
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  /**
+   * End public class
+   */
+  .container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    background-position: 0 0;
+    background-size: 100% 100%;
+    font-family: 'Microsoft Yahei';
+    .navigationBar {
+      color: #fff;
+    }
+    .iconfont{
+        font-size: 44rpx;
+        padding-top: 3rpx;
+        text-align: center;
+        line-height: 69rpx;
+        color: #fff;
+      }
+    .userInfo{
+      margin-top: 44rpx;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 26rpx;
+      .avatar {
+        width: 174rpx;
+        height: 174rpx;
+        background-color: #fff;
+        border: 4rpx solid #fe6104;
+        border-radius: 90rpx;
+      }
+      .id {
+        padding-left: 26rpx;
+      }
+      .right {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .feedBack {
+          width: 34rpx;
+          height: 36rpx;
+        }
+        .setting {
+          width: 34rpx;
+          height: 36rpx;
+          // margin-left: 40rpx;
+          margin-right: 7rpx;
+        }
+      }
+    }
+    
+     /deep/ .choose-father{
+          margin-top: 35rpx;
+          font-size: 24rpx;
+          .icon {
+            margin-left: 20rpx;
+          }
+          .second-text {
+            padding-left: 200rpx;
+          }
+      }
+      // 登录盒子的样式
+    .login-container {
+      height: 100%;
+      overflow: hidden;
+      .login-in {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        overflow: hidden;
+        // 登录按钮的样式
+        .btn-login {
+          position: absolute;
+          top: 50%;
+          width: 90%;
+          border-radius: 200rpx;
+          margin: 30rpx 0;
+          background-image: linear-gradient(to bottom, #f7a216, #fe6205);
+        }
+            
+        // 按钮下方提示消息的样式
+        .tips-text {
+          position: absolute;
+          top: 50%;
+          margin-top: 50%;
+          font-size: 24rpx;
+          color: #fff;
+        }
+      }
+    }
+    button::after { border: none }
+
+	}

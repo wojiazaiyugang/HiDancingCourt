@@ -1,0 +1,107 @@
+.flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+.current {
+  height: 37vh;
+  background-color: #fff;
+  overflow: hidden;
+  .topText {
+    margin: 23rpx 27rpx;
+    font-weight: 600;
+  }
+  .choose-venues {
+    display: flex;
+    height: 100%;
+    .left {
+      width: 30%;
+      .scroll {
+        height: 100%;
+        .ul{
+          .li {
+            width: 77%;
+            height: 67rpx;
+            color: #000;
+            line-height: 67rpx;
+            list-style: none;
+            margin-bottom: 20rpx;
+            margin-left: 21rpx;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .leftAddClass {
+           color: #fe7a38;
+           border-left: 20rpx solid #fe7a38;
+          }
+        }
+      }
+      .placeholder {
+        width: 1rpx;
+        height: 90rpx;
+      }
+    }
+    .right {
+      width: 70%;
+      .scroll {
+        height: 100%;
+        .imgContainer {
+          width:100%; 
+          height: 300rpx; 
+          margin-bottom: 50rpx;
+          .img {
+            position: relative; 
+            width: 85%; 
+            height: 300rpx;
+            margin-left: 5%;
+            background-size: cover; 
+            border-radius: 20rpx;
+            display: block;
+            margin-bottom: 30rpx;
+            .row {
+              display: flex; 
+              justify-content: space-between; 
+              position: absolute; 
+              bottom: 12rpx; 
+              width: 100%;
+              .checkBtn {
+                display: flex;
+                justify-content: center; 
+                align-items: center;
+                width: 50rpx;
+                height: 50rpx; 
+                background-color: #fff; 
+                border-radius: 25rpx; 
+                margin-left: 15rpx; 
+                .btnSon {
+                  width: 70%; 
+                  height: 70%; 
+                  background-color:#fe6003; 
+                  border-radius: 25rpx;
+                }
+              }
+              .siteNum {
+                width: 140rpx; 
+                height: 50rpx; 
+                background-color: #fe6003; 
+                border-radius: 20rpx; 
+                text-align: center; 
+                line-height: 50rpx; 
+                color: #fff; 
+                margin-right: 20rpx;
+              }
+            }
+          }
+          
+        }
+      }
+    }
+  }
+}
+   
+  
