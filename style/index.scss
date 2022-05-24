@@ -1,11 +1,4 @@
-  /**
-   * Start public class
-   */
-  .flex {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+
   .textColor {
     color: #fff;
   }
@@ -13,15 +6,16 @@
    * End public class
    */
 	.container {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    background-size: 100% 100%;
-    font-family: 'Microsoft Yahei';
+    background-size: cover;
     font-size: 24rpx;
 	}
-    /deep/ .uni-popup-dialog {
+  /deep/ .uni-popup-dialog {
     width: 590rpx!important;
     height: 345rpx!important;
     font-size: 30rpx!important;
@@ -39,121 +33,134 @@
     .uni-dialog-button-group {
       border: none;
       margin-top: 45rpx;
-        .cancel {
-          width: 198rpx;
-          height: 80rpx;
-          border-radius: 48rpx;
-          line-height: 80rpx;
-          text-align: center;
-          font-size: 30rpx;
-          color: #fff;
-          background-color: #666;
-        }
-        .uni-button-color {
-          width: 198rpx;
-          height: 80rpx;
-          border-radius: 48rpx;
-          line-height: 80rpx;
-          text-align: center;
-          font-size: 30rpx;
-          color: #fff;
-          background-image: linear-gradient(to bottom, #f7a216, #fe6205);
-        }
+      .cancel {
+        width: 198rpx;
+        height: 80rpx;
+        border-radius: 48rpx;
+        line-height: 80rpx;
+        text-align: center;
+        font-size: 30rpx;
+        color: #fff;
+        background-color: #666;
+      }
+      .uni-button-color {
+        width: 198rpx;
+        height: 80rpx;
+        border-radius: 48rpx;
+        line-height: 80rpx;
+        text-align: center;
+        font-size: 30rpx;
+        color: #fff;
+        background-image: linear-gradient(to bottom, #f7a216, #fe6205);
+      }
     }
-    
     .uni-border-left {
       border: none;
     }
   }
   .First-LongButton {
-    margin-top: 328rpx;
+    width: 95%;
+    margin-top: 290rpx;
   }
   .courtPicture {
-    padding-top: 8rpx;
+    height: 410rpx;
+    // height: 200rpx;
+    width: 600rpx;
     margin-top: 6rpx;
     border-radius: 24rpx;
+    background-image: url(https://static.qiniuyun.highvenue.cn/image/hibascourt_images/picture.png);
+    background-size: cover;
+  }
+  .Second-LongButton {
+    width: 95%;
+    margin-top: 40rpx;
+  }
+  .InputBoard{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 40rpx 26rpx 0rpx 26rpx;
+    height: 174rpx;
+    background-color: #483B7B;
+    border-radius: 30rpx;
+    .InputItem{
+      width: 106rpx;
+      height: 106rpx;
+      line-height: 106rpx;
+      text-align: center;
+      font-size: 50rpx;
+      color: #D22D72;
+      background-color: #0A0135;
+      border-radius: 10rpx;
+      border: 1rpx solid white;
     }
-    .Second-LongButton {
-      margin-top: 40rpx;
+  }
+  .Four-LongButton {
+    width: 95%;
+    height: 78rpx;
+    border-radius: 50rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    .First-LongButton-son{
+      flex: 1;
+      height: 66rpx;
+      margin: 6rpx 6rpx;
+      line-height: 66rpx;
+      border-radius: 40rpx;
+      background-color: #ccc;
     }
-    .show-Third-LongButton {
-      margin-top: 40rpx;
+  }
+  .camera {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 120rpx;
+    height: 120rpx;
+    background-color: #fff;
+    border-radius: 50%;
+    transform: translateY(-82.5%);
+    .camera-son {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 108rpx;
+      height: 108rpx;
+      border-radius: 50%; 
     }
-    .hide-Third-LongButton {
-      margin-top: 40rpx;
-     .choose {
-        background: #666;
-      }
-    }
-    .transparent {
-      overflow: hidden;
-      margin-bottom: 48rpx;
-      .Four-LongButton {
-        border-radius: 50rpx;
-        margin: 60rpx 26rpx 48rpx;
-        background-color: #fff;
-        overflow: hidden;
-        .First-LongButton-son{
-          height: 60rpx;
-          margin: 11rpx;
-          line-height: 60rpx;
-          border-radius: 40rpx;
-          background-color: #ccc;
-        }
-      }
-      .camera {
-        margin-left: 42%;
-        margin-top: -19.6%;
-        width: 120rpx;
-        height: 120rpx;
-        background-color: #fff;
-        border-radius: 50%;
-        overflow: hidden;
-        .camera-son {
-          width: 112rpx;
-          height: 112rpx;
-          border-radius: 50%; 
-          margin: 6rpx;
-        }
-      }
-    }
-    .bottom {
-      position: relative;
-      bottom: 0;
-      width: 100%;
-      // height: 10vh;
-      background-color: #fff;
-      border-radius: 26rpx 26rpx 0 0;
-      overflow: hidden;
-      .SearchVideo {
-        width: 400rpx;
-        height: 80rpx;
-        background-image: linear-gradient(to bottom, #f7a216, #fe6205);
-        margin: 14rpx 0;
-        border-radius: 60rpx;
-        text-align: center;
-        line-height: 80rpx;
-      }
+  }
+  .bottomSearch {
+    width: 100%;
+    height: 159rpx;
+    margin-top: -50rpx;
+    background-color: #fff;
+    border-radius: 40rpx 40rpx 0rpx 0rpx;
+    display: flex;
+    justify-content: space-between;
+    .SearchVideo {
+      width: 400rpx;
+      height: 80rpx;
+      background-image: linear-gradient(to bottom, #FB9D6A, #F6397E);
+      margin: 14rpx 0rpx 14rpx 26rpx;
+      border-radius: 60rpx;
+      text-align: center;
+      line-height: 80rpx;
     }
     .my {
-      position: absolute;
-      bottom: 0;
-      right: 0;
+      margin: 14rpx 26rpx 14rpx 0rpx;
       width: 93rpx;
       height: 73rpx;
-      transform: translateY(-18%);
     }
     .pos-text {
       width: 50rpx;
       height: 50rpx;
       text-align: center;
       line-height: 50rpx;
-      position: absolute;
-      bottom: 0;
-      right: 0;
       transform: translate(-36%,10%);
       margin-left: 10rpx;
       color: #fff;
       z-index: 2;
     }
+  }
     
