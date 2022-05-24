@@ -47,7 +47,7 @@
       return {
         timer: null,
         videoDownload : '',
-        isShow:false,
+        isShow:true,
       };
     },
     components: {
@@ -81,19 +81,20 @@
         })
       },
     async getUserinfo() {
-         wx.getUserProfile({
-           lang: 'zh_CN',
-           desc: '用于完善用户资料',
-           success: res => {
-             if(res.errMsg === 'getUserProfile:fail auth deny'){
-               uni.$showMsg('您取消了授权')
-             } else {
-               // 将用户信息存在vuex
-               this.updateUserInfo(res.userInfo)
-             }
-           }
-         })
-       },
+     wx.getUserProfile({
+       lang: 'zh_CN',
+       desc: '用于完善用户资料',
+       success: res => {
+         if(res.errMsg === 'getUserProfile:fail auth deny'){
+           uni.$showMsg('您取消了授权')
+         } else {
+           // 将用户信息存在vuex
+           this.updateUserInfo(res.userInfo)
+           this.isShow = false
+         }
+       }
+     })
+     },
     }
   }
 </script>

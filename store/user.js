@@ -37,9 +37,8 @@ export default {
         if(err || res.errMsg !== 'login:ok') return uni.$showMsg('登录失败')
         if(res.code) {
           const { data } = await uni.$http.get(`/users/open_id/?code=${res.code}&applet=HiDancing`)
-          console.log("查看token",data)
+          
           uni.setStorageSync('token',data.data)
-          // console.log(data.data)
         }
     },
   },

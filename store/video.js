@@ -7,8 +7,6 @@ export default {
   mutations: {
     updateVideoInfo(state,payload) {
       state.videoInfo = payload
-        console.log('2')
-      console.log(state.videoInfo)
     }
   }
   

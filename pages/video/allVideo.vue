@@ -43,7 +43,7 @@
         </van-tabs>
       </van-tab>
       
-      <van-tab title="进球类型">
+      <van-tab title="教室">
         <view class="" style="margin-top: 20rpx;"></view>
         <van-tabs type="card" @click="change">
           <!-- 进球类型全部 -->
@@ -88,19 +88,6 @@
         </van-tabs>
       </van-tab>
     </van-tabs>
-    <!-- <shopping-car @click.native="toCart"></shopping-car> -->
-    <view class="bottom">
-      <image class="shopping-car" src="https://static.qiniuyun.highvenue.cn/image/shopping-car.png" @click="toCart"></image>
-      <view class="shopping-num flex">
-        <text>{{cart.length}}</text>
-      </view>
-      <view style="margin-top: 4%;">
-        <view class="downLoad flex" @click="pay">获取</view>
-      </view>
-    </view>
-  
-    
-    <van-toast id="van-toast" />
 	</view>
 </template>
 
