@@ -36,7 +36,7 @@ $http.beforeRequest = async function (options) {
     'Content-Type': 'application/json',
     'Authorization':`Bearer ${token}`
   }
-  uni.$showMsg('加载中')
+  uni.$showMsg("加载中")
 }
 
 // 响应拦截器

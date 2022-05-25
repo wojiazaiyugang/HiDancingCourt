@@ -128,7 +128,7 @@
 	export default {
 		data() {
 			return {
-        // 四位验证码
+        // 四位验证码用于战报搜索
         verfication:[],
         start_time: '', // 接口数据(废弃)-媒介数据
         stop_time: '', //接口数据(废弃)-媒介数据
@@ -144,21 +144,48 @@
      created() {
       this.getVenues()
       this.defaultTime()
+      this.setSystemInfo()
     },
     computed: {
       supprt_find_color() {
         return this.supprt_find === 1 ? 'linear-gradient(to bottom, #FB9D6A, #F6397E)' : '#666!important'
       },
       ...mapState('m_camera',['imgSrc']),
-      ...mapState('m_venues',['startTime','stopTime','allVenues'])
+      ...mapState('m_venues',['startTime','stopTime','allVenues']),
+      ...mapState("m_device",["info"])
     },
 		methods: {
       ...mapMutations('m_venues',['getVenuesImg','updateStartTime','updateStopTime','updateShowTimeArr']),
+      ...mapMutations("m_device",["setDeviceInfo",]),
       ...mapActions('m_venues',['getVideo']),
       // 输出查看键盘输入
       bindKeyInput(e){
         console.log("e",e)
         this.verfication[e.target.id] = e.target.value
+      },
+      
+      
+      
+      async setSystemInfo() {
+        // try {
+          // 得到设备信息
+          // let info = await uni.getSystemInfo(),
+          //   // 得到胶囊位置信息
+          //   menuInfo = uni.getMenuButtonBoundingClientRect()
+          //   this.setDeviceInfo(Object.assign({}, info, {menuInfo}))
+          //   console.log("查看当前的设备信息",this.info)
+            
+            var that =this
+            uni.getSystemInfo({
+            	success: function (res) {
+                console.log("查看当前的设备信息",res)
+                let menuInfo = uni.getMenuButtonBoundingClientRect()
+                console.log("查看按钮",menuInfo)
+                that.setDeviceInfo(Object.assign({}, res, {menuInfo}))
+                console.log("sadasd",that.info)
+              }
+            });
+            
       },
       // 时间选择组件传递的数据
       getData(time) {
@@ -350,25 +377,10 @@
         console.log(event)
       },
       // 查找视频
-      async  SearchVideo() {
-        console.log(this.verfication)
-        var query = {
-          start_time: this.startTime,
-          stop_time: this.stopTime,
-          venue_id:22,
-          page:1,
-          per_page:5,
-          applet:"HiDancing"
-          // face_img: this.imgSrc
-        }
-        this.date(this.startTime,this.stopTime)
-        // console.log(query)
-        this.getVideo(query)
-          setTimeout( () => {
-            uni.navigateTo({
-              url: '../video/allVideo'
-            })
-          },50)
+      SearchVideo() {
+        uni.navigateTo({
+          url: '../video/allVideo'
+        })
       },
 		}
 	}

@@ -10,16 +10,15 @@
             <scroll-view 
             scroll-y="true" 
             style="height: 1200rpx; margin-top: 20rpx;" 
-            @scrolltolower="lower" 
+            @scrolltolower="scroolBottom" 
             v-else
             >
             <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
-              <view class="white" v-for="(item,index) in siteIdVideo.length != 0 && siteIdVideo" :key="index">
+              <view class="white" v-for="(item,index) in allVideos" :key="index">
                <videoData :video="item"></videoData>
               </view>
             </view>
-              
-              <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
+            <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
             </scroll-view>
           </van-tab>
           <!-- 时间区间数据 -->
@@ -28,7 +27,7 @@
             <scroll-view
             scroll-y="true" 
             style="height: 1200rpx; margin-top: 20rpx;" 
-            @scrolltolower="lower" 
+            @scrolltolower="scroolBottom" 
             v-else
             >
             <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
@@ -53,7 +52,7 @@
              <scroll-view 
              scroll-y="true" 
              style="height: 1200rpx; margin-top: 20rpx;" 
-             @scrolltolower="lower" 
+             @scrolltolower="scroolBottom" 
              v-else
              >
              <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
@@ -72,7 +71,7 @@
            <scroll-view 
            scroll-y="true" 
            style="height: 1200rpx; margin-top: 20rpx;" 
-           @scrolltolower="lower" 
+           @scrolltolower="scroolBottom" 
            @scrolltoupper="upper"
            v-else
            >
@@ -101,9 +100,16 @@
 			return {
 				active: 0, //当前选中的选项卡：默认选中第一个~
         ballType: ['三分球','两分球'],
+        // 搜索出来的是否具有视频
         allVideoShow: false,
-        num: 0,
-        
+        // 根据人脸以及时间信息获得的所有视频
+        allVideos:[],
+        // 搜索初始的页码数
+        currentPage:1,
+        // 每个页码所存放的视频数
+        perPage:12,
+        // 数据是否加载完毕
+        loadingDone:false,
 			}
 		},
     components: {
@@ -111,31 +117,46 @@
       shoppingCar
     },
     computed: {
-      ...mapState('m_venues',['siteIdVideo','total','showTimeArr','startTime','stopTime','videoShow','newSiteIdVideo']),
+      ...mapState('m_venues',['showTimeArr','startTime','stopTime','videoShow','newSiteIdVideo']),
       ...mapState('m_cart',['cart']),
       ...mapState('m_user',['userinfo'])
       
     },
-    async created() {
-      if( this.showTimeArr[0].slice(0,2) < 8 || this.showTimeArr[0].slice(0,2) >23) {
-        this.allVideoShow = true
-      }
-      this.getCart()   
+    created() {
+      this.getVideosByFace()
     },
     // 页面离开事件
     onUnload() {
       this.clearSiteIdVideo()
       console.log('onunload')
-      // console.log(this.siteIdVideo)
+      
       console.log(this.cart.length)
       
     },
 		methods: {
-      ...mapMutations('m_venues',['updatePage','clearSiteIdVideo','clearPage','clearSiteIdVideo']),
+      ...mapMutations('m_venues',['updatePage','clearPage','clearSiteIdVideo']),
       ...mapActions('m_venues',['getVideo']),
       ...mapMutations('m_cart',['addCart']),
+      ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 根据人脸以及时间站点信息获得全部搜索视频
+      async getVideosByFace(){
+        const {data} = await uni.$http.post('/search/hidancing_search', {
+          start_time: "2022-05-13 07:45:13",
+          stop_time: "2022-05-13 13:46:13",
+          venue_id:22,
+          page:this.currentPage,
+          per_page:this.perPage,
+          applet:"HiDancing"
+        })
+        if(data.data.length==0){
+          this.allVideoShow = true
+        }
+        this.loadingDone = data.data.length<this.perPage
+        this.allVideos = [...data.data]
+        this.setAllSearchVideos([...data.data])
+        this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
+      },
       change(e) {
-        this.clearSiteIdVideo()
         this.clearPage()
         console.log(e.detail.title)
         console.log('change')
@@ -192,23 +213,25 @@
       upper() {
         uni.$showMsg('已经是最新数据')
       },
-      // 下拉到底
-      lower() {
-        console.log('==========')
-        // console.log(this.siteIdVideo);
-        // console.log(this.total)
-        console.log(this.siteIdVideo.length)
-        if(this.siteIdVideo.length == this.total)
-        return uni.$showMsg('没有更多数据了')
-        this.updatePage(1)
-        // var query = {
-        //   start_time: this.startTime,
-        //   stop_time: this.stopTime,
-        // }
-        this.getVideo({
-            start_time: this.startTime,
-            stop_time: this.stopTime
-          })
+      // 下拉到底刷新数据
+      async scroolBottom() {
+        if(this.loadingDone){
+          uni.$showMsg("数据已经加载完毕")
+          return false
+        }
+        this.currentPage++
+        const {data} = await uni.$http.post('/search/hidancing_search', {
+          start_time: "2022-05-13 07:45:13",
+          stop_time: "2022-05-13 13:46:13",
+          venue_id:22,
+          page:this.currentPage,
+          per_page:this.perPage,
+          applet:"HiDancing"
+        })
+        this.loadingDone = data.data.length<this.perPage
+        this.allVideos = [...this.allVideos,...data.data]
+        this.setAllSearchVideos([...this.allVideos])
+        this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
       },
       async getCart() {
         const {data} = await uni.$http.get('/storehouse/hibas/cart')

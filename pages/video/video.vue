@@ -1,143 +1,189 @@
 <template>
-  <view class="container">
-    <view style="padding: 26rpx 26rpx 0 26rpx; margin: 0 auto;display: flex; flex-direction: column; align-items: center;">
-      <video class="video" :src="videoInfo.download_src" controls direction="90" autoplay="true"></video>
-       <view style="width: 100%;">
-         <view class="CourName" @click="list"><text style="font-size: 26rpx;padding-right: 32rpx;">{{videoInfo.venue_name}}</text> <text style="font-size: 24rpx; color: #666;">{{videoInfo.site_name}}</text> <text class="ballType" v-if="ballTypeShow">{{videoInfo.goal_label[0]}}</text></view>
-  
-         <view class=" public">{{this.videoInfo.goal_time.slice(0,11)}} <text style="padding-left: 20rpx;">{{this.videoInfo.goal_time.slice(11,19)}}</text></view>
-         
-         <view class="feedback" @click="clickFeedBack">
-           <view class="iconfont icon-yijianfankui-tianchong"></view>
-           <view class="feedbackText" @click="clickFeedBack">遗漏反馈</view>
-         </view>
-       </view>
+  <view class="video-container" :style="{height:calVideoHeight}">
+    <view class="video-text">
+      <video
+       id="myVideo"
+       :src="playVideo.download_src"
+       controls
+       objectFit="cover"
+       :show-fullscreen-btn="false"
+       :show-play-btn="false"
+       autoplay="true"
+       style="height: 100%;width: 100%;"
+       >
+      </video>
+      <!-- 状态栏占位 -->
+      <view style="position: absolute;top: 0rpx;left: 0rpx;width: 100%;">
+        <view style="width: 100%;" :style="{height:info.statusBarHeight +'px'}">
+          
+        </view>
+        <view style=" width: 100%; display: flex;justify-content: center;align-items: center;" :style="{height:((info.menuInfo.top-info.statusBarHeight)*2 + info.menuInfo.height) +'px'}">
+          <view style="position: absolute; font-size: 30rpx;color: white;" :style="{left:(info.screenWidth - info.menuInfo.right)+'px'}" @click="goBack" class="iconfont icon-fanhui">
+            
+          </view>
+          <view style="color: white;">
+            视频详情
+          </view>
+        </view>
+      </view>
+      <view 
+        @click="preVideo"
+        style="display: flex;justify-content: center;align-items: center; position: absolute;left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
+        :style="{top:info.screenHeight+'rpx'}">
+        <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
+          
+        </view>
+      </view>
+      <view
+        @click="nextVideo"
+        style="display: flex;justify-content: center;align-items: center; position: absolute;right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
+        :style="{top:info.screenHeight+'rpx'}">
+        <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
+          
+        </view>
+      </view>
+      <view 
+        style="display: flex;justify-content: space-between;align-items: center; position: absolute;bottom: 100rpx;height: 150rpx;width: 100%;">
+        <view 
+          :style="{marginLeft:(info.screenWidth - info.menuInfo.right)+'px'}"
+        >
+          <view style="margin-bottom: 30rpx;font-size: 35rpx;color: white;">
+            {{playVideo.venue_name}}
+          </view>
+          <view style="font-size: 25rpx;color: white;">
+            {{playVideo.goal_time}}
+          </view>
+        </view>
+        <view
+          @click="downloadVideo"
+          style="width: 250rpx; background-color: #7E71F0;height: 80rpx;border-radius: 50rpx;display: flex;justify-content: center;align-items: center;" 
+          :style="{marginRight:(info.screenWidth - info.menuInfo.right)+'px'}">
+          <view style="font-size: 27rpx;color: white;margin-right: 15rpx;">
+            获取
+          </view>
+          <view style="width: 37rpx;height: 30rpx;color: white;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/downlogo.png);">
+            
+          </view>
+        </view>
+      </view>
     </view>
-    <!-- 视频列表 -->
-    <view class="videoList">
-      <view class="">视频列表</view>
-      <view class="videoPlay"></view>
-    </view>
-    <view class="" style="padding: 0 26rpx; width: 100%; height: 300rpx; background-size: cover;">
-      <image src="https://static.qiniuyun.highvenue.cn/image%2Fbanner.png" style="width: 93%; height: 100%;"></image>
-    </view>
-    <shopping-car></shopping-car> 
-    
   </view>
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import { shoppingCar } from '@/components/shopping-car/shopping-car.vue'
+  import { mapState, mapMutations } from "vuex"
   export default {
     data() {
       return {
-        orange: false,
-        timer: null ,
-        ballTypeShow: false
+        // 当前视频播放的信息
+        playVideo:null,
+        // 当前视频所在全部视频的索引号
+        numberId:0,
+        // 下一个视频当前的页数
+        nextPage:0,
+        // 最后一个视频的标志
+        lastVideoStatus:false,
       };
     },
     created() {
-      console.log('videoinfo')
-      console.log(this.videoInfo)
-      if(this.videoInfo.goal_label.length != 0) {
-        this.ballTypeShow = true
-      }
+      this.playingVideo()
     },
     computed: {
-      ...mapState('m_video',['videoInfo'])
-    },
-    components: {
-      shoppingCar
+      ...mapState("m_video",["currentVideo","allSearchVideos","videoPages",]),
+      ...mapState("m_device",["info"]),
+      calVideoHeight(){
+        return 2*this.info.screenHeight +"rpx"
+      }
     },
     methods: {
-      list() {
-        console.log(this.videoInfo)
+      ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 播放当前视频
+      playingVideo(){
+        // 当前页面接收传递过来的视频对象
+        this.playVideo = this.currentVideo
+        // 当前页面接收传过来的视频页数
+        this.nextPage = this.videoPages.curPage
       },
-      isShow() {
-        this.orange = !this.orange
-        console.log(this.orange)
+      // 返回上一页
+      goBack(){
+        uni.navigateBack({
+        	delta: 1,
+        });
       },
-      toCart() {
-        uni.navigateTo({
-          url:'../cart/cart'
-        })
-      },
-       clickFeedBack() {
-        if(this.timer) clearTimeout(this.timer)
-        this.timer =  setTimeout( async () => {
-          const {data} = await uni.$http.post('/feedback/hibas/',
-          {
-            video_id: this.videoInfo.id,
-            venue_id: this.videoInfo.venue_id,
-            site_id: this.videoInfo.site_id,
-            goal_time: `20${this.videoInfo.goal_time}`
-          })
-          if(data.data === "反馈成功"){
-            Toast.success('反馈成功');
+      // 上一个视频
+      preVideo(){
+        this.allSearchVideos.map((item,index)=>{
+          if(item.id==this.playVideo.id){
+            this.numberId = index
           }
-        },300)
+        })
+        // 播放的不是第一个视频
+        if(this.numberId){
+          this.playVideo = this.allSearchVideos[this.numberId-1]
+        }
+        // 若播放的是第一个视频
+        else{
+          uni.showToast({
+          	icon:"none",
+            title: "当前视频已是首个视频！",
+          	duration: 1000
+          });
+        }
+      },
+      // 下一个视频
+      async nextVideo(){
+        this.allSearchVideos.map((item,index)=>{
+          if(item.id==this.playVideo.id){
+            this.numberId = index
+          }
+        })
+        // 下一个是最后一个视频
+        if(this.numberId==this.allSearchVideos.length-1){
+          this.nextPage++
+          const {data} = await uni.$http.post('/search/hidancing_search', {
+            start_time: "2022-05-13 07:45:13",
+            stop_time: "2022-05-13 13:46:13",
+            venue_id:22,
+            page:this.nextPage,
+            per_page:this.videoPages.perPage,
+            applet:"HiDancing"
+          })
+          if(data.data.length==0){
+            uni.showToast({
+            	icon:"none",
+              title: "当前视频已是最后一个视频！",
+            	duration: 1000
+            });
+          }
+          else{
+            this.setAllSearchVideos([...this.allSearchVideos,...data.data])
+            this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+            this.playVideo = this.allSearchVideos[this.numberId+1]
+          }
+        }
+        // 不是最后一个视频
+        else{
+          this.playVideo = this.allSearchVideos[this.numberId+1]
+        }
+      },
+      // 上报下载视频
+      async downloadVideo(){
+        await uni.$http.post("/downloads/dance", {
+          video_id: this.playVideo.id,
+          applet:"HiDancing"
+        })
       }
     }
   }
 </script>
 
 <style lang="scss">
-  .public {
-    color: #666;
-    margin-top: 36rpx;
-    font-size: 26rpx;
-    
-  }
-  .container {
+  .video-container {
     width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    .video {
+    .video-text {
       width: 100%;
-      border-radius: 35rpx;
-      margin-bottom: 26rpx;
-    }
-    .videoList {
-      padding: 26rpx 26rpx 0 26rpx;
-    }
-    .CourName{
-      .ballType{
-        display: inline-block;
-        width: 120rpx;
-        height: 43rpx;
-        background-color: #5784fe;
-        border-radius: 37rpx;
-        font-family: -webkit-body;
-        margin-left: 30rpx;
-        text-align: center;
-        line-height: 45rpx;
-        color: #fff;
-        font-size: 20rpx;
-      }
-    }
-    .feedback {
-     position: absolute;
-     top: 34%;
-     right: 5%;
-     text-align: center;
-      .icon-fankuitianbao {
-        font-size: 60rpx;
-      }
-      .feedbackText {
-        font-size: 25rpx;
-        color: #b8b8b8;
-      }
-    }
-    .btn {
-      width: 35%;
-      height: 79rpx;
-      background-image: linear-gradient(to bottom, #f7a216, #fe6205);
-      font-size: 31rpx;
-      text-align: center;
-      border-radius: 50rpx;
-      line-height: 79rpx;
-      color: #fff;
+      height:100%;
+      position: relative;
     }
   }
 </style>

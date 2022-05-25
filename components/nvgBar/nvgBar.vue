@@ -5,7 +5,7 @@
       <!-- 状态栏占位 -->
       <view :style="{height: statuBarHeight  +'px'}"></view>
       <view class="navbar-context" >
-        <text @click="last" class="iconfont icon-fanhui" style="font-size: 45rpx; padding-left: 20rpx;">
+        <text @click="last" class="iconfont icon-fanhui" style="font-size: 45rpx; padding-left: 20rpx;color: #000000;">
           </text>
         <text class="text" :style="{'padding-left': paddingLeft / 2.3 + 'px'}"><slot name="text"></slot></text>
       </view>

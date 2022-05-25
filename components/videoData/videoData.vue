@@ -91,7 +91,7 @@
       this.isShow = this.fill[this.idx]
     },
     methods: {
-      ...mapMutations('m_video',['updateVideoInfo']),
+      ...mapMutations('m_video',['setCurrentVideo']),
       ...mapMutations('m_cart',['addCart','delCart']),
       // 单个视频的选择
       async checkClick() {
@@ -166,7 +166,8 @@
       },
       // 跳转视频详情
       clickVideo() {
-        this.updateVideoInfo(this.video)
+        // 存储当前的视频对象，进入视频播放页面不需要再拉取组件了
+        this.setCurrentVideo(this.video)
         uni.navigateTo({
           url: '../../pages/video/video'
         })

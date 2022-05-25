@@ -8,6 +8,7 @@ import venues from './venues.js'
 import camera from './camera.js'
 import video from './video.js'
 import cart from './cart.js'
+import device from "./device.js"
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -17,7 +18,8 @@ const store = new Vuex.Store({
     m_venues: venues,
     m_camera: camera,
     m_video: video,
-    m_cart: cart
+    m_cart: cart,
+    m_device: device,
   },
   getters
 })
