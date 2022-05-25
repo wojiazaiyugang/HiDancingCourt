@@ -33,11 +33,11 @@
               :key="item.id" 
               class="img" 
               :style="{backgroundImage: 'url(' + item.data.cover + ')'}" 
-              
+               @click="checkClick(index)"
             >
               <view class="row">
-                <view class="checkBtn" @click="checkClick(item,index)">
-                  <view class="btnSon"  v-if="btnShow"></view>
+                <view class="checkBtn">
+                  <view class="btnSon"  v-if="btnShow[index]"></view>
                 </view>
                 <view class="siteNum">场地{{index+1}}</view>
               </view>
@@ -67,16 +67,17 @@
       return {
         current: 0 ,// 动态类名
         isShow: false,
-        btnShow: false,
+        btnShow: [],
       }
     },
-    
     methods: {
       async currentLeft(item,index) {
-        console.log(item)
         this.current= index
         this.isShow = true
         const {data: img} = await uni.$http.get(`/sites/${item.id}`)
+        console.log("输出查看",img)
+        this.btnShow = new Array(img.data.length).fill(false)
+        console.log("查看状态量",this.btnShow)
         // console.log(img.data)
         // console.log(this.siteInfo)
         // console.log('siteinfo')
@@ -88,8 +89,12 @@
         this.$parent.close();
         this.current = 0
       },
-      checkClick(item) {
-         this.btnShow = !this.btnShow
+      checkClick(data) {
+        console.log("输出点击",data)
+        this.btnShow = this.btnShow.map((item,index)=>{
+          return index == data? !item:item
+        })
+        console.log("查看改变后",this.btnShow)
       }
     }
   }

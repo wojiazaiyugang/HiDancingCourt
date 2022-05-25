@@ -1,6 +1,6 @@
 <template>
 	<view class="container"
-   style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hibascourt_images/index-bgi.jpg);"
+   style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
    >
     <!-- Start 第一个Long-Button -->
     <view class="First-LongButton">
@@ -9,26 +9,23 @@
         <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/location.png" mode="aspectFit" style="width: 80%; height: 80%;"></image>
         </template>
         
-        <template v-slot:first-text>
-          <text class="text">定位：{{courtName}}
-        <!-- <text style="padding-left: 20rpx;">默认： 1号场地</text> -->
-          </text>
-        </template>
-        
-        <template v-slot:second-text>
-          <text class="text" @click="color">默认：{{site}}</text>
+        <template v-slot:center-text>
+          <text style="text-align: center;">请选择您练舞的舞蹈房</text>
         </template>
         
         <template v-slot:i-choose>
-         <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/switch.png" mode="aspectFit" style="width: 60%; height: 100%;" @click="chooseVenues"></image >
+         <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/switch.png"
+          mode="aspectFit"
+          style="width: 60%; height: 100%;"
+          @click="chooseVenues"></image >
         </template>
       </long-button>
     </view>
     <!-- End 第一个Long-Button -->
     
     <!-- Start 球馆图片 -->
-    <view class="courtPicture flex">
-      <image class="flex" src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/picture.png" ></image>
+    <view class="courtPicture">
+      
     </view>
     <!-- End 球馆图片 -->
     
@@ -38,8 +35,8 @@
       <template v-slot:icon>
         <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/time.png" mode="aspectFit" style="width: 80%; height: 80%;"></image>
       </template> 
-      <template v-slot:first-text>
-       <text class="text">默认时段：{{ showTime.showStart }}~{{ showTime.showStop }}</text>
+      <template v-slot:center-text>
+       <text class="text">请选择您练舞的时段</text>
       </template>
       <template v-slot:i-choose>
          <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/switch.png" mode="aspectFit" @click="showTimePopup" style="width: 65%; height: 100%;" ></image >
@@ -48,66 +45,59 @@
     </view>
     <!-- End 第二个Long-Button -->
     
-    <!-- Start show第三个Long-Button -->
-    <view class="show-Third-LongButton" v-if="false">
-      <long-button >
-        <template v-slot:icon>
-            <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/sports.png" mode="aspectFit" style="width: 60%; height:60%;"></image>
-        </template>
-        <template v-slot:first-text>
-          <text class="text">请选择您打球时战袍的颜色</text>
-        </template>
-      </long-button>
-    </view>
-    <!-- End 第三个Long-Button --> 
     
     <!-- Start hide第三个Long-Button -->
-    <view class="hide-Third-LongButton" v-else>
-      <long-button>
-        <template v-slot:icon>
-            <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/ccc-sports.png" mode="aspectFit" style="width: 60%; height:60%;"></image>
-        </template>
-        <template v-slot:first-text>
-          <text class="text">该场馆不支持战袍颜色选择</text>
-        </template>
-      </long-button>
+    <view style="width: 95%;margin-bottom: 40rpx; color: white;">
+      <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
+        <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
+      </view>
+      <view class="InputBoard">
+         <textarea type="number" 
+          v-for= "(item,index) in 4"
+          :key= "index" 
+          :id="index"
+          :show-confirm-bar="false"
+          :cursor-spacing="50"
+          @input="bindKeyInput"
+          class="InputItem" />
+      </view>
     </view>
     <!-- End 第三个Long-Button -->
     
     <!-- Start 透明层 -->
-    <view class="transparent">
-      <view class="Four-LongButton">
-        <view class="First-LongButton-son" :style="{background:supprt_find_color}" >
-          <text 
-          class="textColor" 
-          style="margin: 10rpx 0 0 18rpx;"
-          v-if="supprt_find"
-          >点击图标拍照查询</text>  
-          <text 
-          class="textColor" 
-          style="margin: 10rpx 0 0 18rpx;"
-          v-else
-          >该场馆不支持拍照查询</text>
-        </view>
+    <view class="Four-LongButton">
+      <view class="First-LongButton-son" :style="{background:supprt_find_color}" >
+        <text 
+        class="textColor" 
+        style="margin: 10rpx 0 0 18rpx;"
+        v-if="supprt_find"
+        >点击图标人脸识别</text>  
+        <text 
+        class="textColor" 
+        style="margin: 10rpx 0 0 18rpx;"
+        v-else
+        >该场馆不支持拍照查询</text>
       </view>
       <!-- Start 相机按钮 -->
-      <view class="camera" @click="useCamera">
-        <view class="camera-son flex" :style="{background:supprt_find_color}"  >
-           <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/camera.png" mode="aspectFit" style="width: 60%; height: 60%;"></image>
-        </view>
-      </view>
-      <!-- End 相机按钮 -->
     </view>
-    <!-- End 透明层 -->
-    
+    <view class="camera" @click="useCamera">
+      <view class="camera-son" :style="{background:supprt_find_color}"  >
+        <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/camera.png" mode="aspectFit" style="width: 60%; height: 60%;"></image>
+      </view>
+    </view>
+  
     <!-- Start底部 -->
-   <view class="bottom flex" >
+    <view class="bottomSearch" >
+      <!-- 用于占位 -->
+      <view style="width: 93rpx;" >
+       
+      </view>
       <view class="SearchVideo" @click="SearchVideo">
         <text class="textColor">查找视频</text>
       </view>
       <view class="my" @click="toMy">
         <image src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/my.png" mode="aspectFit" style="width: 100%; height: 100%;"></image>
-      <text class="pos-text">我的</text>
+        <text class="pos-text">我的</text>
       </view>
     </view>
     <!-- End底部 -->
@@ -138,6 +128,8 @@
 	export default {
 		data() {
 			return {
+        // 四位验证码用于战报搜索
+        verfication:[],
         start_time: '', // 接口数据(废弃)-媒介数据
         stop_time: '', //接口数据(废弃)-媒介数据
         showTime: {showStart: '',showStop: ''}, // 时间选择组件传递的时间数据
@@ -145,32 +137,56 @@
         site: '1号场地',
         supprt_find: 1 ,// 是否支持拍照 默认支持
         venuesList: [] ,// 场馆数据包含场地图片
-        // siteArr: [],
         allVideoTimeArr: [],
         siteInfo: []
 			}
 		},
      created() {
-      // this.checkToken()
       this.getVenues()
       this.defaultTime()
-      console.log('wx')
-      //  wx.getSystemInfo({
-      //   success(res) {
-      //     console.log(res)
-      //   }
-      // })
+      this.setSystemInfo()
     },
     computed: {
       supprt_find_color() {
-        return this.supprt_find === 1 ? 'linear-gradient(to bottom, #f7a216, #fe6205)' : '#666!important'
+        return this.supprt_find === 1 ? 'linear-gradient(to bottom, #FB9D6A, #F6397E)' : '#666!important'
       },
       ...mapState('m_camera',['imgSrc']),
-      ...mapState('m_venues',['startTime','stopTime','allVenues'])
+      ...mapState('m_venues',['startTime','stopTime','allVenues']),
+      ...mapState("m_device",["info"])
     },
 		methods: {
       ...mapMutations('m_venues',['getVenuesImg','updateStartTime','updateStopTime','updateShowTimeArr']),
+      ...mapMutations("m_device",["setDeviceInfo",]),
       ...mapActions('m_venues',['getVideo']),
+      // 输出查看键盘输入
+      bindKeyInput(e){
+        console.log("e",e)
+        this.verfication[e.target.id] = e.target.value
+      },
+      
+      
+      
+      async setSystemInfo() {
+        // try {
+          // 得到设备信息
+          // let info = await uni.getSystemInfo(),
+          //   // 得到胶囊位置信息
+          //   menuInfo = uni.getMenuButtonBoundingClientRect()
+          //   this.setDeviceInfo(Object.assign({}, info, {menuInfo}))
+          //   console.log("查看当前的设备信息",this.info)
+            
+            var that =this
+            uni.getSystemInfo({
+            	success: function (res) {
+                console.log("查看当前的设备信息",res)
+                let menuInfo = uni.getMenuButtonBoundingClientRect()
+                console.log("查看按钮",menuInfo)
+                that.setDeviceInfo(Object.assign({}, res, {menuInfo}))
+                console.log("sadasd",that.info)
+              }
+            });
+            
+      },
       // 时间选择组件传递的数据
       getData(time) {
         // console.log(time)
@@ -181,10 +197,6 @@
           this.showTime.showStart = time.start_time.replace(':',' : ')
           this.showTime.showStop = time.stop_time.replace(':',' : ')
         }
-        
-        // console.log('==========')
-        // console.log(this.showTime.showStart)
-        
         if(time.year){
           this.start_time = `${time.year} ${time.start_time}:00`
           this.stop_time = `${time.year} ${time.stop_time}:00`
@@ -244,11 +256,6 @@
         // 前两个小时
         let hed = h - 2
         hed = hed < 10 ? '0'+hed : hed
-        // if( hed < 2 ) {
-        //   hed = '00'
-        // } else if( hed < 1 ) {
-        //   hed = 22
-        // }
         console.log(hed)
         let m = date.getMinutes()
         m = m < 10 ? `0${m}` : m
@@ -264,11 +271,6 @@
           this.updateStopTime(`${y}-${M}-${d} ${parseInt(h) + 1}:00:00`)
           // console.log('>=30')
         }
-        
-        // console.log(`${y}-${M}-${d} ${hed}:${m}:00`)
-        // console.log(`${y}-${M}-${d} ${h}:${m}:00`)
-         // console.log(this.startTime)
-         // console.log(this.stopTime)
       },
       // 点击选择时段
       showTimePopup() {
@@ -303,30 +305,12 @@
         })
         this.$refs.permissionsPopup.close()
       },
-      // 有token，发送业务请求
-      // checkToken() {
-      //   // let that = this
-      //   let timer = ''
-      //   // clearInterval(timer)
-      //   if(uni.getStorageSync('token')) {
-      //     this.getVenues()
-      //     return
-      //   } else {
-      //     timer = setInterval(async() => {
-      //       if(uni.getStorageSync('token')){
-      //         this.getVenues()
-      //         clearInterval(timer)
-      //       }
-      //     })
-      //   }
-      // },
       // 用户授权位置信息
       wxGetLocation() {
         var that = this
         uni.getLocation({
           type: 'wgs84',
           success: async function(res) {
-            console.log('经纬度',res)
             // 计算距离
             var distance = [] // 最近距离
             // console.log(that.venuesList)
@@ -368,43 +352,11 @@
       },
       // 请求所有场馆
       async getVenues() {
-        console.log('getVenues')
         let that = this
-        // let timer = ''
-        // clearInterval(timer)
-        // timer = setInterval(async() => {
-          // if(uni.getStorageSync('token')){
-            
-            const {data: res} = await uni.$http.get('/venues/')
-            // console.log('2ss')
-            console.log(res)
-            that.venuesList = res.data
-            this.wxGetLocation()
-            // console.log('data')
-            // this.wxGetLocation()
-            // console.log(that.venuesList)
-            
-            
-            // for(let i = 0; i < that.venuesList.length; i++){
-            //   if(that.venuesList[i].id == 5 || that.venuesList[i].id == 9 || that.venuesList[i].id == 10){
-            //     that.venuesList.splice(i,1)
-            //     i--
-            //   }
-            // }
-            // console.log('siteid')
-            // that.venuesList.forEach(async item => {
-            //   const {data: img} = await uni.$http.get(`/sites/${item.id}`)
-            //   // that.siteArr.push(...img.data)
-            //   item.img = img.data
-            // })
-            // console.log(that.venuesList[0])
-            // console.log('that')
-            // 更新vuex场地信息
-            // 更新场馆信息
-            this.getVenuesImg(this.venuesList)
-            // clearInterval(timer)
-          // }
-        // },100)
+        const {data: res} = await uni.$http.get('/venues/?applet=HiDancing')
+        that.venuesList = res.data
+        this.wxGetLocation()
+        this.getVenuesImg(this.venuesList)
       },
       // 去个人页面
       toMy() {
@@ -416,9 +368,8 @@
       async chooseVenues() {
         this.$refs.popupVenues.open('bottom')
         const {data: img} = await uni.$http.get(`/sites/${this.allVenues[0].id}`)
-        console.log(img)
+        console.log("初始第一个",img)
         this.siteInfo = [...img.data]
-        // console.log(this.siteInfo)
       },
       chanSiteInfo(event) {
         this.siteInfo = [...event]
@@ -426,20 +377,10 @@
         console.log(event)
       },
       // 查找视频
-      async  SearchVideo() {
-        var query = {
-          start_time: this.startTime,
-          stop_time: this.stopTime,
-          face_img: this.imgSrc
-        }
-        this.date(this.startTime,this.stopTime)
-        // console.log(query)
-        this.getVideo(query)
-          setTimeout( () => {
-            uni.navigateTo({
-              url: '../video/allVideo'
-            })
-          },50)
+      SearchVideo() {
+        uni.navigateTo({
+          url: '../video/allVideo'
+        })
       },
 		}
 	}

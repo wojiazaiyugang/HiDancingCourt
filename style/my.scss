@@ -59,7 +59,13 @@
         }
       }
     }
-    
+    .bannerInfo{
+      
+      height: 408rpx;
+      margin: 40rpx 26rpx;
+      background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBanner.jpg);
+      background-size: cover;
+    }
      /deep/ .choose-father{
           margin-top: 35rpx;
           font-size: 24rpx;

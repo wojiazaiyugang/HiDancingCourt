@@ -39,16 +39,6 @@
              {{ item.time }}
            </view>
         </view>
-        <view class="hotTime flex">
-          <text class="txt flex">常用时段：</text>
-          <view 
-          class="block-long flex" 
-          v-for="(item,index) in hotTime" 
-          :key="index"
-          @click="hotClick(item,index)" 
-          :class="hotCli == index ? 'hotAddClass' : ''"
-          >{{ item }}</view>
-        </view>
       </view>
     </view>
   </view>
@@ -196,17 +186,6 @@
         this.start_time = ''
         this.stop_time = ''
       },
-      // 常用时段
-      hotClick(item,index) {
-        this.start_time = ''
-        this.stop_time = ''
-        this.IntTime.forEach( key => key.selected = false)
-        this.hotCli = index
-        this.start_time += `${item.substr(0,5)}~`
-        this.stop_time = `${item.substr(6,12)}`
-        this.dataObj.start_time = this.start_time,
-        this.dataObj.stop_time = this.stop_time
-      }
     }
     
   }

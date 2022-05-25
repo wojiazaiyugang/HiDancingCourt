@@ -6,8 +6,6 @@ export default {
   state: () => ({
     // 用户信息对象
     userinfo: JSON.parse(uni.getStorageSync('userinfo') || '{}') ,
-    // 授权按钮状态
-    isShow: true,
     // 视频下载数量
     videoDownloadNum: 0
   }),
@@ -16,10 +14,6 @@ export default {
     // 更新视频下载数量
     updateVideoDownloadNum(state,payload) {
       state.videoDownloadNum = payload
-    },
-    // 更新授权按钮状态
-    updateIsShow(state,isShow) {
-      state.isShow = !state.isShow
     },
     // 更新用户基本信息
     updateUserInfo(state,userinfo) {
@@ -42,10 +36,9 @@ export default {
         const [err,res] = await uni.login()
         if(err || res.errMsg !== 'login:ok') return uni.$showMsg('登录失败')
         if(res.code) {
-          const { data } = await uni.$http.get(`/users/open_id/?code=${res.code}&Wechat_App=hibascourt`)
-          // console.log(data)
+          const { data } = await uni.$http.get(`/users/open_id/?code=${res.code}&applet=HiDancing`)
+          
           uni.setStorageSync('token',data.data)
-          // console.log(data.data)
         }
     },
   },

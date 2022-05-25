@@ -26,7 +26,6 @@
       "path" : "pages/camera/camera",
       "style" :                                                                                    
       {
-        "navigationBarTitleText": "拍照查询",
         "navigationBarBackgroundColor":"#fff",
         "navigationStyle":"custom"
       }
@@ -35,10 +34,9 @@
         "path" : "pages/video/video",
         "style" :                                                                                    
         {
-          "navigationBarTitleText": "视频详情",
           "enablePullDownRefresh": false,
           "navigationBarBackgroundColor":"#fff",
-          "navigationStyle":"default"
+          "navigationStyle":"custom"
         }
       }
         ,{

@@ -11,9 +11,9 @@ import { $http } from '@escook/request-miniprogram' // 网络请求包
 uni.$http = $http 
 
 // 开发路径
-// $http.baseUrl = 'http://192.168.31.245:5000'
+$http.baseUrl = 'http://192.168.31.245:8082'
 // 线上路径
-$http.baseUrl = 'https://api.highvenue.cn/development'
+// $http.baseUrl = 'https://api.highvenue.cn/development'
 
 // 消息提示
 uni.$showMsg = function (title="数据请求失败！", duration = 1000) {
@@ -36,7 +36,7 @@ $http.beforeRequest = async function (options) {
     'Content-Type': 'application/json',
     'Authorization':`Bearer ${token}`
   }
-  uni.$showMsg('加载中')
+  uni.$showMsg("加载中")
 }
 
 // 响应拦截器
