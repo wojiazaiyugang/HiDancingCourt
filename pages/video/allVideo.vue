@@ -1,105 +1,33 @@
 <template>
 	<view class="container">
-    <van-tabs :active="active" @click="change">
-      <van-tab title="时段">
-        <view style="margin-top: 20rpx;"></view>
-        <!-- 时段二级tabs栏 -->
-        <van-tabs type="card" @click="changes">
-          <van-tab title="全部">
-            <view class="videoShow" v-if="allVideoShow">当前时段暂无视频</view>
-            <scroll-view 
-            scroll-y="true" 
-            style="height: 1200rpx; margin-top: 20rpx;" 
-            @scrolltolower="scroolBottom" 
-            v-else
-            >
-            <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
-              <view class="white" v-for="(item,index) in allVideos" :key="index">
-               <videoData :video="item"></videoData>
-              </view>
-            </view>
-            <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
-            </scroll-view>
-          </van-tab>
-          <!-- 时间区间数据 -->
-          <van-tab :title="item" v-for="(item,index) in showTimeArr" :key="index">
-            <view class="videoShow" v-if="videoShow">当前时段暂无视频</view>
-            <scroll-view
-            scroll-y="true" 
-            style="height: 1200rpx; margin-top: 20rpx;" 
-            @scrolltolower="scroolBottom" 
-            v-else
-            >
-            <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
-              <view class="white" v-for="(item,idx) in siteIdVideo.length != 0 && siteIdVideo" :key="idx">
-               <videoData :video="item"></videoData>
-              </view>
-            </view>
-              
-              <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
-            </scroll-view>
-          </van-tab>
-        </van-tabs>
-      </van-tab>
-      
-      <van-tab title="教室">
-        <view class="" style="margin-top: 20rpx;"></view>
-        <van-tabs type="card" @click="change">
-          <!-- 进球类型全部 -->
-          <view>
-            <van-tab title="全部" @click="changes">
-             <view class="videoShow" v-if="allVideoShow">当前时段暂无视频</view>
-             <scroll-view 
-             scroll-y="true" 
-             style="height: 1200rpx; margin-top: 20rpx;" 
-             @scrolltolower="scroolBottom" 
-             v-else
-             >
-             <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
-               <view class="white" v-for="(item,index) in siteIdVideo.length != 0 && siteIdVideo" :key="index">
-                <videoData :video="item"></videoData>
-               </view>
-             </view>
-               
-               <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
-             </scroll-view>
-            </van-tab>
+    <scroll-view 
+      scroll-y="true" 
+      style="height: 50%;" 
+      @scrolltolower="scroolBottom" 
+    >
+      <view class="videoShow" v-if="allVideoShow">
+        当前时段暂无视频
+      </view>
+      <view v-else>
+        <view style="display: flex; flex-wrap: wrap; ">
+          <view class="white" v-for="(item,index) in allVideos" :key="index">
+            <videoData :video="item"></videoData>
           </view>
-          <!-- 三分球/二分球 -->
-          <van-tab :title="item" v-for="(item,index) in ballType" :key="index">
-           <view class="videoShow" v-if="allVideoShow">当前时段暂无视频</view>
-           <scroll-view 
-           scroll-y="true" 
-           style="height: 1200rpx; margin-top: 20rpx;" 
-           @scrolltolower="scroolBottom" 
-           @scrolltoupper="upper"
-           v-else
-           >
-           <view style="display: flex; gap: calc(16%/3) ; flex-wrap: wrap; padding: 0 32rpx;">
-             <view class="white" v-for="(item,idx) in siteIdVideo.length != 0 && siteIdVideo" :key="idx">
-              <videoData :video="item"></videoData>
-             </view>
-           </view>
-             
-             <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
-           </scroll-view>
-         </van-tab>
-        </van-tabs>
-      </van-tab>
-    </van-tabs>
+        </view>
+        <view class="placeholder" style="width: 320rpx; height: 180rpx;"></view>
+      </view>
+
+    </scroll-view>
 	</view>
 </template>
 
 <script>
   import { mapState,mapActions,mapMutations } from 'vuex'
   import { videoDate } from '@/components/videoData/videoData.vue'
-  import { shoppingCar } from '@/components/shopping-car/shopping-car.vue'
   import Toast from '@/wxcomponents/vant/toast/toast.js'
 	export default {
 		data() {
 			return {
-				active: 0, //当前选中的选项卡：默认选中第一个~
-        ballType: ['三分球','两分球'],
         // 搜索出来的是否具有视频
         allVideoShow: false,
         // 根据人脸以及时间信息获得的所有视频
@@ -107,43 +35,48 @@
         // 搜索初始的页码数
         currentPage:1,
         // 每个页码所存放的视频数
-        perPage:12,
+        perPage:20,
         // 数据是否加载完毕
         loadingDone:false,
+        // 所选舞房ID
+        houseId:"",
+        // 所选搜索时间
+        houseTime:"",
+        // 搜索的开始时间
+        startTime:"",
+        // 搜索的结束时间
+        stopTime:"",
 			}
 		},
     components: {
       videoDate,
-      shoppingCar
     },
     computed: {
-      ...mapState('m_venues',['showTimeArr','startTime','stopTime','videoShow','newSiteIdVideo']),
+      ...mapState('m_venues',['showTimeArr','videoShow','newSiteIdVideo']),
       ...mapState('m_cart',['cart']),
       ...mapState('m_user',['userinfo'])
-      
     },
-    created() {
+    onLoad(data) {
+      this.houseId = data.houseId
+      this.houseTime = data.selectTime
+      this.startTime = this.houseTime + " " + "00:00:00"
+      this.stopTime =this.houseTime + " " + "24:00:00"
+      this.initTime()
       this.getVideosByFace()
-    },
-    // 页面离开事件
-    onUnload() {
-      this.clearSiteIdVideo()
-      console.log('onunload')
-      
-      console.log(this.cart.length)
-      
     },
 		methods: {
       ...mapMutations('m_venues',['updatePage','clearPage','clearSiteIdVideo']),
-      ...mapActions('m_venues',['getVideo']),
-      ...mapMutations('m_cart',['addCart']),
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 初始化时间段
+      initTime(){
+        
+      },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         const {data} = await uni.$http.post('/search/hidancing_search', {
-          start_time: "2022-05-13 07:45:13",
-          stop_time: "2022-05-13 13:46:13",
-          venue_id:22,
+          start_time: this.startTime,
+          stop_time: this.stopTime,
+          venue_id: parseInt(this.houseId) ,
           page:this.currentPage,
           per_page:this.perPage,
           applet:"HiDancing"
@@ -215,6 +148,7 @@
       },
       // 下拉到底刷新数据
       async scroolBottom() {
+        console.log("1111")
         if(this.loadingDone){
           uni.$showMsg("数据已经加载完毕")
           return false
@@ -233,27 +167,6 @@
         this.setAllSearchVideos([...this.allVideos])
         this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
       },
-      async getCart() {
-        const {data} = await uni.$http.get('/storehouse/hibas/cart')
-        console.log(data)
-      },
-      toCart() {
-        this.getCart()
-        uni.navigateTo({
-          url: '../cart/cart'
-        })
-      },
-      // 支付
-      pay() {
-        console.log(this.userinfo)
-        if(uni.getStorageInfoSync().keys["userinfo"]) {
-          return Toast('请先登录在进行视频下载')
-        } else {
-          uni.navigateTo({
-            url: '../pay/pay'
-          })
-        }
-      }
 		}
 	}
 </script>

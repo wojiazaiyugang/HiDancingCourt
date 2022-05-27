@@ -2,6 +2,9 @@
 import Vue from 'vue'
 import App from './App'
 import store from 'store/store.js'
+
+import "@/plugins/utils"
+
 import LongButton from '@/components/long-button/long-button'
 import ChooseTime from '@/components/choose-time/choose-time' // 时间选择组件
 import chooseVenues from '@/components/choose-venues/choose-venues.vue' // 场馆选择组件

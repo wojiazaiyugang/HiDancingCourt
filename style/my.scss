@@ -17,16 +17,33 @@
     background-position: 0 0;
     background-size: 100% 100%;
     font-family: 'Microsoft Yahei';
-    .navigationBar {
-      color: #fff;
-    }
-    .iconfont{
-        font-size: 44rpx;
-        padding-top: 3rpx;
+    // 登录盒子的样式
+    .login-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      // 登录按钮的样式
+      .btn-login {
+        width: 90%;
+        height: 100rpx;
+        border-radius: 50rpx;
         text-align: center;
-        line-height: 69rpx;
-        color: #fff;
+        font-size: 35rpx;
+        font-weight: 550;
+        line-height: 100rpx;
+        background-image: linear-gradient(to bottom, #2de6f8, #f76fed);
       }
+      // 按钮下方提示消息的样式
+      .tips-text {
+        display: flex;
+        justify-content: center;align-items: center;
+        margin-top: 50rpx;
+        font-size: 30rpx;
+        color: #000000;
+      }
+    }
     .userInfo{
       margin-top: 44rpx;
       display: flex;
@@ -37,77 +54,38 @@
         width: 174rpx;
         height: 174rpx;
         background-color: #fff;
-        border: 4rpx solid #fe6104;
+        border: 4rpx solid #7C6DFB;
         border-radius: 90rpx;
       }
-      .id {
-        padding-left: 26rpx;
+      .userName {
+        width: 330rpx;
+        margin-left: 26rpx;
       }
       .right {
+        width: 150rpx;
         display: flex;
-        justify-content: center;
+        justify-content: space-between;
         align-items: center;
-        .feedBack {
-          width: 34rpx;
-          height: 36rpx;
-        }
         .setting {
           width: 34rpx;
           height: 36rpx;
-          // margin-left: 40rpx;
-          margin-right: 7rpx;
         }
       }
     }
     .bannerInfo{
-      
       height: 408rpx;
       margin: 40rpx 26rpx;
-      background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBanner.jpg);
+      background-image: url(https://static.qiniuyun.highvenue.cn/image/Dancetheme.jpg);
       background-size: cover;
     }
-     /deep/ .choose-father{
-          margin-top: 35rpx;
-          font-size: 24rpx;
-          .icon {
-            margin-left: 20rpx;
-          }
-          .second-text {
-            padding-left: 200rpx;
-          }
+    /deep/ .choose-father{
+      margin-top: 35rpx;
+      font-size: 24rpx;
+      .icon {
+        margin-left: 20rpx;
       }
-      // 登录盒子的样式
-    .login-container {
-      height: 100%;
-      overflow: hidden;
-      .login-in {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        overflow: hidden;
-        // 登录按钮的样式
-        .btn-login {
-          position: absolute;
-          top: 50%;
-          width: 90%;
-          border-radius: 200rpx;
-          margin: 30rpx 0;
-          background-image: linear-gradient(to bottom, #f7a216, #fe6205);
-        }
-            
-        // 按钮下方提示消息的样式
-        .tips-text {
-          position: absolute;
-          top: 50%;
-          margin-top: 50%;
-          font-size: 24rpx;
-          color: #fff;
-        }
+      .second-text {
+        padding-left: 200rpx;
       }
-    }
-    button::after { border: none }
-
+     }
 	}

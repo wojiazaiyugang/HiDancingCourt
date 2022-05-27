@@ -2,6 +2,7 @@
   <view class="container" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/cameraBgi.jpg);">
     <!-- 导航栏 -->
     <nvg-bar>
+      <template v-slot:icon><text class="iconfont icon-fanhui" style="color: white;" ></text></template>
       <template v-slot:text><text>拍照查询</text></template>
     </nvg-bar>
     

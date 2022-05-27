@@ -1,36 +1,48 @@
 <template>
-  <view class="container" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi1.jpg);">
+  <view class="container" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
     <!-- 导航栏 -->
-      <nvg-bar>
-        <template v-slot:text><text>个人中心</text></template>
-      </nvg-bar>
+    <nvg-bar>
+      <template v-slot:icon><text class="iconfont icon-fanhui" style="color: white;font-size: 30rpx;" ></text></template>
+      <template v-slot:text><text style="color: white;">个人中心</text></template>
+    </nvg-bar>
     <!-- 没信息 -->
-    <view  class="login-container" :style="none">
-      <view class="login-in">
-        <button type="primary" class="btn-login" @click="getUserinfo" >一键登录</button>
-        <view class="tips-text">登录需同意<text style="color: red;" @click="go">《用户协议及隐私政策》</text></view>
+    <view v-if="isShow" class="login-container">
+      <view class="btn-login" @click="getUserinfo" >一键登录</view>
+      <view class="tips-text" @click="agreePrivacy">
+        <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
+          <view v-show="isAgree" class="iconfont icon-duihao" style="color: white; font-size: 30rpx;" ></view>
+        </view>
+        <view style="color: white;margin-left: 50rpx;">
+          登录需同意
+        </view>
+        <view style="color: red;margin-left: 20rpx;" @click="navPrivacy">
+          《用户协议及隐私政策》
+        </view>
       </view>
     </view>
-   
    <!-- 有信息 -->
-   <view class="box" :style="block">
+   <view v-if="!isShow" class="box">
      <!-- 头像 -->
       <view class="userInfo" >
-           <view class="flex">
-             <image class="avatar flex" :src="userinfo.avatarUrl">
-             </image>
-             <text class="id" style="color: #fff;">ID:{{userinfo.nickName}}</text>
-           </view>
-           
-           <view class="right">
-             <button type="default" open-type="contact" style="background: transparent; border: none!important;"><view class="iconfont icon-kefu"></view></button>
-             <view class="setting">
-               <image
-               @click="settings"
-               src="https://static.qiniuyun.highvenue.cn/image/hibascourt_images/settings.png" 
-               style="width: 100%; height: 100%;"></image>
-             </view>
-           </view>
+        <view class="flex">
+          <image class="avatar flex" :src="userInfo.avatarUrl">
+          </image>
+          <text class="userName ellipsis" style="color: #fff;">ID:{{userInfo.nickName}}</text>
+          
+        </view>
+        <view class="right">
+          <button type="default" open-type="contact" style="background: transparent; border: none!important;">
+            <view style="width: 34rpx;height: 36rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceCustomer.png);">
+              
+            </view>
+          </button>
+          <view class="setting">
+            <image
+            @click="settings"
+            src="https://static.qiniuyun.highvenue.cn/image/DanceSetting.png" 
+            style="width: 100%; height: 100%;"></image>
+          </view>
+        </view>
       </view>
       <view class="bannerInfo">
         
@@ -45,56 +57,81 @@
   export default {
     data() {
       return {
-        timer: null,
-        videoDownload : '',
         isShow:true,
+        // 是否同意隐私协议
+        isAgree:false,
       };
     },
     components: {
       nvgBar,
     },
     computed: {
-      ...mapState('m_user',['userinfo',]),
-      block() {
-        return this.isShow == false ? 'display: block' : 'display: none'
-      },
-      none() {
-        return this.isShow == true ? 'display: block' : 'display: none'
-      }
+      ...mapState('m_user',["userInfo",]),
+    },
+    created() {
+      this.calShowPrivacy()
+      console.log(this.userInfo)
     },
     methods: {
-      ...mapMutations('m_user',['updateUserInfo','updateToken','updateIsShow',]),
+      ...mapMutations('m_user',["setUserInfo"]),
+      calShowPrivacy(){
+        if(wx.getStorageSync("date")){
+          // 将信息存储在本地，30天重新拿一次头像信息
+          var date = new Date()
+          // 当前时间戳
+          var currentTime = this.$dayjs(date).format("YYYY-MM-DD")
+          console.log("查看时间",currentTime)
+          // 上一次点击信息登录的时间戳
+          var historyTime = this.$dayjs(wx.getStorageSync("date")).format("YYYY-MM-DD")
+          console.log("查看时间2",historyTime)
+          // 30天重新登陆一下，拿取头像以及名字信息进行更新
+          var timeDifference = (Date.parse(currentTime) - Date.parse(historyTime))/(1 * 24 * 60 * 60 * 1000)
+          console.log("时间差",timeDifference)
+          if (timeDifference>=30) {
+            this.isShow = true
+          }
+          else{
+            this.isShow = false
+          }
+        }
+      },
+      // 同意隐私协议
+      agreePrivacy(){
+        this.isAgree = !this.isAgree
+      },
       settings() {
         wx.openSetting({
           success (res) {
           }
         })
       },
-      go() {
-        wx.navigateTo({
+      navPrivacy() {
+        uni.navigateTo({
           url: '../privacy/privacy'
         })
       },
-      last() {
-        uni.navigateBack({
-          delta: 3
-        })
+      async getUserinfo() {
+        if(this.isAgree){
+          wx.getUserProfile({
+            lang: 'zh_CN',
+            desc: '用于完善用户资料',
+            success: async (res) => {
+              let date = new Date()
+              wx.setStorageSync("date",date)
+              console.log(res.userInfo)
+              this.setUserInfo(res.userInfo)
+              this.isShow = false
+              await uni.$http.post("/users/info/",{data:res.userInfo,applet: "HiDancing"})
+            },
+            fail: error => {
+              uni.$showMsg("为了保证用户您信息更新的即时性，请同意授权！")
+            }
+          })
+        }
+        else{
+          uni.$showMsg("请您同意用户隐私协议！")
+        }
       },
-    async getUserinfo() {
-     wx.getUserProfile({
-       lang: 'zh_CN',
-       desc: '用于完善用户资料',
-       success: res => {
-         if(res.errMsg === 'getUserProfile:fail auth deny'){
-           uni.$showMsg('您取消了授权')
-         } else {
-           // 将用户信息存在vuex
-           this.updateUserInfo(res.userInfo)
-           this.isShow = false
-         }
-       }
-     })
-     },
     }
   }
 </script>
