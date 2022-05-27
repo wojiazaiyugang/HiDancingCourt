@@ -67,6 +67,9 @@
         </view>
       </view>
     </view>
+    <uni-popup ref="cameraPermiss" type="dialog">
+    	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" :duration="2000" :before-close="true" @close="closeCamera" @confirm="confirmCamera"></uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -166,13 +169,78 @@
           this.playVideo = this.allSearchVideos[this.numberId+1]
         }
       },
+      // 拒绝开启相册权限弹出窗关闭事件
+      closeCamera(){
+        this.$refs.cameraPermiss.close()
+      },
+      // 拒绝开启相册权限弹出窗开启事件
+      confirmCamera(){
+        this.$refs.cameraPermiss.close()
+        wx.openSetting({
+          success (res) {
+            // 开启权限设置
+            
+          }
+        })
+      },
       // 上报下载视频
       async downloadVideo(){
-        await uni.$http.post("/downloads/dance", {
-          video_id: this.playVideo.id,
-          applet:"HiDancing"
+        var that = this
+        // 手机震动
+        uni.vibrateShort()
+        // 是否开启相册权限
+        wx.getSetting({
+          success: response => {
+            if (!response.authSetting["scope.writePhotosAlbum"]) {
+              wx.authorize({
+                scope: "scope.writePhotosAlbum",
+                success() {
+                  // 同意相册
+                },
+                fail() {
+                  // 不同意相册
+                  that.$refs.cameraPermiss.open("center")
+                }
+              })
+            }
+            else{
+              wx.authorize({
+                /* 这个就是保存相册的 */
+                scope: "scope.writePhotosAlbum",
+                async success() {
+                  console.log("下载视频")
+                  that.saveToAlbum()
+                },
+                fail() {
+                },
+              });
+            }
+          },
+          fail: res => {
+          },
+          complete: res => {
+          },
         })
-      }
+      },
+      // 下载视频的动作
+      async saveToAlbum() {
+        let that = this;
+        var myDate = new Date();
+        that.$download({
+          url: that.playVideo.download_src,
+          async success() {
+            await uni.$http.post("/downloads/dance", {
+              video_id: that.playVideo.id,
+              applet:"HiDancing"
+            }).then(()=>{
+              uni.$showMsg("下载成功！")
+            })
+          },
+          fail() {
+            uni.$showMsg("下载失败！")
+          },
+        });
+      },
     }
   }
 </script>
@@ -184,6 +252,49 @@
       width: 100%;
       height:100%;
       position: relative;
+    }
+    /deep/ .uni-popup-dialog {
+      width: 590rpx!important;
+      height: 345rpx!important;
+      font-size: 30rpx!important;
+      border-radius: 30rpx!important;
+      .uni-dialog-title-text {
+        font-size: 30rpx;
+        font-weight: 600;
+      }
+      .uni-dialog-content {
+        margin-top: 30rpx;
+        .uni-dialog-content-text {
+          font-size: 30rpx;
+        }
+      }
+      .uni-dialog-button-group {
+        border: none;
+        margin-top: 45rpx;
+        .cancel {
+          width: 198rpx;
+          height: 80rpx;
+          border-radius: 48rpx;
+          line-height: 80rpx;
+          text-align: center;
+          font-size: 30rpx;
+          color: #fff;
+          background-color: #666;
+        }
+        .uni-button-color {
+          width: 198rpx;
+          height: 80rpx;
+          border-radius: 48rpx;
+          line-height: 80rpx;
+          text-align: center;
+          font-size: 30rpx;
+          color: #fff;
+          background-image: linear-gradient(to bottom, #f7a216, #fe6205);
+        }
+      }
+      .uni-border-left {
+        border: none;
+      }
     }
   }
 </style>

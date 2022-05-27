@@ -1,6 +1,6 @@
 <template>
   <view>
-    <view style="  width: 100%; height: 100%; ">
+    <view style=" width: 100%; height: 100%; ">
       <view 
       class="video"
       :style="{backgroundImage: 'url(' + video.gif_src + ')'}"

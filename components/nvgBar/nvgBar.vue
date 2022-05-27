@@ -5,8 +5,9 @@
       <!-- 状态栏占位 -->
       <view :style="{height: statuBarHeight  +'px'}"></view>
       <view class="navbar-context" >
-        <text @click="last" class="iconfont icon-fanhui" style="font-size: 45rpx; padding-left: 20rpx;color: #000000;">
-          </text>
+        <text @click="navBack" style="font-size: 45rpx; padding-left: 20rpx;color: #000000;">
+          <slot name="icon"></slot>
+        </text>
         <text class="text" :style="{'padding-left': paddingLeft / 2.3 + 'px'}"><slot name="text"></slot></text>
       </view>
     </view>
@@ -30,7 +31,7 @@
       this.paddingLeft = menuButton.left
     },
     methods: {
-      last() {
+      navBack() {
         uni.navigateBack({
           delta: 1
         })
