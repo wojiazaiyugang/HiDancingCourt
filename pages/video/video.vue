@@ -94,6 +94,7 @@
     computed: {
       ...mapState("m_video",["currentVideo","allSearchVideos","videoPages",]),
       ...mapState("m_device",["info"]),
+      ...mapState("m_video",["searchData","videoHouse"]),
       calVideoHeight(){
         return 2*this.info.screenHeight +"rpx"
       }
@@ -143,25 +144,51 @@
         // 下一个是最后一个视频
         if(this.numberId==this.allSearchVideos.length-1){
           this.nextPage++
-          const {data} = await uni.$http.post('/search/hidancing_search', {
-            start_time: "2022-05-13 07:45:13",
-            stop_time: "2022-05-13 13:46:13",
-            venue_id:22,
-            page:this.nextPage,
-            per_page:this.videoPages.perPage,
-            applet:"HiDancing"
-          })
-          if(data.data.length==0){
-            uni.showToast({
-            	icon:"none",
-              title: "当前视频已是最后一个视频！",
-            	duration: 1000
-            });
+          if(this.videoHouse.clickStatus){
+            const {data} = await uni.$http.post('/search/hidancing_search', {
+              face_query:0,
+              start_time: this.searchData.startTime,
+              stop_time: this.searchData.stopTime,
+              site_id: this.videoHouse.id,
+              page:this.nextPage,
+              per_page:this.videoPages.perPage,
+              applet:"HiDancing"
+            })
+            if(data.data.length==0){
+              uni.showToast({
+              	icon:"none",
+                title: "当前视频已是最后一个视频！",
+              	duration: 1000
+              });
+            }
+            else{
+              this.setAllSearchVideos([...this.allSearchVideos,...data.data])
+              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+              this.playVideo = this.allSearchVideos[this.numberId+1]
+            }
           }
           else{
-            this.setAllSearchVideos([...this.allSearchVideos,...data.data])
-            this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
-            this.playVideo = this.allSearchVideos[this.numberId+1]
+            const {data} = await uni.$http.post('/search/hidancing_search', {
+              face_query:0,
+              start_time: this.searchData.startTime,
+              stop_time: this.searchData.stopTime,
+              venue_id: this.searchData.houseId,
+              page:this.nextPage,
+              per_page:this.videoPages.perPage,
+              applet:"HiDancing"
+            })
+            if(data.data.length==0){
+              uni.showToast({
+              	icon:"none",
+                title: "当前视频已是最后一个视频！",
+              	duration: 1000
+              });
+            }
+            else{
+              this.setAllSearchVideos([...this.allSearchVideos,...data.data])
+              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+              this.playVideo = this.allSearchVideos[this.numberId+1]
+            }
           }
         }
         // 不是最后一个视频
@@ -196,6 +223,7 @@
                 scope: "scope.writePhotosAlbum",
                 success() {
                   // 同意相册
+                  that.saveToAlbum()
                 },
                 fail() {
                   // 不同意相册

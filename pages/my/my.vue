@@ -24,11 +24,17 @@
    <view v-if="!isShow" class="box">
      <!-- 头像 -->
       <view class="userInfo" >
-        <view class="flex">
+        <view v-if="userInfo" class="flex">
           <image class="avatar flex" :src="userInfo.avatarUrl">
           </image>
-          <text class="userName ellipsis" style="color: #fff;">ID:{{userInfo.nickName}}</text>
-          
+          </image>
+          <text class="userName ellipsis" style="color: white;"  v-if="userInfo">{{"ID:"+userInfo.nickName}}</text>
+        </view>
+        <view class="flex" v-else>
+          <view @click="reLogin" class="avatar flex" style="background-color: #3C3C3C;">
+            <image style="background-color: #3C3C3C;height: 70rpx;width: 70rpx;background-size: cover;" src="https://static.qiniuyun.highvenue.cn/image/DanceAvatar.png">
+          </view>
+          <text class="userName" style="color: #3C3C3C;font-weight: 550;">请点击头像重新登录！</text>
         </view>
         <view class="right">
           <button type="default" open-type="contact" style="background: transparent; border: none!important;">
@@ -57,6 +63,7 @@
   export default {
     data() {
       return {
+        // 是否显示获得个人信息页面
         isShow:true,
         // 是否同意隐私协议
         isAgree:false,
@@ -74,19 +81,22 @@
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
+      // 拒绝授权之后重新登陆
+      reLogin(){
+        this.isAgree = true
+        this.getUserinfo()
+      },
+      // 是否显示登录页面
       calShowPrivacy(){
         if(wx.getStorageSync("date")){
           // 将信息存储在本地，30天重新拿一次头像信息
           var date = new Date()
           // 当前时间戳
           var currentTime = this.$dayjs(date).format("YYYY-MM-DD")
-          console.log("查看时间",currentTime)
           // 上一次点击信息登录的时间戳
           var historyTime = this.$dayjs(wx.getStorageSync("date")).format("YYYY-MM-DD")
-          console.log("查看时间2",historyTime)
           // 30天重新登陆一下，拿取头像以及名字信息进行更新
           var timeDifference = (Date.parse(currentTime) - Date.parse(historyTime))/(1 * 24 * 60 * 60 * 1000)
-          console.log("时间差",timeDifference)
           if (timeDifference>=30) {
             this.isShow = true
           }
@@ -99,17 +109,20 @@
       agreePrivacy(){
         this.isAgree = !this.isAgree
       },
+      // 打开设置页面
       settings() {
         wx.openSetting({
           success (res) {
           }
         })
       },
+      // 导航隐私页面
       navPrivacy() {
         uni.navigateTo({
           url: '../privacy/privacy'
         })
       },
+      // 点击登陆获得个人信息页面
       async getUserinfo() {
         if(this.isAgree){
           wx.getUserProfile({
@@ -118,12 +131,12 @@
             success: async (res) => {
               let date = new Date()
               wx.setStorageSync("date",date)
-              console.log(res.userInfo)
               this.setUserInfo(res.userInfo)
               this.isShow = false
               await uni.$http.post("/users/info/",{data:res.userInfo,applet: "HiDancing"})
             },
             fail: error => {
+              this.isShow = false
               uni.$showMsg("为了保证用户您信息更新的即时性，请同意授权！")
             }
           })

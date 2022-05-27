@@ -181,6 +181,7 @@
 		methods: {
       ...mapMutations('m_venues',['getVenuesImg','updateStartTime','updateStopTime','updateShowTimeArr']),
       ...mapMutations("m_device",["setDeviceInfo",]),
+      ...mapMutations("m_video",["setSearchData"]),
       ...mapActions('m_venues',['getVideo']),
       // 选择场馆
       chooseVenues() {
@@ -215,7 +216,7 @@
         this.verfication.map(item=>{
           tempCode = tempCode + item.toString()
         })
-        const data = await uni.$http.post(`/venues/invite`,{
+        await uni.$http.post(`/venues/invite`,{
           // 场馆邀请码
           invite_code: parseInt(tempCode),  
           // 场馆id
@@ -228,9 +229,9 @@
                 this.selectId = item.id
               }
             })
+            this.setSearchData({houseId:this.selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
             uni.navigateTo({
-              url: "../video/allVideo?houseId="+ this.selectId+ "&selectTime="+this.currentTimes,
-              
+              url: "../video/allVideo",
             })
           }
           else{

@@ -1,8 +1,8 @@
 <template>
   <view>
-    <view style=" width: 100%; height: 100%; ">
+    <view class="video">
       <view 
-      class="video"
+      class="coverImage"
       :style="{backgroundImage: 'url(' + video.gif_src + ')'}"
       @click="clickVideo"
       >
@@ -10,9 +10,6 @@
         <view class="leftBottom">
           <view>{{video.goal_time.slice(5,10)}}</view>
           <view>{{video.goal_time.substr(11,15)}}</view>
-        </view>
-        <view class="choose" @click.stop="checkClick" :class="isShow == true ? 'color' : ''">
-          <view class="iconfont icon-a-Frame3163" v-if="isShow"></view>
         </view>
       </view>
     </view>
@@ -179,13 +176,16 @@
 <style lang="scss">
   .video {
     position: relative;
-    width: 320rpx;
-    height: 180rpx;
-    background-color: #666;
-    border-radius: 25rpx;
+    width: 220rpx;
+    height: 300rpx;
     margin-top: 20rpx;
-    background-size: cover;
-    
+    margin-right: 17rpx;
+    .coverImage{
+      height: 100%;
+      width: 100%;
+      background-size: cover;
+      border-radius: 25rpx;
+    }
     .leftTop {
       z-index: 2;
       position: absolute;
