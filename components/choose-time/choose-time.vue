@@ -192,5 +192,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '@/style/choose-time'
+  @import "@/static/style/choose-time"
 </style>

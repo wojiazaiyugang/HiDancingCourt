@@ -76,5 +76,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/cart'
+  @import "@/static/style/cart"
 </style>

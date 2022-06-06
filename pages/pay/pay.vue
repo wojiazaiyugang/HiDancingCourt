@@ -56,5 +56,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/pay'
+  @import "@/static/style/pay"
 </style>

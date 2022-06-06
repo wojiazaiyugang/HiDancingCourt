@@ -91,5 +91,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/camera'
+  @import "@/static/style/camera"
 </style>

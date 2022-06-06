@@ -24,18 +24,16 @@
 
 <style lang="scss">
 	/*每个页面公共css */
-	@import '@/uni_modules/uni-scss/index.scss';
-  @import '/wxcomponents/vant/common/index.wxss';
+	@import "@/uni_modules/uni-scss/index.scss";
+  @import "@/wxcomponents/vant/common/index.wxss";
 	/* #ifndef APP-NVUE */
-	@import '@/static/customicons.css';
+	@import "@/static/customicons.css";
   /*字体图标样式*/
-  @import '@/iconfont/iconstyles/iconfont.css';
+  @import "@/static/iconfont/iconstyles/iconfont.css";
 	// 设置整个项目的背景色 
 	page {
 		background-color: #f5f5f5;
 	}
-
-
 	/* #endif */
 	.example-info {
 		font-size: 14px;

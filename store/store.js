@@ -2,13 +2,13 @@ import Vue from "vue"
 import Vuex from 'vuex'
 
 // 导入用户信息
-import user from './user'
-import getters from './getters'
-import venues from './venues.js'
-import camera from './camera.js'
-import video from './video.js'
-import cart from './cart.js'
-import device from "./device.js"
+import user from "./modules/user.js"
+import venues from "./modules/venues.js"
+import camera from "./modules/camera.js"
+import video from "./modules/video.js"
+import cart from "./modules/cart.js"
+import device from "./modules/device.js"
+
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
@@ -21,7 +21,6 @@ const store = new Vuex.Store({
     m_cart: cart,
     m_device: device,
   },
-  getters
 })
 
 export default store

@@ -150,5 +150,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/my'
+  @import "@/static/style/my"
 </style>

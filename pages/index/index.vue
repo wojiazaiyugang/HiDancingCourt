@@ -372,5 +372,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/index'
+  @import "@/static/style/index"
 </style>

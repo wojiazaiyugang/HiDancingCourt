@@ -101,5 +101,5 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '@/style/choose-venues'
+  @import "@/static/style/choose-venues"
 </style>

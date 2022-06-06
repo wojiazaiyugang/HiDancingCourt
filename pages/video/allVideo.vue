@@ -219,5 +219,5 @@
 </script>
 
 <style lang="scss">
-  @import '@/style/allVideo'
+  @import "@/static/style/allVideo"
 </style>
