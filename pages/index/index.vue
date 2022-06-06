@@ -174,7 +174,6 @@
 		},
     created() {
       this.getVenues()
-      this.setSystemInfo()
       this.getTimeData()
     },
     computed: {
@@ -184,7 +183,6 @@
     },
 		methods: {
       ...mapMutations('m_venues',['getVenuesImg','updateStartTime','updateStopTime','updateShowTimeArr']),
-      ...mapMutations("m_device",["setDeviceInfo",]),
       ...mapMutations("m_video",["setSearchData"]),
       ...mapActions('m_venues',['getVideo']),
       // 选择场馆
@@ -258,16 +256,6 @@
           this.currentIndex = parseInt(data.target.id)
         }
       },
-      // 获得当前的设备信息
-      async setSystemInfo() {
-        var that =this
-        uni.getSystemInfo({
-          success: function (res) {
-            let menuInfo = uni.getMenuButtonBoundingClientRect()
-            that.setDeviceInfo(Object.assign({}, res, {menuInfo}))
-          }
-        });
-      },
       // 时间选择组件传递的数据
       getTimeData() {
         for(var i=0;i<this.dayLength;i++){
@@ -313,46 +301,6 @@
         })
         this.$refs.permissionsPopup.close()
       },
-      // 用户授权位置信息
-      wxGetLocation() {
-        var that = this
-        uni.getLocation({
-          type: 'wgs84',
-          success: async function(res) {
-            // 计算距离
-            var distance = [] // 最近距离
-            let list = await Promise.all(that.venuesList.map(item => {
-              if(res.latitude) {
-               distance.push(Vue.prototype.$getDistance(res.longitude,res.latitude,item.data.location[0],item.data.location[1])) 
-              }
-              else {
-                // item.myLocation = 0
-              }
-            }))
-          that.courtName = that.venuesList[distance.indexOf(Math.min(...distance))].name  
-          const currentObj = that.venuesList.find(function(item){
-            if(item.name == that.courtName){
-              return item
-            }
-          })
-          
-          // 是否支持人脸
-          that.venuesList.forEach(item => {
-            if(item.name == that.courtName){
-              that.supprt_find = item.data.supprt_find
-              }
-            })
-          },
-          fail: function() {
-            that.venuesList.forEach(item => {
-              if(item.name == that.courtName){
-                that.supprt_find = item.data.supprt_find
-              }
-            })
-            that.$refs.permissionsPopup.open('center')
-          }
-        })
-      },
       // 请求所有场馆
       async getVenues() {
         const {data} = await uni.$http.get('/venues/?applet=HiDancing')
@@ -362,7 +310,6 @@
         })
         this.currentHourses = this.columnsHouses[0]
         this.currentBacimg = this.venuesList[0].data.thumbnail
-        this.wxGetLocation()
         this.getVenuesImg(this.venuesList)
       },
       // 去个人页面

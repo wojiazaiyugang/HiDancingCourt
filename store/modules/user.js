@@ -1,28 +1,34 @@
+import { loginByCode } from "@/api/user.js"
+
 export default {
   // 开启命名空间
   namespaced: true,
-  
   // 模块化数据
   state: () => ({
     // 个人用户信息
     userInfo:null,
+    // 用户的user_id，用于获得用户的个人信息
+    userId:"",
   }),
   
   mutations: {
     setUserInfo(state,payload){
       state.userInfo = payload
     },
+    setUserId(state,payload){
+      state.userId = payload
+    },
   },
   actions: {
-    async getToken() {
-      // 拿到openId
-      if(uni.getStorageSync('token')) return
-        const [err,res] = await uni.login()
-        if(err || res.errMsg !== 'login:ok') return uni.$showMsg('登录失败')
-        if(res.code) {
-          const { data } = await uni.$http.get(`/users/open_id/?code=${res.code}&applet=HiDancing`)
-          uni.setStorageSync('token',data.data)
+    async getToken({commit,state}) {
+      uni.login({
+        provider: "weixin",
+        success: async ({code}) => {
+          let {data} = await loginByCode(code)
+          uni.setStorageSync("token",data.token)
+          commit("setUserId",data.user_id)
         }
+      });
     },
   },
   

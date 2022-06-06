@@ -1,8 +1,10 @@
-import Vue from 'vue'
+import Vue from "vue"
+import { getVenues } from "@/api/venues.js"
+import device from "./device.js"
+
 export default {
   namespaced: true,
-  
-  state: () => ({
+  state:{
     // 所有的场馆信息
     allVenues: [],
     // 根据场地id搜索到的视频
@@ -24,7 +26,7 @@ export default {
     venuesList: [] ,//场馆数据包含场地图片
     videoShow: false ,// 暂无视频显示隐藏
     newSiteIdVideo: []
-  }),
+  },
   
   mutations: {
     updateShowTimeArr(state,payload) {
@@ -46,7 +48,7 @@ export default {
     updatelatitudeLongitude(state,payload) {
       state.latitudeLongitude = payload
     },
-    getVenuesImg(state,payload) {
+    setAllVenues(state,payload) {
       state.allVenues = payload
     },
     updateSiteIdVideo(state,payload) {
@@ -91,6 +93,21 @@ export default {
     }
   },
   actions: {
+    async getVenues({commit,state}){
+      let {data} = await getVenues()
+      let location = device.state.locationInfo
+      let list = await Promise.all(data.map(item=>{
+        if(location.latitude){
+          item.unDistance = Vue.prototype.$getDistance(location.longitude,location.latitude,item.data.location[0],item.data.location[1])
+        }
+        else{
+          item.unDistance = 0
+        }
+        return item
+      }))
+      list.sort((pre,cur)=>pre.unDistance-cur.unDistance)
+      commit("setAllVenues",list)
+    },
     async getVideo({commit,state,rootState},payload) {
       const {data} = await uni.$http.post('/search/hidancing_search', {
         // site_ids: [54],

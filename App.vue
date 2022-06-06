@@ -2,8 +2,11 @@
  import { mapActions, mapMutations, } from 'vuex'
 	export default {
 		onLaunch: function() {
-      this.getToken()
-      this.getUserInfo()
+      this.getToken().finally(()=>{
+        this.getLocation().finally(()=>{
+          this.getVenues()
+        })
+      })
 		},
 		onShow: function() {
 		},
@@ -11,13 +14,15 @@
 		},
     methods: {
       ...mapActions("m_user",["getToken"]),
-      ...mapMutations("m_user",["setUserInfo"]),
-      // 获得用户信息
-      async getUserInfo(){
-        let {data} = await uni.$http.get("/users/info/?applet=HiDancing")
-        this.setUserInfo(data.data.user_info)
-        console.log(data.data.user_info)
-      },
+      ...mapActions("m_device",["getLocation"]),
+      ...mapActions("m_venues",["getVenues"]),
+      // ...mapMutations("m_user",["setUserInfo"]),
+      // // 获得用户信息
+      // async getUserInfo(){
+      //   let {data} = await uni.$http.get("/users/info/?applet=HiDancing")
+      //   this.setUserInfo(data.data.user_info)
+      //   console.log(data.data.user_info)
+      // },
     }
 	}
 </script>
