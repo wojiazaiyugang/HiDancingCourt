@@ -58,8 +58,8 @@
 </template>
 
 <script>
-  import { mapMutations,mapState } from 'vuex'
-  import nvgBar from '@/components/nvgBar/nvgBar.vue'
+  import { mapMutations,mapState } from "vuex"
+  import nvgBar from "@/components/nvgBar"
   export default {
     data() {
       return {

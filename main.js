@@ -2,12 +2,8 @@
 import Vue from 'vue'
 import App from './App'
 import store from 'store/store.js'
-
 import "@/plugins/utils"
 
-import LongButton from '@/components/long-button/long-button'
-import ChooseTime from '@/components/choose-time/choose-time' // 时间选择组件
-import chooseVenues from '@/components/choose-venues/choose-venues.vue' // 场馆选择组件
 
 import { $http } from '@escook/request-miniprogram' // 网络请求包
 
@@ -18,14 +14,6 @@ uni.$http = $http
 // 线上路径
 $http.baseUrl = 'https://api.highvenue.cn/development'
 
-// 消息提示
-uni.$showMsg = function (title="数据请求失败！", duration = 1000) {
-  uni.showToast({
-    title,
-    duration,
-    icon: 'none'
-  })
-}
 
 // 请求拦截器
 $http.beforeRequest = async function (options) {
@@ -62,12 +50,11 @@ Vue.prototype.$getDistance = (lat1, lng1, lat2, lng2) => {
   return s
 }
 
-Vue.component('long-button', LongButton)
-Vue.component('choose-time', ChooseTime)
-Vue.component('choose-venues', chooseVenues)
+
+
 Vue.config.productionTip = false
 
-App.mpType = 'app'
+App.mpType = "app"
 
 const app = new Vue({
   ...App,

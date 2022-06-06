@@ -135,9 +135,13 @@
 </template>
 
 <script>
-  import { mapMutations,mapState,mapActions } from 'vuex'
-  import Vue from 'vue'
+  import { mapMutations,mapState,mapActions } from "vuex"
+  import LongButton from "@/components/long-button"
+  import Vue from "vue"
 	export default {
+    components:{
+      LongButton,
+    },
 		data() {
 			return {
         // 当前场馆的背景图

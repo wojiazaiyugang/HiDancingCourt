@@ -11,6 +11,15 @@ Vue.prototype.$go = (url, params = {}) => {
   })
 }
 
+// 消息提示
+uni.$showMsg = function (title="数据请求失败！", duration = 1000) {
+  uni.showToast({
+    title,
+    duration,
+    icon: 'none'
+  })
+}
+
 // 路径导航传参
 Vue.prototype.$redirect = (url, params = {}) => {
   url = formatUrl(url, params)

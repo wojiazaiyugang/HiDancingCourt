@@ -47,9 +47,9 @@
 </template>
 
 <script>
-  import { mapState,mapActions,mapMutations } from 'vuex'
-  import { videoDate } from '@/components/videoData/videoData.vue'
-  import Toast from '@/wxcomponents/vant/toast/toast.js'
+  import { mapState,mapActions,mapMutations } from "vuex"
+  import { videoDate } from "@/components/videoData"
+  import Toast from "@/wxcomponents/vant/toast/toast.js"
 	export default {
 		data() {
 			return {

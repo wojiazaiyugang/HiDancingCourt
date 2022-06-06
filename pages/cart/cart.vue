@@ -34,8 +34,8 @@
 </template>
 
 <script>
-  import {mapState} from 'vuex'
-  import { videoDate } from '@/components/videoData/videoData.vue'
+  import {mapState} from "vuex"
+  import { videoDate } from "@/components/videoData"
   export default {
     data() {
       return {
