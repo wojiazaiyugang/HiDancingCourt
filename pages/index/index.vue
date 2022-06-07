@@ -1,7 +1,5 @@
 <template>
-	<view class="container"
-   style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
-   >
+	<view class="container">
     <!-- Start 第一个Long-Button -->
     <view class="First-LongButton">
       <long-button>
@@ -24,8 +22,11 @@
     <!-- End 第一个Long-Button -->
     
     <!-- Start 球馆图片 -->
-    <view class="courtPicture" :style="{backgroundImage: `url(${currentBacimg})`}">
-      
+    <view class="courtPicture" >
+      <view style="width: 97%;height: 96%;background-size: cover;border-radius: 24rpx;"
+       :style="{backgroundImage: `url(${currentBacimg})`}">
+        
+      </view>
     </view>
     <!-- End 球馆图片 -->
     
@@ -44,28 +45,27 @@
     </long-button>
     </view>
     <!-- End 第二个Long-Button -->
-    
-    
     <!-- Start hide第三个Long-Button -->
-    <view style="width: 95%;margin-bottom: 40rpx; color: white;">
+    <view style="width: 95%;margin-bottom: 45rpx; color: white;">
       <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
         <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
       </view>
-      <view class="InputBoard">
-         <input type="number" 
-          v-for= "(item,index) in verfication"
-          :key= "index" 
-          :maxlength="1"
-          :hold-keyboard="true"
-          :focus="currentIndex==index"
-          :id="index"
-          :show-confirm-bar="false"
-          @input="keyInput"
-          class="InputItem" />
+      <view style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
+        <view class="InputBoard">
+          <input type="number"
+           v-for= "(item,index) in verfication"
+           :key= "index" 
+           :maxlength="1"
+           :focus="currentIndex==index"
+           :id="index"
+           :show-confirm-bar="false"
+           @focus="initCursor"
+           @input="keyInput"
+           class="InputItem" />
+        </view>
       </view>
     </view>
     <!-- End 第三个Long-Button -->
-    
     <!-- Start 透明层 -->
     <view class="Four-LongButton">
       <view class="First-LongButton-son" >
@@ -75,7 +75,8 @@
     </view>
     <view class="camera" @click="useCamera">
       <view class="camera-son" >
-        <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png" mode="aspectFit" style="width: 60%; height: 60%;"></image>
+        <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
+         mode="aspectFit" style="width: 60%; height: 60%;"></image>
       </view>
     </view>
   
@@ -205,6 +206,12 @@
       ...mapMutations("m_video",["setSearchData"]),
       ...mapMutations("m_device",["setDeviceInfo"]),
       ...mapMutations("m_venues",["setSiteInfos"]),
+      // 初始化光标
+      initCursor(){
+        if(this.currentIndex==-1){
+          this.currentIndex = 0
+        }
+      },
       // 存储当前设备的信息
       async getDeviceInfo(){
         await uni.getSystemInfo({
@@ -261,9 +268,11 @@
       },
       // 输出查看键盘输入
       keyInput(data){
+        console.log("sad")
         this.verfication[data.target.id] = data.target.value
         if(this.verfication[data.target.id]){
           if(data.target.id<this.verfication.length-1){
+            console.log("askasfhj")
             this.currentIndex = parseInt(data.target.id) + 1
           }
           else{

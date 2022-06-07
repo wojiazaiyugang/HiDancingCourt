@@ -5,7 +5,7 @@
         <scroll-view scroll-x="true" class="scrollClass" style=" margin-bottom: 40rpx;width: 100%;">
          <view v-for="(item,index) in timeList"
             class="timeDuration"
-            :style="{backgroundColor:timeIndex==index?'#7E71F0':''}"
+            :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
             @click="selectDuration({item,index})"
             :key="index"
           >
@@ -15,7 +15,7 @@
         <scroll-view scroll-x="true" class="scrollClass" :scroll-top="scrollHeight">
           <view v-for="(item,index) in roomsList"
             class="timeDuration"
-            :style="{backgroundColor:houseIndex==index?'#7E71F0':''}"
+            :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
             @click="selectHouse({item,index})"
             :key="index"
           >

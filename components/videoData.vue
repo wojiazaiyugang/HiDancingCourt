@@ -6,10 +6,8 @@
       :style="{backgroundImage: 'url(' + video.site_thumbnail + ')'}"
       @click="clickVideo"
       >
-        <view class="leftTop" >{{video.data.goal_labels[0]}}</view>
         <view class="leftBottom">
-          <view>{{video.goal_time.slice(5,10)}}</view>
-          <view>{{video.goal_time.substr(11,15)}}</view>
+          <view>{{video.goal_time}}</view>
         </view>
       </view>
     </view>
@@ -59,20 +57,6 @@
       background-size: cover;
       border-radius: 25rpx;
     }
-    .leftTop {
-      z-index: 2;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 107rpx;
-      height: 40rpx;
-      background-color: #fe5857;
-      border-radius: 20rpx 0 ;
-      font-size: 24rpx;
-      line-height: 40rpx;
-      text-align: center;
-      color: #fff;
-    }
     .leftBottom {
       display: flex;
       flex-direction: column;
@@ -82,9 +66,9 @@
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 107rpx;
+      width: 100%;
       height: 50rpx;
-      border-radius: 0 20rpx;
+      border-radius: 0rpx 0rpx 25rpx 25rpx;
       font-size: 20rpx;
       background-color: rgba(0,0,0,.5);
       color: #fff;

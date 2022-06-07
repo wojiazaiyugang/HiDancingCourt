@@ -1,10 +1,12 @@
 <template>
-  <view class="video-container" :style="{height:2*deviceInfo.screenHeight +'rpx'}">
+  <view class="video-container" :style="{height:calHeight}">
     <view class="video-text">
       <video
        id="myVideo"
        :src="playVideo.download_src"
+       @click="clickControl"
        controls
+       loop
        objectFit="cover"
        :show-fullscreen-btn="false"
        :show-play-btn="false"
@@ -28,17 +30,17 @@
       </view>
       <view 
         @click="preVideo"
-        style="display: flex;justify-content: center;align-items: center; position: absolute;left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
+        style="display: flex;justify-content: center;align-items: center; position: absolute;left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;background-color: black;" 
         :style="{top:deviceInfo.screenHeight+'rpx'}">
-        <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
+        <view style="width: 60rpx;height: 60rpx;opacity: 1; background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
           
         </view>
       </view>
       <view
         @click="nextVideo"
-        style="display: flex;justify-content: center;align-items: center; position: absolute;right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
+        style="display: flex;justify-content: center;align-items: center; position: absolute;right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;background-color: black;" 
         :style="{top:deviceInfo.screenHeight+'rpx'}">
-        <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
+        <view style="width: 60rpx;height: 60rpx;opacity: 1; background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
           
         </view>
       </view>
@@ -88,11 +90,14 @@
         nextPage:0,
         // 最后一个视频的标志
         lastVideoStatus:false,
+        // 当前微信创建的播放对象
+        videoContent:null,
+        // 当前视频播放与否
+        isPlay:true,
       };
     },
     created() {
       this.playingVideo()
-      console.log("查看设备信息",this.deviceInfo)
     },
     computed: {
       ...mapState("m_video",[
@@ -104,11 +109,25 @@
       ]),
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_device",["deviceInfo"]),
+      calHeight(){
+        return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
+      }
     },
     methods: {
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 点击视频进行播放与否
+      clickControl(){
+        if(this.isPlay){
+          this.videoContent.pause()
+        }
+        else{
+          this.videoContent.play()
+        }
+        this.isPlay = !this.isPlay
+      },
       // 播放当前视频
       playingVideo(){
+        this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
         // 当前页面接收传过来的视频页数
