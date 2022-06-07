@@ -1,8 +1,8 @@
 export default {
   namespaced: true,
-  state : () => ({
+  state : {
     cart: []
-  }),
+  },
   mutations: {
     addCart(state,payload) {
       state.cart.push(payload)

@@ -12,12 +12,17 @@ const baseUrl = "https://api.highvenue.cn/development"
 
 const successHandler = (res, resolve, reject) => {
   if (res.data.code === 0) {
-    // store.commit("m_device/setServerTime", res.header["Date"])
+    store.commit("m_device/setServerTime", res.header["Date"])
     resolve(res.data)
   }
   else {
     let msg = res.data.msg || "出错了！"
-    if(res.data.code === -6) msg = "视频已过期"
+    if(res.data.code === -1) msg = "密码错误请重新输入！"
+    uni.showToast({
+      title:msg,
+      duration:1000,
+      icon: "none"
+    })
   }
 }
 const failHandler = (res, reject) => {

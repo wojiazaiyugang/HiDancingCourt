@@ -47,9 +47,9 @@
 </template>
 
 <script>
-  import { mapState,mapActions,mapMutations } from "vuex"
-  import { videoDate } from "@/components/videoData"
-  import Toast from "@/wxcomponents/vant/toast/toast.js"
+  import { mapState, mapMutations, } from "vuex"
+  import { getAllvideos } from "@/api/search.js"
+  import { videoData } from "@/components/videoData"
 	export default {
 		data() {
 			return {
@@ -65,6 +65,8 @@
         timeList:[],
         // 顶部的选择教室的数组
         roomsList:[],
+        // 视频搜索的场地id数组
+        siteArray:[],
         // 根据人脸以及时间信息获得的所有视频
         allVideos:[],
         // 搜索初始的页码数
@@ -82,26 +84,19 @@
 			}
 		},
     components: {
-      videoDate,
+      videoData,
     },
     computed: {
-      ...mapState('m_venues',['showTimeArr','videoShow','newSiteIdVideo']),
-      ...mapState('m_cart',['cart']),
-      ...mapState('m_user',['userinfo']),
+      ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_video",["searchData","allSearchVideos"]),
     },
     created() {
-      console.log(this.searchData)
-      this.houseId = this.searchData.houseId
-      this.startTime = this.searchData.startTime 
-      this.stopTime = this.searchData.stopTime 
+      this.getRooms()
       this.initTime()
       this.getVideosByFace()
-      this.getRooms()
       this.setAllSearchVideos([])
     },
 		methods: {
-      ...mapMutations('m_venues',['updatePage','clearPage','clearSiteIdVideo']),
       ...mapMutations("m_video",
       ["setAllSearchVideos",
       "setVideoPages",
@@ -125,7 +120,7 @@
           this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+data.item.split("~")[1]+":00"
           this.setSearchData({houseId:this.houseId,startTime:this.startTime,stopTime:this.stopTime})
         }
-        this.changeHouse?this.getVideosBySites():this.getVideosByFace()
+        this.getVideosByFace()
       },
       // 选择舞蹈房
       selectHouse(data){
@@ -136,20 +131,26 @@
         this.loadingDone = false
         this.setAllSearchVideos([])
         if(data.index==0){
-          this.changeHouse = false
+          this.siteArray = this.siteInfos.map(item=>{
+            return item.id
+          })
           this.getVideosByFace()
           this.setVideoHouse({id:this.siteId,clickStatus:false})
           return false
         }
         else{
-          this.changeHouse = true
-          this.getVideosBySites()
+          this.siteArray = [data.item.id]
+          this.getVideosByFace()
           this.setVideoHouse({id:this.siteId,clickStatus:true})
           return false
         }
       },
       // 初始化时间段
       initTime(){
+        console.log(this.searchData)
+        this.houseId = this.searchData.houseId
+        this.startTime = this.searchData.startTime 
+        this.stopTime = this.searchData.stopTime 
         this.timeList.push("全部")
         for(var i=1;i<=12;i++){
           let tempTime = i*2>9?i*2:"0"+i*2
@@ -160,38 +161,18 @@
       },
       // 根据舞蹈房ID获得教室
       async getRooms(){
-        const {data} = await uni.$http.get(`/sites/${this.houseId}?applet=HiDancing`)
-        this.roomsList = data.data
+        console.log("查看所有场地",this.siteInfos)
+        this.siteArray = this.siteInfos.map(item=>{
+          return item.id
+        })
+        this.roomsList = this.siteInfos.concat([])
         this.roomsList.unshift("全部")
         console.log(this.roomsList)
+        console.log("输出站点数组",this.siteArray)
       },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
-        const {data} = await uni.$http.post('/search/hidancing_search', {
-          face_query: 0, 
-          start_time: this.startTime,
-          stop_time: this.stopTime,
-          venue_id: parseInt(this.houseId) ,
-          page:this.currentPage,
-          per_page:this.perPage,
-          applet:"HiDancing"
-        })
-        this.loadingDone = data.data.length<this.perPage
-        this.allVideos = [...this.allSearchVideos,...data.data]
-        this.setAllSearchVideos([...this.allVideos])
-        this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
-      },
-      // 根据站点获得视频
-      async getVideosBySites(){
-        const {data} = await uni.$http.post('/search/hidancing_search', {
-          face_query:0,
-          start_time: this.startTime,
-          stop_time: this.stopTime,
-          site_id: parseInt(this.siteId),
-          page:this.currentPage,
-          per_page:this.perPage,
-          applet:"HiDancing"
-        })
+        const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,false)
         this.loadingDone = data.data.length<this.perPage
         this.allVideos = [...this.allSearchVideos,...data.data]
         this.setAllSearchVideos([...this.allVideos])
@@ -199,22 +180,14 @@
       },
       // 下拉到底刷新数据
       async scroolBottom() {
-        console.log("1111")
         if(this.loadingDone){
-          uni.$showMsg("数据已经加载完毕")
+          this.$showMsg("数据已经加载完毕")
           return false
         }
         this.currentPage++
-        if(this.changeHouse){
-          this.getVideosBySites()
-          return false
-        }
-        else{
-          this.getVideosByFace()
-          return false
-        }
-      },
-		}
+        this.getVideosByFace()
+      }
+    },
 	}
 </script>
 

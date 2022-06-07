@@ -1,15 +1,15 @@
-import { loginByCode } from "@/api/user.js"
+import { loginByCode, getUserInfo } from "@/api/user.js"
 
 export default {
   // 开启命名空间
   namespaced: true,
   // 模块化数据
-  state: () => ({
+  state: {
     // 个人用户信息
     userInfo:null,
     // 用户的user_id，用于获得用户的个人信息
     userId:"",
-  }),
+  },
   
   mutations: {
     setUserInfo(state,payload){
@@ -24,16 +24,16 @@ export default {
       uni.login({
         provider: "weixin",
         success: async ({code}) => {
-          let {data} = await loginByCode(code)
-          uni.setStorageSync("token",data.token)
-          commit("setUserId",data.user_id)
+          // let {data} = await loginByCode(code)
+          await loginByCode(code).then(async value=>{
+            uni.setStorageSync("token",value.data.token)
+            commit("setUserId",value.data.user_id)
+            let {data} = await getUserInfo(value.data.user_id)
+            commit("setUserInfo",data)
+          })
+
         }
       });
     },
   },
-  
-  getters: {
-    
-  }
-  
 }

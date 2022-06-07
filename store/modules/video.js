@@ -1,7 +1,7 @@
 export default {
   namespaced: true,
   
-  state: () => ({
+  state:{
     // 当前选择的教室id以及是否点击教室
     videoHouse:{
       id:"",
@@ -18,11 +18,11 @@ export default {
     },
     // 视频搜索的工作室ID以及时间
     searchData:{
-      houseId:"",
+      houseId:[],
       startTime:"",
       stopTime:"",
     }
-  }),
+  },
   mutations: {
     setVideoHouse(state,payload){
       state.videoHouse = payload

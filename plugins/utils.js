@@ -19,7 +19,7 @@ Vue.prototype.$redirect = (url, params = {}) => {
   })
 }
 // 消息提示
-uni.$showMsg = function (title="数据请求失败！", duration = 1000) {
+Vue.prototype.$showMsg = function (title="数据请求失败！", duration = 1000) {
   uni.showToast({
     title,
     duration,

@@ -261,11 +261,11 @@
               video_id: that.playVideo.id,
               applet:"HiDancing"
             }).then(()=>{
-              uni.$showMsg("下载成功！")
+              this.$showMsg("下载成功！")
             })
           },
           fail() {
-            uni.$showMsg("下载失败！")
+            this.$showMsg("下载失败！")
           },
         });
       },

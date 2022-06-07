@@ -1,5 +1,5 @@
 <script>
- import { mapActions, mapMutations, } from 'vuex'
+ import { mapActions, mapMutations, mapState } from "vuex"
 	export default {
 		onLaunch: function() {
       this.getToken().finally(()=>{
@@ -12,17 +12,13 @@
 		},
 		onHide: function() {
 		},
+    computed:{
+      ...mapState("m_user",["userId"]),
+    },
     methods: {
-      ...mapActions("m_user",["getToken"]),
+      ...mapActions("m_user",["getToken",]),
       ...mapActions("m_device",["getLocation"]),
       ...mapActions("m_venues",["getVenues"]),
-      // ...mapMutations("m_user",["setUserInfo"]),
-      // // 获得用户信息
-      // async getUserInfo(){
-      //   let {data} = await uni.$http.get("/users/info/?applet=HiDancing")
-      //   this.setUserInfo(data.data.user_info)
-      //   console.log(data.data.user_info)
-      // },
     }
 	}
 </script>

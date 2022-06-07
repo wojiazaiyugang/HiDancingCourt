@@ -7,7 +7,7 @@
     </nvg-bar>
     <!-- 没信息 -->
     <view v-if="isShow" class="login-container">
-      <view class="btn-login" @click="getUserinfo" >一键登录</view>
+      <view class="btn-login" @click="loginUserinfo" >一键登录</view>
       <view class="tips-text" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao" style="color: white; font-size: 30rpx;" ></view>
@@ -25,10 +25,10 @@
      <!-- 头像 -->
       <view class="userInfo" >
         <view v-if="userInfo" class="flex">
-          <image class="avatar flex" :src="userInfo.avatarUrl">
+          <image class="avatar flex" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
           </image>
-          </image>
-          <text class="userName ellipsis" style="color: white;"  v-if="userInfo">{{"ID:"+userInfo.nickName}}</text>
+          
+          <text class="userName ellipsis" style="color: white;"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
         </view>
         <view class="flex" v-else>
           <view @click="reLogin" class="avatar flex" style="background-color: #3C3C3C;">
@@ -50,6 +50,7 @@
           </view>
         </view>
       </view>
+      
       <view class="bannerInfo">
         
       </view>
@@ -59,6 +60,7 @@
 
 <script>
   import { mapMutations,mapState } from "vuex"
+  import { updateInfo } from "@/api/user.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
@@ -67,24 +69,27 @@
         isShow:true,
         // 是否同意隐私协议
         isAgree:false,
+        // 个人头像
+        selfAvatar:"",
+        // 个人名字
+        selfName:"",
       };
     },
     components: {
       nvgBar,
     },
     computed: {
-      ...mapState('m_user',["userInfo",]),
+      ...mapState("m_user",["userInfo",]),
     },
     created() {
       this.calShowPrivacy()
-      console.log(this.userInfo)
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
       // 拒绝授权之后重新登陆
       reLogin(){
         this.isAgree = true
-        this.getUserinfo()
+        this.loginUserinfo()
       },
       // 是否显示登录页面
       calShowPrivacy(){
@@ -123,26 +128,28 @@
         })
       },
       // 点击登陆获得个人信息页面
-      async getUserinfo() {
+      async loginUserinfo() {
         if(this.isAgree){
           wx.getUserProfile({
-            lang: 'zh_CN',
-            desc: '用于完善用户资料',
+            lang: "zh_CN",
+            desc: "用于完善用户资料",
             success: async (res) => {
               let date = new Date()
               wx.setStorageSync("date",date)
               this.setUserInfo(res.userInfo)
+              this.selfAvatar = res.userInfo.avatarUrl
+              this.selfName = res.userInfo.nickName
               this.isShow = false
-              await uni.$http.post("/users/info/",{data:res.userInfo,applet: "HiDancing"})
+              await updateInfo({data:res.userInfo})
             },
             fail: error => {
               this.isShow = false
-              uni.$showMsg("为了保证用户您信息更新的即时性，请同意授权！")
+              this.$showMsg("为了保证用户您信息更新的即时性，请同意授权！",2000)
             }
           })
         }
         else{
-          uni.$showMsg("请您同意用户隐私协议！")
+          this.$showMsg("请您同意用户隐私协议！")
         }
       },
     }

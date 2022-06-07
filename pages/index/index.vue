@@ -128,7 +128,11 @@
    
    <!-- Start权限提示信息 -->
    <uni-popup ref="permissionsPopup" type="dialog">
-   	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" :before-close="true" @close="close" @confirm="confirm"></uni-popup-dialog>
+   	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" 
+    :before-close="true" 
+    @close="closeProp" 
+    @confirm="confirmProp">
+    </uni-popup-dialog>
    </uni-popup>
    <!-- End权限提示信息 -->
   </view>
@@ -136,6 +140,8 @@
 
 <script>
   import { mapMutations,mapState,mapActions } from "vuex"
+  import { verifyCode } from "@/api/search.js"
+  import { getSites } from "@/api/venues.js"
   import LongButton from "@/components/long-button"
   import Vue from "vue"
 	export default {
@@ -160,34 +166,46 @@
         verfication:["","","",""],
         // 选定的舞房
         currentHourses:"",
-        // 选定舞房的ID
-        selectId:0,
         // 选定的时间段
         currentTimes:"",
-        courtName: 'HiCourt运动体验中心1111',
-        site: '1号场地',
-        supprt_find: 1 ,// 是否支持拍照 默认支持
-        venuesList: [] ,// 场馆数据包含场地图片
-        allVideoTimeArr: [],
-        siteInfo: []
 			}
 		},
+    watch:{
+      locationInfo(newValue,oldValue){
+        if(!newValue.latitude){
+          this.$refs.permissionsPopup&&this.$refs.permissionsPopup.open("center")
+        }
+      },
+      allVenues(newValue,oldValue){
+        if(newValue.length!=0){
+          this.columnsHouses = this.allVenues.filter(item=>{
+            if(!item.data.supprt_find){
+              return item
+            }
+          })
+          this.columnsHouses = this.columnsHouses.map(item=>{
+            return item.name
+          })
+          this.currentHourses = this.columnsHouses[0]
+          this.currentBacimg = this.allVenues[0].data.thumbnail
+        }
+      }
+    },
     created() {
-      this.getVenues()
       this.getTimeData()
     },
     computed: {
-      ...mapState('m_camera',['imgSrc']),
-      ...mapState('m_venues',['startTime','stopTime','allVenues']),
-      ...mapState("m_device",["info"])
+      ...mapState("m_venues",["startTime","stopTime","allVenues"]),
+      ...mapState("m_device",["locationInfo"]),
     },
 		methods: {
-      ...mapMutations('m_venues',['getVenuesImg','updateStartTime','updateStopTime','updateShowTimeArr']),
+      ...mapActions("m_device",["getLocation"]),
+      ...mapActions("m_venues",["getVenues"]),
       ...mapMutations("m_video",["setSearchData"]),
-      ...mapActions('m_venues',['getVideo']),
-      // 选择场馆
+      ...mapMutations("m_venues",["setSiteInfos",]),
+      // 打开选择场馆
       chooseVenues() {
-        this.$refs.popupVenues.open('bottom')
+        this.$refs.popupVenues.open("bottom")
       },
       // 选择舞房点击确认
       confirmHouse(){
@@ -196,13 +214,14 @@
       // 滑动选择舞房
       selectHouse(data){
         this.currentHourses = this.columnsHouses[data.detail.index]
-        this.currentBacimg = this.venuesList[data.detail.index].data.thumbnail
-        console.log(this.venuesList[data.detail.index].data.thumbnail)
+        this.currentBacimg = this.allVenues[data.detail.index].data.thumbnail
       },
       // 点击选择时段
       showTimePopup() {
-        this.$refs.popup.open('bottom')
-        this.currentTimes = this.columnsDaysYear[0]
+        this.$refs.popup.open("bottom")
+        if(!this.currentTimes){
+          this.currentTimes = this.columnsDaysYear[0]
+        }
       },
       // 选择时间段点击确认
       confirmHours(){
@@ -211,50 +230,6 @@
       // 滑动选择时间
       selectHours(data){
         this.currentTimes = this.columnsDaysYear[data.detail.index]
-      },
-      // 查找视频
-      async SearchVideo() {
-        var tempCode = ""
-        this.verfication.map(item=>{
-          tempCode = tempCode + item.toString()
-        })
-        await uni.$http.post(`/venues/invite`,{
-          // 场馆邀请码
-          invite_code: parseInt(tempCode),  
-          // 场馆id
-          venue_id: 14,  
-          applet: "HiDancing"
-        }).then(value=>{
-          if(value.data.code==0){
-            this.venuesList.map(item=>{
-              if(item.name==this.currentHourses){
-                this.selectId = item.id
-              }
-            })
-            this.setSearchData({houseId:this.selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
-            uni.navigateTo({
-              url: "../video/allVideo",
-            })
-          }
-          else{
-            uni.$showMsg("验证码输入错误，请重新输入！")
-          }
-        })
-      },
-      // 输出查看键盘输入
-      keyInput(data){
-        this.verfication[data.target.id] = data.target.value
-        if(this.verfication[data.target.id]){
-          if(data.target.id<this.verfication.length-1){
-            this.currentIndex = parseInt(data.target.id) + 1
-          }
-          else{
-            this.currentIndex = parseInt(data.target.id)
-          }
-        }
-        else{
-          this.currentIndex = parseInt(data.target.id)
-        }
       },
       // 时间选择组件传递的数据
       getTimeData() {
@@ -272,50 +247,105 @@
           this.columnsDaysYear.push(calDateYear)
         }
       },
+      // 输出查看键盘输入
+      keyInput(data){
+        this.verfication[data.target.id] = data.target.value
+        if(this.verfication[data.target.id]){
+          if(data.target.id<this.verfication.length-1){
+            this.currentIndex = parseInt(data.target.id) + 1
+          }
+          else{
+            this.currentIndex = parseInt(data.target.id)
+          }
+        }
+        else{
+          this.currentIndex = parseInt(data.target.id)
+        }
+      },
+      
       // 调用相机
       useCamera() {
-        uni.$showMsg("暂不支持人脸查询！")
+        this.$showMsg("暂不支持人脸查询！")
         // uni.authorize({
-        //   scope: 'scope.camera',
+        //   scope: "scope.camera",
         //   success: (res) => {
         //     uni.navigateTo({
-        //       url: '../camera/camera'
+        //       url: "../camera/camera"
         //     })
         //   },
         //   fail: () => {
-        //     // uni.$showMsg('如需再次授权，请到个人中心设置页面进行授权')
+        //     // this.$showMsg('如需再次授权，请到个人中心设置页面进行授权')
         //     this.$refs.permissionsPopup.open('center')
         //   }
         // })
       },
-      close() {
-        this.$refs.permissionsPopup.close()
-      },
-      confirm() {
-        // 二次授权
-        var that = this 
-        wx.openSetting({
-          success () {
-            that.wxGetLocation()
+      // 查找视频
+      async SearchVideo() {
+        // 输入得四位验证码
+        var tempCode = ""
+        // 所选择的场馆id
+        var selectId = 0
+        this.verfication.map(item=>{
+          tempCode = tempCode + item.toString()
+        })
+        this.allVenues.map(item=>{
+          if(item.name==this.currentHourses){
+            selectId = item.id
           }
         })
-        this.$refs.permissionsPopup.close()
-      },
-      // 请求所有场馆
-      async getVenues() {
-        const {data} = await uni.$http.get('/venues/?applet=HiDancing')
-        this.venuesList = data.data
-        this.columnsHouses = this.venuesList.map(item=>{
-          return item.name
+        await verifyCode({
+          // 场馆邀请码
+          invite_code: parseInt(tempCode),  
+          // 场馆id
+          venue_id: selectId,  
+          applet: "HiDancing"
+        }).then(async ()=>{
+          await getSites(selectId).then((value)=>{
+            console.log("查看场地",value.data)
+            this.setSiteInfos(value.data)
+            if(this.currentTimes){
+              this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
+              uni.navigateTo({
+                url: "../video/allVideo",
+              })
+            }
+            else{
+              this.$showMsg("请您选择搜索日期！")
+            }
+          })
         })
-        this.currentHourses = this.columnsHouses[0]
-        this.currentBacimg = this.venuesList[0].data.thumbnail
-        this.getVenuesImg(this.venuesList)
       },
       // 去个人页面
       navigateMy() {
         uni.navigateTo({
           url: '../my/my'
+        })
+      },
+      // 拒绝授权关闭提示框
+      closeProp() {
+        this.$refs.permissionsPopup.close()
+      },
+      // 同意授权
+      confirmProp() {
+        // 二次授权
+        var that = this 
+         wx.openSetting({
+          success (res) {
+            that.$refs.permissionsPopup.close()
+            wx.getSetting({
+              success: async response => {
+                if (response.authSetting["scope.userLocation"]) {
+                  that.getLocation().finally(()=>{
+                    that.getVenues()
+                  })
+                }
+              },
+              fail: res => {
+              },
+              complete: res => {
+              },
+            })
+          }
         })
       },
 		}

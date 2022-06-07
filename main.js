@@ -5,16 +5,6 @@ import store from 'store/store.js'
 import "@/plugins/utils"
 
 
-import { $http } from '@escook/request-miniprogram' // 网络请求包
-
-uni.$http = $http 
-
-// 开发路径
-// $http.baseUrl = 'http://192.168.31.245:8082'
-// 线上路径
-$http.baseUrl = 'https://api.highvenue.cn/development'
-
-
 Vue.config.productionTip = false
 
 App.mpType = "app"

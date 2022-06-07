@@ -6,6 +6,8 @@ export default {
     deviceInfo: null,
     // 当前用户的定位信息
     locationInfo:null,
+    // 当前服务器响应的时间
+    currentTime:"",
   },
   mutations: {
     setDeviceInfo(state, payload) {
@@ -13,6 +15,9 @@ export default {
     },
     setLocationInfo(state, payload) {
       state.locationInfo = payload
+    },
+    setServerTime(state,payload) {
+      state.currentTime = payload
     }
   },
   actions:{
@@ -21,12 +26,11 @@ export default {
         uni.getLocation({
         	type: "wgs84",
         	success: (res) => {
-            console.log("定位信息",res)
         		commit("setLocationInfo",res)
             return resolve()
         	},
           fail: (error) => {
-            console.log()
+            commit("setLocationInfo",error)
             return reject()
           }
         });

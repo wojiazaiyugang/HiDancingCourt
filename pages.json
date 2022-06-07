@@ -7,7 +7,10 @@
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor":"#2979FF",
         "navigationBarTextStyle": "white",
-        "navigationStyle":"custom"
+        "navigationStyle":"custom",
+        "usingComponents":{
+          "van-picker": "/wxcomponents/vant/picker/index"
+        }
       }
     },
     {
@@ -21,75 +24,29 @@
         "enablePullDownRefresh": false,
         "navigationStyle":"default"
       }
-    }
-    ,{
+    },
+    {
       "path" : "pages/camera/camera"
-    }
-    ,{
-        "path" : "pages/video/video",
-        "style" :                                                                                    
-        {
-          "enablePullDownRefresh": false,
-          "navigationBarBackgroundColor":"#fff",
-          "navigationStyle":"custom"
-        }
+    },
+    {
+      "path" : "pages/video/video",
+      "style" :                                                                                    
+      {
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor":"#fff",
+        "navigationStyle":"custom"
       }
-        ,{
-          "path" : "pages/video/allVideo",
-          "style" :                                                                                    
-          {
-              "navigationBarTitleText": "所有视频",
-              "enablePullDownRefresh": false,
-              "navigationBarBackgroundColor":"#fff",
-              "navigationStyle":"default"
-          }
-            
-        }
-        ,{
-            "path" : "pages/list/list",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "list",
-                "enablePullDownRefresh": false,
-                "navigationBarBackgroundColor":"#fff",
-                "navigationStyle":"default"
-            }
-            
-        }
-        ,{
-            "path" : "pages/downLoad/downLoad",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "我的下载",
-                "enablePullDownRefresh": false,
-                "navigationBarBackgroundColor":"#fff",
-                "navigationStyle":"default"
-            }
-            
-        }
-        ,{
-            "path" : "pages/cart/cart",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "购物车",
-                "enablePullDownRefresh": false,
-                "navigationBarBackgroundColor":"#fff",
-                "navigationStyle":"default"
-            }
-            
-        }
-        ,{
-            "path" : "pages/pay/pay",
-            "style" :                                                                                    
-            {
-                "navigationBarTitleText": "下载支付",
-                "enablePullDownRefresh": false,
-                "navigationBarBackgroundColor":"#fff",
-                "navigationStyle":"default"
-            }
-            
-        }
-    ],
+    },
+    {
+      "path" : "pages/video/allVideo",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "所有视频",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor":"#fff",
+        "navigationStyle":"default"
+      }
+    }],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -98,12 +55,6 @@
     "navigationStyle":"custom",
 		"app-plus": {
 			"background": "#1bf46b"
-		},
-    "usingComponents":{
-      "van-tab": "/wxcomponents/vant/tab/index",
-      "van-tabs": "/wxcomponents/vant/tabs/index",
-      "van-toast": "/wxcomponents/vant/toast/index",
-      "van-picker": "/wxcomponents/vant/picker/index"
-    }
+		}
 	}
 }

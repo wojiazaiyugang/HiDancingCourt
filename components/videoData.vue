@@ -149,8 +149,8 @@
         console.log('拿不到id')
         console.log(res)
         
-        return uni.$showMsg('该视频已添加进购物车')
-        if(res.msg == '无法重复添加到购物车') return uni.$showMsg('该视频已添加到购物车，请勿重复添加')
+        return this.$showMsg('该视频已添加进购物车')
+        if(res.msg == '无法重复添加到购物车') return this.$showMsg('该视频已添加到购物车，请勿重复添加')
       },
       // 删除购物车视频
       async CurreentPageDelCartVideo(video) {
@@ -158,7 +158,7 @@
           video_id: video.id
         })
         console.log(res)
-        if(res.data == 'success') return uni.$showMsg('该视频已从购物车删除')
+        if(res.data == 'success') return this.$showMsg('该视频已从购物车删除')
         
       },
       // 跳转视频详情
