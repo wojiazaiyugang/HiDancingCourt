@@ -193,16 +193,28 @@
     },
     created() {
       this.getTimeData()
+      this.getDeviceInfo()
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues"]),
       ...mapState("m_device",["locationInfo"]),
     },
 		methods: {
-      ...mapActions("m_device",["getLocation"]),
-      ...mapActions("m_venues",["getVenues"]),
+      ...mapActions("m_device",["getLocation",]),
+      ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
-      ...mapMutations("m_venues",["setSiteInfos",]),
+      ...mapMutations("m_device",["setDeviceInfo"]),
+      ...mapMutations("m_venues",["setSiteInfos"]),
+      // 存储当前设备的信息
+      async getDeviceInfo(){
+        await uni.getSystemInfo({
+          success:async(res)=> {
+            // 得到胶囊位置信息
+            let menuInfo = await uni.getMenuButtonBoundingClientRect()
+            this.setDeviceInfo(Object.assign({}, res, {menuInfo}))
+          }
+        })
+      },
       // 打开选择场馆
       chooseVenues() {
         this.$refs.popupVenues.open("bottom")
@@ -306,7 +318,7 @@
             if(this.currentTimes){
               this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
               uni.navigateTo({
-                url: "../video/allVideo",
+                url: "../search-report/index",
               })
             }
             else{

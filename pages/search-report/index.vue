@@ -12,7 +12,7 @@
             {{item}}
           </view>
         </scroll-view>
-        <scroll-view scroll-x="true" class="scrollClass">
+        <scroll-view scroll-x="true" class="scrollClass" :scroll-top="scrollHeight">
           <view v-for="(item,index) in roomsList"
             class="timeDuration"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':''}"
@@ -55,8 +55,6 @@
 			return {
         // 是否切换舞蹈房
         changeHouse:false,
-        // 舞蹈房的站点id
-        siteId:0,
         // 时间选择索引
         timeIndex:0,
         // 舞蹈房算则索引
@@ -81,6 +79,8 @@
         startTime:"",
         // 搜索的结束时间
         stopTime:"",
+        // 滚动条的高度
+        scrollHeight:0,
 			}
 		},
     components: {
@@ -124,8 +124,9 @@
       },
       // 选择舞蹈房
       selectHouse(data){
-        this.siteId = data.item.id
-        console.log("查看id",this.siteId)
+        var siteId = data.item.id
+        console.log("查看id",siteId)
+        this.scrollHeight = 0
         this.houseIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
@@ -135,13 +136,13 @@
             return item.id
           })
           this.getVideosByFace()
-          this.setVideoHouse({id:this.siteId,clickStatus:false})
+          this.setVideoHouse({id:siteId,clickStatus:false})
           return false
         }
         else{
           this.siteArray = [data.item.id]
           this.getVideosByFace()
-          this.setVideoHouse({id:this.siteId,clickStatus:true})
+          this.setVideoHouse({id:siteId,clickStatus:true})
           return false
         }
       },
@@ -173,8 +174,8 @@
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,false)
-        this.loadingDone = data.data.length<this.perPage
-        this.allVideos = [...this.allSearchVideos,...data.data]
+        this.loadingDone = data.length<this.perPage
+        this.allVideos = [...this.allSearchVideos,...data]
         this.setAllSearchVideos([...this.allVideos])
         this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
       },

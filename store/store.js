@@ -6,7 +6,6 @@ import user from "./modules/user.js"
 import venues from "./modules/venues.js"
 import camera from "./modules/camera.js"
 import video from "./modules/video.js"
-import cart from "./modules/cart.js"
 import device from "./modules/device.js"
 
 Vue.use(Vuex)
@@ -18,7 +17,6 @@ const store = new Vuex.Store({
     m_venues: venues,
     m_camera: camera,
     m_video: video,
-    m_cart: cart,
     m_device: device,
   },
 })

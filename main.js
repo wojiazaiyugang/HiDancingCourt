@@ -1,5 +1,5 @@
 // #ifndef VUE3
-import Vue from 'vue'
+import Vue from "vue"
 import App from './App'
 import store from 'store/store.js'
 import "@/plugins/utils"

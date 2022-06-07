@@ -29,7 +29,7 @@
       "path" : "pages/camera/camera"
     },
     {
-      "path" : "pages/video/video",
+      "path" : "pages/video-detail/index",
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
@@ -38,7 +38,7 @@
       }
     },
     {
-      "path" : "pages/video/allVideo",
+      "path" : "pages/search-report/index",
       "style" :                                                                                    
       {
         "navigationBarTitleText": "所有视频",

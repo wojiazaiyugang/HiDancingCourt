@@ -1,5 +1,5 @@
 <template>
-  <view class="video-container" :style="{height:calVideoHeight}">
+  <view class="video-container" :style="{height:2*deviceInfo.screenHeight +'rpx'}">
     <view class="video-text">
       <video
        id="myVideo"
@@ -14,11 +14,11 @@
       </video>
       <!-- 状态栏占位 -->
       <view style="position: absolute;top: 0rpx;left: 0rpx;width: 100%;">
-        <view style="width: 100%;" :style="{height:info.statusBarHeight +'px'}">
+        <view style="width: 100%;" :style="{height:deviceInfo.statusBarHeight +'px'}">
           
         </view>
-        <view style=" width: 100%; display: flex;justify-content: center;align-items: center;" :style="{height:((info.menuInfo.top-info.statusBarHeight)*2 + info.menuInfo.height) +'px'}">
-          <view style="position: absolute; font-size: 30rpx;color: white;" :style="{left:(info.screenWidth - info.menuInfo.right)+'px'}" @click="goBack" class="iconfont icon-fanhui">
+        <view style=" width: 100%; display: flex;justify-content: center;align-items: center;" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
+          <view style="position: absolute; font-size: 30rpx;color: white;" :style="{left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack" class="iconfont icon-fanhui">
             
           </view>
           <view style="color: white;">
@@ -29,7 +29,7 @@
       <view 
         @click="preVideo"
         style="display: flex;justify-content: center;align-items: center; position: absolute;left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
-        :style="{top:info.screenHeight+'rpx'}">
+        :style="{top:deviceInfo.screenHeight+'rpx'}">
         <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
           
         </view>
@@ -37,7 +37,7 @@
       <view
         @click="nextVideo"
         style="display: flex;justify-content: center;align-items: center; position: absolute;right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;background-color: #31362A;" 
-        :style="{top:info.screenHeight+'rpx'}">
+        :style="{top:deviceInfo.screenHeight+'rpx'}">
         <view style="width: 60rpx;height: 60rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
           
         </view>
@@ -45,7 +45,7 @@
       <view 
         style="display: flex;justify-content: space-between;align-items: center; position: absolute;bottom: 100rpx;height: 150rpx;width: 100%;">
         <view 
-          :style="{marginLeft:(info.screenWidth - info.menuInfo.right)+'px'}"
+          :style="{marginLeft:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}"
         >
           <view style="margin-bottom: 30rpx;font-size: 35rpx;color: white;">
             {{playVideo.venue_name}}
@@ -57,7 +57,7 @@
         <view
           @click="downloadVideo"
           style="width: 250rpx; background-color: #7E71F0;height: 80rpx;border-radius: 50rpx;display: flex;justify-content: center;align-items: center;" 
-          :style="{marginRight:(info.screenWidth - info.menuInfo.right)+'px'}">
+          :style="{marginRight:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}">
           <view style="font-size: 27rpx;color: white;margin-right: 15rpx;">
             获取
           </view>
@@ -75,6 +75,8 @@
 
 <script>
   import { mapState, mapMutations } from "vuex"
+  import { addDownload } from "@/api/video.js"
+  import { getAllvideos } from "@/api/search.js"
   export default {
     data() {
       return {
@@ -90,14 +92,18 @@
     },
     created() {
       this.playingVideo()
+      console.log("查看设备信息",this.deviceInfo)
     },
     computed: {
-      ...mapState("m_video",["currentVideo","allSearchVideos","videoPages",]),
-      ...mapState("m_device",["info"]),
-      ...mapState("m_video",["searchData","videoHouse"]),
-      calVideoHeight(){
-        return 2*this.info.screenHeight +"rpx"
-      }
+      ...mapState("m_video",[
+        "currentVideo",
+        "allSearchVideos",
+        "videoPages",
+        "searchData",
+        "videoHouse",
+      ]),
+      ...mapState("m_venues",["siteInfos"]),
+      ...mapState("m_device",["deviceInfo"]),
     },
     methods: {
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
@@ -136,64 +142,60 @@
       },
       // 下一个视频
       async nextVideo(){
-        this.allSearchVideos.map((item,index)=>{
-          if(item.id==this.playVideo.id){
-            this.numberId = index
-          }
-        })
-        // 下一个是最后一个视频
-        if(this.numberId==this.allSearchVideos.length-1){
-          this.nextPage++
-          if(this.videoHouse.clickStatus){
-            const {data} = await uni.$http.post('/search/hidancing_search', {
-              face_query:0,
-              start_time: this.searchData.startTime,
-              stop_time: this.searchData.stopTime,
-              site_id: this.videoHouse.id,
-              page:this.nextPage,
-              per_page:this.videoPages.perPage,
-              applet:"HiDancing"
-            })
-            if(data.data.length==0){
-              uni.showToast({
-              	icon:"none",
-                title: "当前视频已是最后一个视频！",
-              	duration: 1000
-              });
-            }
-            else{
-              this.setAllSearchVideos([...this.allSearchVideos,...data.data])
-              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
-              this.playVideo = this.allSearchVideos[this.numberId+1]
-            }
-          }
-          else{
-            const {data} = await uni.$http.post('/search/hidancing_search', {
-              face_query:0,
-              start_time: this.searchData.startTime,
-              stop_time: this.searchData.stopTime,
-              venue_id: this.searchData.houseId,
-              page:this.nextPage,
-              per_page:this.videoPages.perPage,
-              applet:"HiDancing"
-            })
-            if(data.data.length==0){
-              uni.showToast({
-              	icon:"none",
-                title: "当前视频已是最后一个视频！",
-              	duration: 1000
-              });
-            }
-            else{
-              this.setAllSearchVideos([...this.allSearchVideos,...data.data])
-              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
-              this.playVideo = this.allSearchVideos[this.numberId+1]
-            }
-          }
+        if(this.lastVideoStatus){
+          this.$showMsg("当前视频已是最后一个视频！")
         }
-        // 不是最后一个视频
         else{
-          this.playVideo = this.allSearchVideos[this.numberId+1]
+          this.allSearchVideos.map((item,index)=>{
+            if(item.id==this.playVideo.id){
+              this.numberId = index
+            }
+          })
+          // 下一个是最后一个视频
+          if(this.numberId==this.allSearchVideos.length-1){
+            this.nextPage++
+            if(this.videoHouse.clickStatus){
+              let {data} = await getAllvideos([this.videoHouse.id],this.searchData.startTime,
+              this.searchData.stopTime,this.nextPage,this.videoPages.perPage)
+              if(data.length==0){
+                uni.showToast({
+                	icon:"none",
+                  title: "当前视频已是最后一个视频！",
+                	duration: 1000
+                })
+                this.lastVideoStatus = true
+              }
+              else{
+                this.setAllSearchVideos([...this.allSearchVideos,...data])
+                this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+                this.playVideo = this.allSearchVideos[this.numberId+1]
+              }
+            }
+            else{
+              let siteList = this.siteInfos.map(item=>{
+                return item.id
+              })
+              let {data} = await getAllvideos(siteList,this.searchData.startTime,
+              this.searchData.stopTime,this.nextPage,this.videoPages.perPage)
+              if(data.length==0){
+                uni.showToast({
+                	icon:"none",
+                  title: "当前视频已是最后一个视频！",
+                	duration: 1000
+                })
+                this.lastVideoStatus = true
+              }
+              else{
+                this.setAllSearchVideos([...this.allSearchVideos,...data])
+                this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+                this.playVideo = this.allSearchVideos[this.numberId+1]
+              }
+            }
+          }
+          // 不是最后一个视频
+          else{
+            this.playVideo = this.allSearchVideos[this.numberId+1]
+          }
         }
       },
       // 拒绝开启相册权限弹出窗关闭事件
@@ -236,10 +238,10 @@
                 /* 这个就是保存相册的 */
                 scope: "scope.writePhotosAlbum",
                 async success() {
-                  console.log("下载视频")
                   that.saveToAlbum()
                 },
                 fail() {
+                  this.$showMsg("您已取消下载！")
                 },
               });
             }
@@ -257,15 +259,11 @@
         that.$download({
           url: that.playVideo.download_src,
           async success() {
-            await uni.$http.post("/downloads/dance", {
-              video_id: that.playVideo.id,
-              applet:"HiDancing"
-            }).then(()=>{
-              this.$showMsg("下载成功！")
-            })
+            await addDownload(that.playVideo.id) 
+            that.$showMsg("下载成功！")
           },
           fail() {
-            this.$showMsg("下载失败！")
+            that.$showMsg("下载失败！")
           },
         });
       },

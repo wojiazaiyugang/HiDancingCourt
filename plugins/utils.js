@@ -2,22 +2,6 @@ import Vue from "vue"
 import dayjs from "dayjs"
 
 
-
-// 路径导航传参
-Vue.prototype.$go = (url, params = {}) => {
-  url = formatUrl(url, params)
-  uni.navigateTo({
-    url,
-  })
-}
-
-// 路径导航传参
-Vue.prototype.$redirect = (url, params = {}) => {
-  url = formatUrl(url, params)
-  uni.redirectTo({
-    url,
-  })
-}
 // 消息提示
 Vue.prototype.$showMsg = function (title="数据请求失败！", duration = 1000) {
   uni.showToast({
@@ -80,33 +64,3 @@ Vue.prototype.$download = ({url, name, success, fail}) => {
   })
 }
 
-Vue.prototype.$share = ({url, suffix, success, fail}) => {
-  wx.downloadFile({
-    url,
-    filePath: wx.env.USER_DATA_PATH + '/' + new Date().getTime() + '.' + suffix,
-    fail: error => fail(error),
-    success: res => {
-      wx.showShareImageMenu({
-        path: res.filePath,
-        fail: error => fail(error),
-        success: res => success(res)
-      })
-    }
-  })
-}
-
-
-Vue.prototype.$downloadFile = (url) => {
-  return new Promise((resolve, reject) => {
-    wx.downloadFile({
-      url,  //公众平台需要配置相应的域名
-      filePath: wx.env.USER_DATA_PATH + '/' + new Date().getTime(),
-      success: res => {
-        resolve(res)
-      },
-      fail: err => {
-        reject(err)
-      }
-    })
-  })
-}
