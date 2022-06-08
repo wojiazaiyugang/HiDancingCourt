@@ -1,7 +1,8 @@
 <template>
-  <view class="video-container" :style="{height:calHeight}">
-    <view class="video-text">
+  <view class="width-full" :style="{height:calHeight}">
+    <view class="width-full height-full relative">
       <video
+      class="width-full height-full"
        id="myVideo"
        :src="playVideo.download_src"
        @click="clickControl"
@@ -11,16 +12,15 @@
        :show-fullscreen-btn="false"
        :show-play-btn="false"
        autoplay="true"
-       style="height: 100%;width: 100%;"
        >
       </video>
       <!-- 状态栏占位 -->
-      <view style="position: absolute;top: 0rpx;left: 0rpx;width: 100%;">
-        <view style="width: 100%;" :style="{height:deviceInfo.statusBarHeight +'px'}">
+      <view class="absolute width-full" style="top: 0rpx;left: 0rpx;">
+        <view class="width-full" :style="{height:deviceInfo.statusBarHeight +'px'}">
           
         </view>
-        <view style=" width: 100%; display: flex;justify-content: center;align-items: center;" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
-          <view style="position: absolute; font-size: 30rpx;color: white;" :style="{left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack" class="iconfont icon-fanhui">
+        <view class="width-full flex flex-center" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
+          <view class="iconfont icon-fanhui absolute fon28 white" :style="{left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack">
             
           </view>
           <view style="color: white;">
@@ -30,40 +30,44 @@
       </view>
       <view 
         @click="preVideo"
-        style="display: flex;justify-content: center;align-items: center; position: absolute;left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;background-color: black;" 
+        class="flex flex-center absolute bablack"
+        style="left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;" 
         :style="{top:deviceInfo.screenHeight+'rpx'}">
-        <view style="width: 60rpx;height: 60rpx;opacity: 1; background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
+        <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
           
         </view>
       </view>
       <view
         @click="nextVideo"
-        style="display: flex;justify-content: center;align-items: center; position: absolute;right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;background-color: black;" 
+        class="flex flex-center absolute bablack"
+        style="right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;" 
         :style="{top:deviceInfo.screenHeight+'rpx'}">
-        <view style="width: 60rpx;height: 60rpx;opacity: 1; background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
+        <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
           
         </view>
       </view>
       <view 
-        style="display: flex;justify-content: space-between;align-items: center; position: absolute;bottom: 100rpx;height: 150rpx;width: 100%;">
+        class="flex absolute width-full justify-between alitem-center"
+        style="bottom: 100rpx;height: 150rpx;">
         <view 
           :style="{marginLeft:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}"
         >
-          <view style="margin-bottom: 30rpx;font-size: 35rpx;color: white;">
+          <view class="white fon36" style="margin-bottom: 30rpx;">
             {{playVideo.venue_name}}
           </view>
-          <view style="font-size: 25rpx;color: white;">
+          <view class="fon24 white">
             {{playVideo.goal_time}}
           </view>
         </view>
         <view
           @click="downloadVideo"
-          style="width: 250rpx; background-color: #7E71F0;height: 80rpx;border-radius: 50rpx;display: flex;justify-content: center;align-items: center;" 
+          class="flex flex-center bapruple"
+          style="width: 250rpx;height: 80rpx;border-radius: 50rpx;" 
           :style="{marginRight:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}">
-          <view style="font-size: 27rpx;color: white;margin-right: 15rpx;">
+          <view class="fon28 white" style="margin-right: 15rpx;">
             获取
           </view>
-          <view style="width: 37rpx;height: 30rpx;color: white;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/downlogo.png);">
+          <view class="background-cover white" style="width: 37rpx;height: 30rpx;background-image: url(https://static.qiniuyun.highvenue.cn/image/downlogo.png);">
             
           </view>
         </view>
@@ -291,55 +295,5 @@
 </script>
 
 <style lang="scss">
-  .video-container {
-    width: 100%;
-    .video-text {
-      width: 100%;
-      height:100%;
-      position: relative;
-    }
-    /deep/ .uni-popup-dialog {
-      width: 590rpx!important;
-      height: 345rpx!important;
-      font-size: 30rpx!important;
-      border-radius: 30rpx!important;
-      .uni-dialog-title-text {
-        font-size: 30rpx;
-        font-weight: 600;
-      }
-      .uni-dialog-content {
-        margin-top: 30rpx;
-        .uni-dialog-content-text {
-          font-size: 30rpx;
-        }
-      }
-      .uni-dialog-button-group {
-        border: none;
-        margin-top: 45rpx;
-        .cancel {
-          width: 198rpx;
-          height: 80rpx;
-          border-radius: 48rpx;
-          line-height: 80rpx;
-          text-align: center;
-          font-size: 30rpx;
-          color: #fff;
-          background-color: #666;
-        }
-        .uni-button-color {
-          width: 198rpx;
-          height: 80rpx;
-          border-radius: 48rpx;
-          line-height: 80rpx;
-          text-align: center;
-          font-size: 30rpx;
-          color: #fff;
-          background-image: linear-gradient(to bottom, #f7a216, #fe6205);
-        }
-      }
-      .uni-border-left {
-        border: none;
-      }
-    }
-  }
+  @import "@/static/style/vantprop";
 </style>

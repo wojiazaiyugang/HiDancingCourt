@@ -1,20 +1,22 @@
 <template>
-	<view class="container">
+	<view class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
     <!-- Start 第一个Long-Button -->
     <view class="First-LongButton">
       <long-button>
         <template v-slot:icon >
-        <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png" mode="aspectFit" style="width: 100%; height: 100%;"></image>
+        <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
+         class="height-full width-full"
+         mode="aspectFit"></image>
         </template>
         
         <template v-slot:center-text>
-          <text style="font-size: 30rpx;font-weight: 550;">{{currentHourses?currentHourses:"请选择您练舞的舞蹈房"}}</text>
+          <text class="fonweight fon28">{{currentHourses?currentHourses:"请选择您练舞的舞蹈房"}}</text>
         </template>
         
         <template v-slot:i-choose>
          <image src="https://static.qiniuyun.highvenue.cn/image/switch.png"
           mode="aspectFit"
-          style="width: 60%; height: 100%;"
+          class="width60 height-full"
           @click="chooseVenues"></image >
         </template>
       </long-button>
@@ -22,8 +24,8 @@
     <!-- End 第一个Long-Button -->
     
     <!-- Start 球馆图片 -->
-    <view class="courtPicture" >
-      <view style="width: 97%;height: 96%;background-size: cover;border-radius: 24rpx;"
+    <view class="courtPicture flex flex-center background-cover margtop40" >
+      <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
        :style="{backgroundImage: `url(${currentBacimg})`}">
         
       </view>
@@ -31,16 +33,16 @@
     <!-- End 球馆图片 -->
     
     <!-- Start 第二个Long-Button -->
-    <view class="Second-LongButton">
+    <view class="Second-LongButton margtop40">
     <long-button>
       <template v-slot:icon>
-        <image src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit" style="width: 100%; height: 100%;"></image>
+        <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
       </template> 
       <template v-slot:center-text>
-       <text style="font-size: 30rpx;font-weight: 550;">{{currentTimes?currentTimes:"请选择您练舞的时段"}}</text>
+       <text class="fonweight fon28">{{currentTimes?currentTimes:"请选择您练舞的时段"}}</text>
       </template>
       <template v-slot:i-choose>
-         <image src="https://static.qiniuyun.highvenue.cn/image/switch.png" mode="aspectFit" @click="showTimePopup" style=" width: 65%; height: 100%;" ></image >
+         <image class="height-full width60" src="https://static.qiniuyun.highvenue.cn/image/switch.png" mode="aspectFit" @click="showTimePopup" ></image >
       </template>
     </long-button>
     </view>
@@ -51,10 +53,10 @@
         <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
       </view>
       <view style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
-        <view class="InputBoard">
+        <view class="InputBoard flex flex-center bagreinput">
 
         </view>
-        <view style="margin-top: -140rpx; display: flex;justify-content: space-around;align-items: center;">
+        <view class="flex justify-around alitem-center" style="margin-top: -140rpx;">
           <input type="number"
            v-for= "(item,index) in verfication"
            :key= "index" 
@@ -64,36 +66,36 @@
            :show-confirm-bar="false"
            @focus="initCursor"
            @input="keyInput"
-           class="InputItem" />
+           class="InputItem bablack" />
         </view>
       </view>
     </view>
     <!-- End 第三个Long-Button -->
     <!-- Start 透明层 -->
-    <view class="Four-LongButton">
-      <view class="First-LongButton-son" >
+    <view class="Four-LongButton bacamerout flex flex-center">
+      <view class="First-LongButton-son bacamer" >
         
       </view>
       <!-- Start 相机按钮 -->
     </view>
-    <view class="camera" @click="useCamera">
-      <view class="camera-son" >
+    <view class="camera flex bacamerout flex-center" @click="useCamera">
+      <view class="camera-son bacamer flex flex-center" >
         <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
-         mode="aspectFit" style="width: 60%; height: 60%;"></image>
+         mode="aspectFit" class="height-full width60"></image>
       </view>
     </view>
   
     <!-- Start底部 -->
-    <view class="bottomSearch" >
+    <view class="bottomSearch flex" >
       <!-- 用于占位 -->
       <view style="width: 93rpx;" >
        
       </view>
       <view class="SearchVideo" @click="SearchVideo">
-        <text style="font-size: 30rpx;color: black;">查找视频</text>
+        <text class="fon28 black fonweight">查找视频</text>
       </view>
-      <view class="my" @click="navigateMy">
-        <view style="font-size: 15rpx;color: black;margin-top: 40rpx;font-weight: 550;">
+      <view class="my background-cover flex flex-center" @click="navigateMy">
+        <view class="black fonweight fon16 margtop40">
           我的
         </view>
       </view>
@@ -288,19 +290,18 @@
       
       // 调用相机
       useCamera() {
-        this.$showMsg("暂不支持人脸查询！")
-        // uni.authorize({
-        //   scope: "scope.camera",
-        //   success: (res) => {
-        //     uni.navigateTo({
-        //       url: "../camera/camera"
-        //     })
-        //   },
-        //   fail: () => {
-        //     // this.$showMsg('如需再次授权，请到个人中心设置页面进行授权')
-        //     this.$refs.permissionsPopup.open('center')
-        //   }
-        // })
+        // this.$showMsg("暂不支持人脸查询！")
+        uni.authorize({
+          scope: "scope.camera",
+          success: (res) => {
+            uni.navigateTo({
+              url: "../camera/camera"
+            })
+          },
+          fail: () => {
+            this.$refs.permissionsPopup.open("center")
+          }
+        })
       },
       // 查找视频
       async SearchVideo() {
@@ -376,5 +377,6 @@
 </script>
 
 <style lang="scss">
-  @import "@/static/style/index"
+  @import "@/static/style/index";
+  @import "@/static/style/vantprop";
 </style>

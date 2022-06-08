@@ -1,10 +1,6 @@
 .container {
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  background-color: white;
   .selectType{
     height: 160rpx;
     margin: 40rpx 0rpx;
@@ -18,15 +14,10 @@
         line-height: 60rpx;
         font-size: 30rpx;
         border-radius: 30rpx;
-        color: black;
       }
     }
   }
   .videoShow {
-    display: flex; 
-    justify-content: center;
-    align-items: center; 
-    color: #ccc;
     margin-top: 50%;
   }
 }

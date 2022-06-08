@@ -1,18 +1,18 @@
 <template>
-  <view class="container" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
+  <view class="container width-full background-cover">
     <!-- 导航栏 -->
     <nvg-bar>
-      <template v-slot:icon><text class="iconfont icon-fanhui" style="color: white;font-size: 30rpx;" ></text></template>
-      <template v-slot:text><text style="color: white;">个人中心</text></template>
+      <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
+      <template v-slot:text><text class="white">个人中心</text></template>
     </nvg-bar>
     <!-- 没信息 -->
-    <view v-if="isShow" class="login-container">
-      <view class="btn-login" @click="loginUserinfo" >一键登录</view>
-      <view class="tips-text" @click="agreePrivacy">
+    <view v-if="isShow" class="flex flex-center height-full flex-direction">
+      <view class="btn-login fonweight" @click="loginUserinfo" >一键登录</view>
+      <view class="tips-text flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
-          <view v-show="isAgree" class="iconfont icon-duihao" style="color: white; font-size: 30rpx;" ></view>
+          <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
         </view>
-        <view style="color: white;margin-left: 50rpx;">
+        <view class="white" style="margin-left: 50rpx;">
           登录需同意
         </view>
         <view style="color: red;margin-left: 20rpx;" @click="navPrivacy">
@@ -23,35 +23,35 @@
    <!-- 有信息 -->
    <view v-if="!isShow" class="box">
      <!-- 头像 -->
-      <view class="userInfo" >
-        <view v-if="userInfo" class="flex">
-          <image class="avatar flex" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+      <view class="userInfo flex flex-center" >
+        <view v-if="userInfo" class="flex flex-center">
+          <image class="avatar flex flex-center" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
           </image>
           
-          <text class="userName ellipsis" style="color: white;"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
+          <text class="userName ellipsis white"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
         </view>
-        <view class="flex" v-else>
-          <view @click="reLogin" class="avatar flex" style="background-color: #3C3C3C;">
-            <image style="background-color: #3C3C3C;height: 70rpx;width: 70rpx;background-size: cover;" src="https://static.qiniuyun.highvenue.cn/image/DanceAvatar.png">
+        <view class="flex flex-center" v-else>
+          <view @click="reLogin" class="avatar flex flex-center bamyava" >
+            <image class="bamyava background-cover" style="height: 70rpx;width: 70rpx;" src="https://static.qiniuyun.highvenue.cn/image/DanceAvatar.png">
           </view>
-          <text class="userName" style="color: #3C3C3C;font-weight: 550;">请点击头像重新登录！</text>
+          <text class="userName fonweight" style="color: #3C3C3C;">请点击头像重新登录！</text>
         </view>
-        <view class="right">
+        <view class="right flex flex-center">
           <button type="default" open-type="contact" style="background: transparent; border: none!important;">
-            <view style="width: 34rpx;height: 36rpx;background-size: cover; background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceCustomer.png);">
+            <view class="background-cover" style="width: 34rpx;height: 36rpx; background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceCustomer.png);">
               
             </view>
           </button>
           <view class="setting">
             <image
+            class="height-full width-full"
             @click="settings"
-            src="https://static.qiniuyun.highvenue.cn/image/DanceSetting.png" 
-            style="width: 100%; height: 100%;"></image>
+            src="https://static.qiniuyun.highvenue.cn/image/DanceSetting.png" ></image>
           </view>
         </view>
       </view>
       
-      <view class="bannerInfo">
+      <view class="bannerInfo background-cover">
         
       </view>
     </view>

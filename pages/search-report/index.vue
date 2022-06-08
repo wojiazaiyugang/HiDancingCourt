@@ -1,8 +1,8 @@
 <template>
-	<view class="container">
+	<view class="container flex flex-direction bawhite justify-start">
     <view class="selectType">
       <view style="margin:0rpx 20rpx;white-space: nowrap">
-        <scroll-view scroll-x="true" class="scrollClass" style=" margin-bottom: 40rpx;width: 100%;">
+        <scroll-view scroll-x="true" class="scrollClass width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in timeList"
             class="timeDuration"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
@@ -14,7 +14,7 @@
         </scroll-view>
         <scroll-view scroll-x="true" class="scrollClass" :scroll-top="scrollHeight">
           <view v-for="(item,index) in roomsList"
-            class="timeDuration"
+            class="timeDuration black"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
             @click="selectHouse({item,index})"
             :key="index"
@@ -29,8 +29,8 @@
       style="height: 85%;width: 100%;"
       @scrolltolower="scroolBottom" 
     >
-      <view v-if="allVideos.length==0" class="videoShow" >
-        当前时段暂无视频
+      <view v-if="allVideos.length==0" class="videoShow flex flex-center background-size: cover; gray" >
+        当前时段暂无视频!
       </view>
       <view v-else style="display: flex;flex-wrap: wrap; margin:0rpx 20rpx;">
         <videoData 
@@ -181,12 +181,14 @@
       },
       // 下拉到底刷新数据
       async scroolBottom() {
-        if(this.loadingDone){
-          this.$showMsg("数据已经加载完毕")
-          return false
+        if(this.allVideos.length!=0){
+          if(this.loadingDone){
+            this.$showMsg("数据已经加载完毕")
+            return false
+          }
+          this.currentPage++
+          this.getVideosByFace()
         }
-        this.currentPage++
-        this.getVideosByFace()
       }
     },
 	}

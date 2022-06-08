@@ -1,17 +1,16 @@
 <template>
-  <view class="container" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/cameraBgi.jpg);">
+  <view class="container width-full background-cover relative">
     <!-- 导航栏 -->
     <nvg-bar>
-      <template v-slot:icon><text class="iconfont icon-fanhui" style="color: white;font-size: 30rpx;" ></text></template>
-      <template v-slot:text><text style="color: white;">拍照查询</text></template>
+      <template v-slot:icon><text class="iconfont icon-fanhui white fon32" ></text></template>
+      <template v-slot:text><text class="white">拍照查询</text></template>
     </nvg-bar>
     
-    <view class="textContent flex">
+    <view class="textContent flex flex-direction white flex-center">
       <view>请拍摄正面照</view>
       <view style="color: #c6c2cc;font-size: 28rpx; margin-top: 26rpx;">点击头像拍照/更换照片</view>
     </view>
     
-    <!-- 相机圈 -->
     <camera 
     class="camera" 
     flash="off" 
@@ -20,22 +19,16 @@
     >
     </camera>
     <view v-else style="-webkit-transform:rotate(0deg);">
-      <view class="img" :style="{backgroundImage: 'url(' + src + ')'}" @click="this.isShow = !this.isShow">
+      <view class="img background-cover" :style="{backgroundImage: 'url(' + src + ')'}" @click="this.isShow = !this.isShow">
       </view>
-     <!-- <image 
-      :src="src" 
-      class="img"  
-      @click="this.isShow = !this.isShow"
-      >
-      </image> -->
-      <view class="resetImg flex">点击照片可重新拍摄</view>
+      <view class="resetImg flex flex-center">点击照片可重新拍摄</view>
     </view>
     
     
     <!-- 底部按钮 -->
-    <view class="bottom flex">
-      <view class="SearchVideo" v-if="isShow" @click="useCamera"><text>点击拍照</text></view>
-      <view class="SearchVideo" v-else @click="last">
+    <view class="bottom flex flex-center">
+      <view class="SearchVideo white" v-if="isShow" @click="useCamera"><text>点击拍照</text></view>
+      <view class="SearchVideo white" v-else @click="navBack">
         <text>确认</text>
       </view>
       </view>
@@ -81,7 +74,7 @@
           
         }
       },
-      last() {
+      navBack() {
         uni.navigateBack({
           delta: 1
         })
