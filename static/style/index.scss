@@ -12,12 +12,9 @@
     }
   }
   view.selectStyle{
-    color: #7E70F1;
-    font-size: 35rpx;
-    margin-right: 30rpx;
-    border-left: 30rpx solid;
-    border-image: linear-gradient(180deg, #f76fed 0%,#2de6f8 99%) 2 2 2 2; 
-  }
+      color: #7E70F1;
+      font-size: 35rpx;
+    }
 	.container {
     display: flex;
     flex-direction: column;
@@ -95,22 +92,22 @@
     display: flex;
     justify-content: space-around;
     align-items: center;
-    // margin: 40rpx 26rpx 0rpx 26rpx;
     height: 174rpx;
     background-color: #14E9FC;
     opacity: 0.2;
     border-radius: 30rpx;
-    .InputItem{
-      width: 106rpx;
-      height: 106rpx;
-      line-height: 106rpx;
-      text-align: center;
-      font-size: 50rpx;
-      color: #D22D72;
-      background-color: #0c151b;
-      border-radius: 10rpx;
-      border: 1rpx solid #FC06ED;
-    }
+  }
+  .InputItem{
+    width: 106rpx;
+    height: 106rpx;
+    line-height: 106rpx;
+    text-align: center;
+    font-size: 50rpx;
+    color: white;
+    opacity: 1;
+    background-color: black;
+    border-radius: 10rpx;
+    border: 4rpx solid #FC06ED;
   }
   .Four-LongButton {
     width: 95%;

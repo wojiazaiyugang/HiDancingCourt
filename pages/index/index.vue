@@ -52,6 +52,9 @@
       </view>
       <view style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
         <view class="InputBoard">
+
+        </view>
+        <view style="margin-top: -140rpx; display: flex;justify-content: space-around;align-items: center;">
           <input type="number"
            v-for= "(item,index) in verfication"
            :key= "index" 
@@ -103,8 +106,8 @@
       show-toolbar
       cancel-button-text="请选择舞蹈房"
       confirm-button-text="确认"
-      custom-class="rootStytle"
       active-class="selectStyle"
+      :isRecently="true"
       toolbar-class="changeToolbar"
       @confirm="confirmHouse"
       @change="selectHouse"
@@ -118,9 +121,10 @@
       show-toolbar
       cancel-button-text="请选择日期"
       confirm-button-text="确认"
-      custom-class="rootStytle"
       active-class="selectStyle"
+      :isToday="true"
       toolbar-class="changeToolbar"
+      visible-item-count="5"
       @confirm="confirmHours"
       @change="selectHours"
       :columns="columnsDays" item-height="40"/>
@@ -268,11 +272,9 @@
       },
       // 输出查看键盘输入
       keyInput(data){
-        console.log("sad")
         this.verfication[data.target.id] = data.target.value
         if(this.verfication[data.target.id]){
           if(data.target.id<this.verfication.length-1){
-            console.log("askasfhj")
             this.currentIndex = parseInt(data.target.id) + 1
           }
           else{

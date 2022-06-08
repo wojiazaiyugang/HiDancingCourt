@@ -20,6 +20,14 @@ VantComponent({
                 this.setIndex(value);
             },
         },
+        isRecently: {
+          type: Boolean,
+          value: false
+        },
+        isToday: {
+          type: Boolean,
+          value: false
+        },
     },
     data: {
         startY: 0,
