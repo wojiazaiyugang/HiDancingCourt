@@ -1,45 +1,36 @@
 <script>
- import { mapActions, mapMutations, } from 'vuex'
+ import { mapActions, mapMutations, mapState } from "vuex"
 	export default {
 		onLaunch: function() {
-      this.getToken()
-      this.getUserInfo()
+      this.getToken().finally(()=>{
+        this.getLocation().finally(()=>{
+          this.getVenues()
+        })
+      })
 		},
 		onShow: function() {
 		},
 		onHide: function() {
 		},
+    computed:{
+      ...mapState("m_user",["userId"]),
+    },
     methods: {
-      ...mapActions("m_user",["getToken"]),
-      ...mapMutations("m_user",["setUserInfo"]),
-      // 获得用户信息
-      async getUserInfo(){
-        let {data} = await uni.$http.get("/users/info/?applet=HiDancing")
-        this.setUserInfo(data.data.user_info)
-        console.log(data.data.user_info)
-      },
+      ...mapActions("m_user",["getToken",]),
+      ...mapActions("m_device",["getLocation"]),
+      ...mapActions("m_venues",["getVenues"]),
     }
 	}
 </script>
 
 <style lang="scss">
-	/*每个页面公共css */
-	@import '@/uni_modules/uni-scss/index.scss';
-  @import '/wxcomponents/vant/common/index.wxss';
+	@import "@/static/style/text.scss";
+  @import "@/static/style/color.scss";
+  @import "@/static/style/position.scss";
+  @import "@/wxcomponents/vant/common/index.wxss";
 	/* #ifndef APP-NVUE */
-	@import '@/static/customicons.css';
+	@import "@/static/customicons.css";
   /*字体图标样式*/
-  @import '@/iconfont/iconstyles/iconfont.css';
-	// 设置整个项目的背景色 
-	page {
-		background-color: #f5f5f5;
-	}
-
-
+  @import "@/static/iconfont/iconstyles/iconfont.css";
 	/* #endif */
-	.example-info {
-		font-size: 14px;
-		color: #333;
-		padding: 10px;
-	}
 </style>

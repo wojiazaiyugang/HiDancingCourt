@@ -20,7 +20,16 @@ VantComponent({
                     this.setColumns().catch(() => { });
                 }
             },
-        } }),
+        },         
+        isRecently: {
+          type: Boolean,
+          value: false
+        },
+        isToday: {
+          type: Boolean,
+          value: false
+        }, }),
+
     beforeCreate() {
         Object.defineProperty(this, 'children', {
             get: () => this.selectAllComponents('.van-picker__column') || [],

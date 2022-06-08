@@ -59,7 +59,7 @@
       </view>
       <view
         class="privacy-name-second"
-        style="     margin: 20px 0px;"
+        style="margin: 20px 0px;"
         @tap="isDisplayThird()"
       >
         2.&nbsp;我们可能如何使用信息

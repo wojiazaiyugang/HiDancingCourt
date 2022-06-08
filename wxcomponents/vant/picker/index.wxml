@@ -22,16 +22,19 @@
       initial-options="{{ item.values }}"
       default-index="{{ item.defaultIndex || defaultIndex }}"
       item-height="{{ itemHeight }}"
+      isToday="{{ isToday }}"
+      isRecently="{{ isRecently }}"
       visible-item-count="{{ visibleItemCount }}"
       active-class="active-class"
       bind:change="onChange"
     />
     <view class="van-picker__mask" style="{{ computed.maskStyle({ itemHeight, visibleItemCount }) }}" />
+    <view style="position: absolute;transform: translateY(-50%);border-radius: 0rpx 20rpx 20rpx 0rpx;  top:50%; height: 80rpx;width: 20rpx; background: linear-gradient(to bottom, #2de6f8 , #f76fed)"></view>
     <view
       class="van-picker__frame van-hairline--top-bottom"
       style="{{ computed.frameStyle({ itemHeight }) }}"
     />
   </view>
-
+    
   <include wx:if="{{ toolbarPosition === 'bottom' }}" src="./toolbar.wxml" />
 </view>
