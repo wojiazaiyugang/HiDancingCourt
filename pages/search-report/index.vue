@@ -29,7 +29,7 @@
       style="height: 85%;width: 100%;"
       @scrolltolower="scroolBottom" 
     >
-      <view v-if="allVideos.length==0" class="videoShow flex flex-center background-size: cover; gray" >
+      <view v-if="allVideos.length==0" class="videoShow flex flex-center background-cover gray" >
         当前时段暂无视频!
       </view>
       <view v-else style="display: flex;flex-wrap: wrap; margin:0rpx 20rpx;">
