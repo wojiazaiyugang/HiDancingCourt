@@ -2,8 +2,8 @@
   <view>
     <view class="video">
       <view 
-      class="coverImage"
-      :style="{backgroundImage: 'url(' + video.site_thumbnail + ')'}"
+      class="coverImage background-cover"
+      :style="{backgroundImage: `url(${video.download_src}?vframe/jpg/offset/4/w/600/h/360)`}"
       @click="clickVideo"
       >
         <view class="leftBottom">
@@ -54,7 +54,6 @@
     .coverImage{
       height: 100%;
       width: 100%;
-      background-size: cover;
       border-radius: 25rpx;
     }
     .leftBottom {

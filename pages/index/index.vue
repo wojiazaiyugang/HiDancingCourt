@@ -39,10 +39,13 @@
         <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
       </template> 
       <template v-slot:center-text>
-       <text class="fonweight fon28">{{currentTimes?currentTimes:"请选择您练舞的时段"}}</text>
+       <text class="fonweight fon28">{{currentTimes}}</text>
       </template>
       <template v-slot:i-choose>
-         <image class="height-full width60" src="https://static.qiniuyun.highvenue.cn/image/switch.png" mode="aspectFit" @click="showTimePopup" ></image >
+         <image class="height-full width60" 
+         src="https://static.qiniuyun.highvenue.cn/image/switch.png" 
+         mode="aspectFit" 
+         @click="showTimePopup" ></image >
       </template>
     </long-button>
     </view>
@@ -64,6 +67,7 @@
            :focus="currentIndex==index"
            :id="index"
            :show-confirm-bar="false"
+           :hold-keyboard="true"
            @focus="initCursor"
            @input="keyInput"
            class="InputItem bablack" />
@@ -244,9 +248,6 @@
       // 点击选择时段
       showTimePopup() {
         this.$refs.popup.open("bottom")
-        if(!this.currentTimes){
-          this.currentTimes = this.columnsDaysYear[0]
-        }
       },
       // 选择时间段点击确认
       confirmHours(){
@@ -270,6 +271,7 @@
           var calDateYear = tempYear+"-"+tempMonth+"-"+tempDay
           this.columnsDays.push(calDate)
           this.columnsDaysYear.push(calDateYear)
+          this.currentTimes = this.columnsDaysYear[0]
         }
       },
       // 输出查看键盘输入
