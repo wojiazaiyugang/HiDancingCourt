@@ -55,22 +55,30 @@
       <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
         <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
       </view>
-      <view style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
-        <view class="InputBoard flex flex-center bagreinput">
-
+      <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
+        <view
+         class="InputBoard flex flex-center bagreinput " >
+          <input
+            @input="keyInput"
+            :maxlength="4"
+            :focus="focusStatus"
+            type="number"
+            class="height-0 width-0 fon50 "/>
         </view>
-        <view class="flex justify-around alitem-center" style="margin-top: -140rpx;">
-          <input type="number"
-           v-for= "(item,index) in verfication"
-           :key= "index" 
-           :maxlength="1"
-           :focus="currentIndex==index"
-           :id="index"
-           :show-confirm-bar="false"
-           :hold-keyboard="true"
-           @focus="initCursor"
-           @input="keyInput"
-           class="InputItem bablack" />
+        <view 
+        class="absolute top0 left0 z-inde10 width-full height-full">
+          <view class="width-full height-full flex justify-around alitem-center ">
+            <view class="InputItem bablack flex relative flex-center"
+            @click.stop="getFocus"
+              v-for= "(item,index) in verfication"
+              :key="index"
+              >
+               <view>{{item}}</view>
+               <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
+                 
+               </view>
+             </view>
+          </view>
         </view>
       </view>
     </view>
@@ -179,6 +187,8 @@
         currentHourses:"",
         // 选定的时间段
         currentTimes:"",
+        // 光标显示的状态
+        focusStatus:false,
 			}
 		},
     watch:{
@@ -216,11 +226,9 @@
       ...mapMutations("m_video",["setSearchData"]),
       ...mapMutations("m_device",["setDeviceInfo"]),
       ...mapMutations("m_venues",["setSiteInfos"]),
-      // 初始化光标
-      initCursor(){
-        if(this.currentIndex==-1){
-          this.currentIndex = 0
-        }
+      // 点击外层获取光标位置让其显示
+      getFocus(){
+        this.focusStatus = !this.focusStatus
       },
       // 存储当前设备的信息
       async getDeviceInfo(){
@@ -276,20 +284,15 @@
       },
       // 输出查看键盘输入
       keyInput(data){
-        this.verfication[data.target.id] = data.target.value
-        if(this.verfication[data.target.id]){
-          if(data.target.id<this.verfication.length-1){
-            this.currentIndex = parseInt(data.target.id) + 1
+        var keyNumber = [...data.target.value+""]
+        this.verfication = [...keyNumber]
+        this.currentIndex = keyNumber.length-1
+        for(var i=0;i<4;i++){
+          if(!this.verfication[i]){
+            this.verfication[i] = ""
           }
-          else{
-            this.currentIndex = parseInt(data.target.id)
-          }
-        }
-        else{
-          this.currentIndex = parseInt(data.target.id)
         }
       },
-      
       // 调用相机
       useCamera() {
         // this.$showMsg("暂不支持人脸查询！")

@@ -19,6 +19,9 @@
 .fon40{
   font-size: 40rpx;
 }
+.fon50{
+  font-size: 50rpx;
+}
 .fonweight{
   font-weight: 550;
 }
@@ -34,8 +37,23 @@
 .boradiu24{
   border-radius: 24rpx;
 }
+.height-0{
+  height: 0rpx;
+}
 .height-full{
   height: 100%;
+}
+.heichi60{
+  height: 60rpx;
+}
+.width-shi{
+  width: 100vw;
+}
+.width-0{
+  width: 0rpx;
+}
+.widchi2{
+  width: 2rpx;
 }
 .width60{
   width: 60%;
@@ -48,6 +66,9 @@
 }
 .background-cover{
   background-size: cover;
+}
+.display-block{
+  display: inline-block;
 }
 .ellipsis {
   white-space:nowrap;

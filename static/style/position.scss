@@ -23,6 +23,12 @@
 .flex-direction{
   flex-direction: column;
 }
+.margleft40{
+  margin-left: 40rpx;
+}
+.margright20{
+  margin-right: 20rpx;
+}
 .margtop10{
   margin-top: 10rpx;
 }
@@ -38,12 +44,30 @@
 .margtop50{
   margin-top: 50rpx;
 }
-
-
-
+.z-inde1{
+  z-index: 1;
+}
+.z-inde10{
+  z-index: 10;
+}
 .absolute{
   position: absolute;
 }
 .relative{
   position: relative;
+}
+.top0{
+  top: 0rpx;
+}
+.top20{
+  top: 20rpx;
+}
+.left0{
+  left: 0rpx;
+}
+.right0{
+  right: 0rpx;
+}
+.right20{
+  right: 20rpx;
 }

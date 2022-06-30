@@ -145,6 +145,7 @@
       },
       // 上一个视频
       preVideo(){
+        this.lastVideoStatus = false
         this.allSearchVideos.map((item,index)=>{
           if(item.id==this.playVideo.id){
             this.numberId = index
