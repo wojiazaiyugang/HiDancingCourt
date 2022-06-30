@@ -62,6 +62,7 @@
             @input="keyInput"
             :maxlength="4"
             :focus="focusStatus"
+            :cursor-spacing="25"
             type="number"
             class="height-0 width-0 fon50 "/>
         </view>
@@ -291,6 +292,9 @@
           if(!this.verfication[i]){
             this.verfication[i] = ""
           }
+        }
+        if(keyNumber.length==4){
+          wx.hideKeyboard()
         }
       },
       // 调用相机
