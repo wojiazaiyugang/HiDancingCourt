@@ -3,7 +3,7 @@
     <view class="video">
       <view 
       class="coverImage background-cover"
-      :style="{backgroundImage: `url(${video.download_src}?vframe/jpg/offset/4/w/600/h/360)`}"
+      :style="{backgroundImage:video.human_src?`url(${video.human_src})`:`url(${video.download_src}?vframe/jpg/offset/4/w/600/h/360)`}"
       @click="clickVideo"
       >
         <view class="leftBottom">

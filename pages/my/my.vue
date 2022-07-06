@@ -83,6 +83,7 @@
     },
     created() {
       this.calShowPrivacy()
+      console.log("查看信息",this.userInfo)
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
@@ -136,7 +137,9 @@
             success: async (res) => {
               let date = new Date()
               wx.setStorageSync("date",date)
-              this.setUserInfo(res.userInfo)
+              let tempInfo = this.userInfo
+              tempInfo.data.open_data = res.userInfo
+              this.setUserInfo(tempInfo)
               this.selfAvatar = res.userInfo.avatarUrl
               this.selfName = res.userInfo.nickName
               this.isShow = false
