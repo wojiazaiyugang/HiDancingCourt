@@ -4,7 +4,7 @@
       <view style="margin:0rpx 20rpx;white-space: nowrap">
         <scroll-view scroll-x="true" class="scrollClass width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in timeList"
-            class="timeDuration"
+            class="timeDuration letter-spacing1"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
             @click="selectDuration({item,index})"
             :key="index"
@@ -14,12 +14,12 @@
         </scroll-view>
         <scroll-view scroll-x="true" class="scrollClass" :scroll-top="scrollHeight">
           <view v-for="(item,index) in roomsList"
-            class="timeDuration black"
+            class="timeDuration black letter-spacing1"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
             @click="selectHouse({item,index})"
             :key="index"
           >
-            {{index==0?"全部":item.name}}
+            {{index==0?"全部舞房":item.name}}
           </view>
         </scroll-view>
       </view>
@@ -152,7 +152,7 @@
         this.houseId = this.searchData.houseId
         this.startTime = this.searchData.startTime 
         this.stopTime = this.searchData.stopTime 
-        this.timeList.push("全部")
+        this.timeList.push("所有时段")
         for(var i=1;i<=12;i++){
           let tempTime = i*2>9?i*2:"0"+i*2
           let tempStr = (tempTime - 2)>9?(tempTime - 2):"0"+(tempTime - 2)
@@ -167,7 +167,7 @@
           return item.id
         })
         this.roomsList = this.siteInfos.concat([])
-        this.roomsList.unshift("全部")
+        this.roomsList.unshift("全部舞房")
         console.log(this.roomsList)
         console.log("输出站点数组",this.siteArray)
       },
