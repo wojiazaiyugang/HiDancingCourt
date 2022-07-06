@@ -1,7 +1,7 @@
 <template>
 	<view class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
     <!-- Start 第一个Long-Button -->
-    <view class="First-LongButton">
+    <view class="First-LongButton" @click="chooseVenues">
       <long-button>
         <template v-slot:icon >
         <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
@@ -16,8 +16,7 @@
         <template v-slot:i-choose>
          <image src="https://static.qiniuyun.highvenue.cn/image/switch.png"
           mode="aspectFit"
-          class="width60 height-full"
-          @click="chooseVenues"></image >
+          class="width60 height-full"></image >
         </template>
       </long-button>
     </view>
@@ -33,21 +32,20 @@
     <!-- End 球馆图片 -->
     
     <!-- Start 第二个Long-Button -->
-    <view class="Second-LongButton margtop40">
-    <long-button>
-      <template v-slot:icon>
-        <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
-      </template> 
-      <template v-slot:center-text>
-       <text class="fonweight fon28">{{currentTimes}}</text>
-      </template>
-      <template v-slot:i-choose>
-         <image class="height-full width60" 
-         src="https://static.qiniuyun.highvenue.cn/image/switch.png" 
-         mode="aspectFit" 
-         @click="showTimePopup" ></image >
-      </template>
-    </long-button>
+    <view class="Second-LongButton margtop40" @click="showTimePopup">
+      <long-button>
+        <template v-slot:icon>
+          <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
+        </template> 
+        <template v-slot:center-text>
+         <text class="fonweight fon28">{{currentTimes}}</text>
+        </template>
+        <template v-slot:i-choose>
+           <image class="height-full width60" 
+           src="https://static.qiniuyun.highvenue.cn/image/switch.png" 
+           mode="aspectFit" ></image >
+        </template>
+      </long-button>
     </view>
     <!-- End 第二个Long-Button -->
     <!-- Start hide第三个Long-Button -->

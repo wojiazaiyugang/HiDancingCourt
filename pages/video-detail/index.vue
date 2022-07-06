@@ -20,7 +20,7 @@
           
         </view>
         <view class="width-full flex flex-center" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
-          <view class="iconfont icon-fanhui absolute fon28 white" :style="{left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack">
+          <view class="iconfont icon-fanhui absolute fon28 white widchi60" :style="{lineHeight: ((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack">
             
           </view>
           <view style="color: white;">

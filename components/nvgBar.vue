@@ -4,7 +4,7 @@
       
     </view>
     <view class="width-full flex flex-center" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
-      <view class="absolute fon32 white" :style="{left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="navBack">
+      <view class="absolute fon32 white widchi60" :style="{ height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',lineHeight: ((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="navBack">
         <slot name="icon"></slot>
       </view>
       <view class="white">
