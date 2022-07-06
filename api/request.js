@@ -3,9 +3,9 @@ import qs from "qs"
 import store from "@/store/store.js"
 
 // 开发环境
-const baseUrl = "https://api.highvenue.cn/development"
+// const baseUrl = "https://api.highvenue.cn/development"
 // 线上环境
-// const baseUrl = "https://api.highvenue.cn"
+const baseUrl = "https://api.highvenue.cn"
 // 本地环境
 // const baseUrl = "http://192.168.31.245:8082"
 
