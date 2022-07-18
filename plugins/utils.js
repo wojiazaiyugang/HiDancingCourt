@@ -7,8 +7,21 @@ Vue.prototype.$showMsg = function (title="数据请求失败！", duration = 100
   uni.showToast({
     title,
     duration,
-    icon: 'none'
+    icon: "none"
   })
+}
+
+// 接口拉取提示
+Vue.prototype.$showLoading = function (title,type) {
+  uni.showLoading({
+    title,
+    icon: type
+  })
+}
+
+// 关闭拉取提示
+Vue.prototype.$hideLoading = function () {
+  uni.hideLoading()
 }
 
 // wgs84坐标

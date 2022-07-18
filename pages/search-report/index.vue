@@ -26,7 +26,8 @@
     </view>
     <scroll-view 
       scroll-y="true" 
-      style="height: 85%;width: 100%;"
+      class="heichi100"
+      @scrolltoupper="scroolTop"
       @scrolltolower="scroolBottom" 
     >
       <view v-if="allVideos.length==0" class="videoShow flex flex-center background-cover gray" >
@@ -104,6 +105,14 @@
       "setSearchData",
       "setVideoHouse",
       ]),
+      // 向上滑动更新所有的视频数据
+      scroolTop(){
+        this.currentPage = 1
+        this.loadingDone = false
+        this.allVideos = []
+        this.setAllSearchVideos([])
+        this.getVideosByFace()
+      },
       // 选择各个小时间段
       selectDuration(data){
         this.timeIndex = data.index
@@ -173,7 +182,9 @@
       },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
+        this.$showLoading("加载中！","none")
         const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,false)
+        this.$hideLoading()
         this.loadingDone = data.length<this.perPage
         this.allVideos = [...this.allSearchVideos,...data]
         this.setAllSearchVideos([...this.allVideos])
@@ -195,5 +206,9 @@
 </script>
 
 <style lang="scss">
+  scroll-view ::-webkit-scrollbar{
+    display: none;
+  }
   @import "@/static/style/allVideo"
+  
 </style>

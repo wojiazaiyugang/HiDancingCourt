@@ -83,14 +83,14 @@
     </view>
     <!-- End 第三个Long-Button -->
     <!-- Start 透明层 -->
-    <view class="Four-LongButton bacamerout flex flex-center">
-      <view class="First-LongButton-son bacamer" >
+    <view class="Four-LongButton  flex flex-center babotton">
+      <view class="First-LongButton-son bacamer babotton" >
         
       </view>
       <!-- Start 相机按钮 -->
     </view>
-    <view class="camera flex bacamerout flex-center" @click="useCamera">
-      <view class="camera-son bacamer flex flex-center" >
+    <view class="camera flex flex-center babotton"  @click="useCamera">
+      <view class="camera-son bacamer flex flex-center babotton" >
         <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
          mode="aspectFit" class="height-full width60"></image>
       </view>
@@ -146,11 +146,11 @@
    
    <!-- Start权限提示信息 -->
    <uni-popup ref="permissionsPopup" type="dialog">
-   	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" 
-    :before-close="true" 
-    @close="closeProp" 
-    @confirm="confirmProp">
-    </uni-popup-dialog>
+      <uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" 
+      :before-close="true" 
+      @close="closeProp" 
+      @confirm="confirmProp">
+      </uni-popup-dialog>
    </uni-popup>
    <!-- End权限提示信息 -->
   </view>
@@ -199,7 +199,7 @@
       allVenues(newValue,oldValue){
         if(newValue.length!=0){
           this.columnsHouses = this.allVenues.filter(item=>{
-            if(!item.data.supprt_find){
+            if(item.data.supprt_find){
               return item
             }
           })

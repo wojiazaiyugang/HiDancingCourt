@@ -2,11 +2,11 @@
   <view class="container width-full background-cover relative">
     <!-- 导航栏 -->
     <nvg-bar>
-      <template v-slot:icon><text class="iconfont icon-fanhui white fon32" ></text></template>
-      <template v-slot:text><text class="white">拍照查询</text></template>
+      <template v-slot:icon><text class="iconfont icon-fanhui black fon32" ></text></template>
+      <template v-slot:text><text class="black">拍照查询</text></template>
     </nvg-bar>
     
-    <view class="textContent flex flex-direction white flex-center">
+    <view class="textContent flex flex-direction flex-center">
       <view>请拍摄正面照</view>
       <view style="color: #c6c2cc;font-size: 28rpx; margin-top: 26rpx;">点击头像拍照/更换照片</view>
     </view>

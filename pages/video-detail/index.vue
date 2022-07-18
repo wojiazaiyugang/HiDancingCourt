@@ -279,11 +279,13 @@
       // 下载视频的动作
       async saveToAlbum() {
         let that = this;
+        that.$showLoading("下载中！")
         var myDate = new Date();
         that.$download({
           url: that.playVideo.download_src,
           async success() {
             await addDownload(that.playVideo.id) 
+            that.$hideLoading()
             that.$showMsg("下载成功！")
           },
           fail() {
