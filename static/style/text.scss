@@ -37,6 +37,12 @@
 .boradiu24{
   border-radius: 24rpx;
 }
+.boradiu42{
+  border-radius: 42rpx;
+}
+.boradiuoverall{
+  border-radius: 100%;
+}
 .height-0{
   height: 0rpx;
 }
@@ -48,6 +54,12 @@
 }
 .heichi60{
   height: 60rpx;
+}
+.heichixu100{
+  height: 100rpx;
+}
+.heichi210{
+  height: 420rpx;
 }
 .width-shi{
   width: 100vw;
@@ -61,6 +73,9 @@
 .widchi60{
   width: 120rpx;
 }
+.widthchi210{
+  width: 420rpx;
+}
 .width60{
   width: 60%;
 }
@@ -70,6 +85,9 @@
 .width-full{
   width: 100%;
 }
+.line-heichi100{
+  line-height: 100rpx;
+}
 .letter-spacing1{
   letter-spacing: 2rpx;
 }
@@ -78,6 +96,12 @@
 }
 .display-block{
   display: inline-block;
+}
+.overflow-hidden{
+  overflow: hidden;
+}
+.text-center{
+  text-align: center;
 }
 .ellipsis {
   white-space:nowrap;

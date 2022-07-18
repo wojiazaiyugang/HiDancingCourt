@@ -10,19 +10,14 @@ const baseUrl = "https://api.highvenue.cn"
 // const baseUrl = "http://192.168.31.245:8082"
 
 
-const successHandler = (res, resolve, reject) => {
+const successHandler = (res, resolve) => {
   if (res.data.code === 0) {
     store.commit("m_device/setServerTime", res.header["Date"])
     resolve(res.data)
   }
   else {
-    let msg = res.data.msg || "出错了！"
-    if(res.data.code === -1) msg = "密码错误请重新输入！"
-    uni.showToast({
-      title:msg,
-      duration:1000,
-      icon: "none"
-    })
+    console.log("shibai")
+    resolve(res.data)
   }
 }
 const failHandler = (res, reject) => {

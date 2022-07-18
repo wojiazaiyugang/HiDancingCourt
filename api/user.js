@@ -14,3 +14,18 @@ export const getUserInfo = (user_id) => {
 export const updateInfo = (data) =>{
   return request.post(`/users/info/`,data)
 }
+
+// 检验人脸是否合格
+export const validateFace = (data) => {
+  return request.post("/records/validate_face/",data)
+}
+
+// 获取用户的人脸信息
+export const getUserFace = () => {
+  return request.get("/records/face")
+}
+
+// 修改人脸信息
+export const changeUserFace = (data) => {
+  return request.put("/records/face",data)
+}

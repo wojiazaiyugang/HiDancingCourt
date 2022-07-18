@@ -1,88 +1,122 @@
 <template>
-  <view class="container width-full background-cover relative">
+  <view class=" width-full heichi100 flex flex-direction justify-start bacamerPhto alitem-center" >
     <!-- 导航栏 -->
     <nvg-bar>
-      <template v-slot:icon><text class="iconfont icon-fanhui black fon32" ></text></template>
-      <template v-slot:text><text class="black">拍照查询</text></template>
+      <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
+      <template v-slot:text><text class="black">拍照查询{{userFaceValiate}}</text></template>
     </nvg-bar>
-    
-    <view class="textContent flex flex-direction flex-center">
-      <view>请拍摄正面照</view>
-      <view style="color: #c6c2cc;font-size: 28rpx; margin-top: 26rpx;">点击头像拍照/更换照片</view>
+    <view class=" flex-direction margtop40 flex flex-center">
+      <view class="font-weight-500">请拍摄正面照</view>
+      <view class="fon28 margtop30" style="color: #c6c2cc;">点击头像拍照/更换照片</view>
     </view>
-    
-    <camera 
-    class="camera" 
-    flash="off" 
-    device-position="front"
-    v-if="isShow"
+   <view 
+      @tap="navMask"
+      v-if="userFaceValiate&&!isRePhoto"
+      style="border: 2rpx solid white;"
+      class="widthchi210 heichi210 boradiuoverall relative overflow-hidden margtop60">
+      <image
+        :src="`data:image/jpeg;base64,${userFaceImg}`"
+        class="boradiuoverall width-full height-full"
+      />
+    </view>
+    <view
+      v-if="isRePhoto"
+      class="widthchi210 heichi210 relative overflow-hidden margtop60 boradiuoverall"
     >
-    </camera>
-    <view v-else style="-webkit-transform:rotate(0deg);">
-      <view class="img background-cover" :style="{backgroundImage: 'url(' + src + ')'}" @click="this.isShow = !this.isShow">
+      <camera
+        class="height-full width-full z-index1"
+        device-position="front"
+        flash="off"
+      />
+      <view 
+        style="border: 200rpx solid #3F028B;"
+        class="width-full height-full z-index10 absolute top-half left-half translate--50 boradiuoverall">
       </view>
-      <view class="resetImg flex flex-center">点击照片可重新拍摄</view>
     </view>
-    
-    
-    <!-- 底部按钮 -->
-    <view class="bottom flex flex-center">
-      <view class="SearchVideo white" v-if="isShow" @click="useCamera"><text>点击拍照</text></view>
-      <view class="SearchVideo white" v-else @click="navBack">
-        <text>确认</text>
-      </view>
-      </view>
+    <view class="absolute bottom50 left-half translatex-50 widthchi210 heichixu100 boradiu42 text-center babotton line-heichi100" @click="useCamera">
+      <text>点击拍照</text>
+    </view>
   </view>
 </template>
 
 <script>
-  import { mapState,mapMutations } from "vuex"
-  import nvgBar from "@/components/nvgBar"
+  import { mapState, mapMutations } from "vuex"
+  import { validateFace, getUserFace, changeUserFace } from "@/api/user.js"
+  import nvgBar from "@/components/nvgBar.vue"
   export default {
-    data() {
-      return {
-      isShow: true, // 下方拍照按钮文字和相机和图片显示
-      src: '' ,// 页面展示图片
-      base64: ''
-      };
-    },
     components: {
       nvgBar,
     },
+    data() {
+      return {
+        // 人脸拍摄照片转base64之后的
+        baseImg: "",
+        // 当前用户的人脸照片
+        userFaceImg:"",
+        // 是否点击头像进行拍照
+        isRePhoto:false,
+      };
+    },
+    computed:{
+      ...mapState("m_camera",["userFaceValiate"]),
+    },
     created() {
-      this.showDay = this.currentDay
+      this.valiateFace()
     },
     methods: {
-      ...mapMutations('m_camera',['updateImgSrc']),
-      showTimePopup() {
-        this.$refs.popup.open('bottom')
+      ...mapMutations("m_camera",["setUserFaceValiate","setUserFaceInfo"]),
+      // 点击头像进行更换照片
+      navMask(){
+        this.isRePhoto = true
       },
-      async useCamera() {
-        try{
-          this.isShow = !this.isShow
-          const cmr = uni.createCameraContext()
-          await cmr.takePhoto({
-            quality: 'high',
-            success: async (res) => {
-              this.src = res.tempImagePath
-              this.base64 = await wx.getFileSystemManager().readFileSync(res.tempImagePath, "base64")
-              // console.log(this.base64)
-              this.updateImgSrc(this.base64)
-             }
-          })
-        }catch(err) {
-          
-        }
-      },
-      navBack() {
-        uni.navigateBack({
-          delta: 1
+      // 获取用户的人脸信息进行校验
+      async valiateFace(){
+        await getUserFace().then(async value=>{
+          if(value.code==-1){
+            this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000)
+            this.isRePhoto = true
+          }
+          if(value.code==0){
+            this.userFaceImg = value.data.data.face_img
+            this.setUserFaceInfo(this.userFaceImg)
+            this.$showMsg("照片校验成功！",1500,"success")
+            this.setUserFaceValiate(true)
+          }
         })
-      }
+      },
+      // 点击确认拍照
+      async useCamera() {
+        // 点击拍照手机震动
+        this.$vs()
+        const cmr = uni.createCameraContext()
+        cmr.takePhoto({
+          quality: "high",
+          success: async (res) => {
+            var tempSrc = ""
+            tempSrc = res.tempImagePath
+            this.baseImg = await wx.getFileSystemManager().readFileSync(res.tempImagePath, "base64")
+            await validateFace({face:this.baseImg}).then( async data=>{
+              if(data.code==0){
+                this.$showMsg("拍照成功！",1500,"success")
+                this.setUserFaceValiate(true)
+                this.setUserFaceInfo(this.baseImg)
+                await changeUserFace({face_img:this.baseImg})
+                uni.navigateBack({
+                  delta: 1
+                })
+              }
+              else{
+                this.setUserFaceValiate(false)
+                this.$showMsg("照片不合格请重新拍摄！",1500,"none")
+              }
+            })
+          }
+        })
+      },
     }
   }
 </script>
 
 <style lang="scss">
-  @import "@/static/style/camera"
+  
 </style>

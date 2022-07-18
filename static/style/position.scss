@@ -44,6 +44,12 @@
 .margtop50{
   margin-top: 50rpx;
 }
+.margtop60{
+  margin-top: 60rpx;
+}
+.margtop120{
+  margin-top: 120rpx;
+}
 .z-inde1{
   z-index: 1;
 }
@@ -62,6 +68,18 @@
 .top20{
   top: 20rpx;
 }
+.top-half{
+  top: 50%;
+} 
+.left-half{
+  left: 50%;
+} 
+.translate--50{
+  transform: translate(-50%,-50%);
+}
+.translatex-50{
+  transform: translateX(-50%);
+}
 .left0{
   left: 0rpx;
 }
@@ -70,4 +88,7 @@
 }
 .right20{
   right: 20rpx;
+}
+.bottom50{
+  bottom: 50rpx;
 }

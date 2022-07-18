@@ -160,6 +160,7 @@
   import { mapMutations,mapState,mapActions } from "vuex"
   import { verifyCode } from "@/api/search.js"
   import { getSites } from "@/api/venues.js"
+  import { getUserFace, } from "@/api/user.js"
   import LongButton from "@/components/long-button"
   import Vue from "vue"
 	export default {
@@ -218,6 +219,7 @@
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues"]),
       ...mapState("m_device",["locationInfo"]),
+      ...mapState("m_camera",["userFaceInfo"])
     },
 		methods: {
       ...mapActions("m_device",["getLocation",]),
@@ -225,6 +227,7 @@
       ...mapMutations("m_video",["setSearchData"]),
       ...mapMutations("m_device",["setDeviceInfo"]),
       ...mapMutations("m_venues",["setSiteInfos"]),
+      ...mapMutations("m_camera",["setUserFaceInfo"]),
       // 点击外层获取光标位置让其显示
       getFocus(){
         this.focusStatus = !this.focusStatus
@@ -312,6 +315,16 @@
       },
       // 查找视频
       async SearchVideo() {
+        
+        await getUserFace().then(async value=>{
+          if(value.code==-1){
+            this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000,"none")
+          }
+          if(value.code==0){
+            var tempImg = value.data.data.face_img
+            this.setUserFaceInfo(tempImg)
+          }
+        })
         // 输入得四位验证码
         var tempCode = ""
         // 所选择的场馆id
@@ -330,20 +343,27 @@
           // 场馆id
           venue_id: selectId,  
           applet: "HiDancing"
-        }).then(async ()=>{
-          await getSites(selectId).then((value)=>{
-            console.log("查看场地",value.data)
-            this.setSiteInfos(value.data)
-            if(this.currentTimes){
-              this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
-              uni.navigateTo({
-                url: "../search-report/index",
-              })
-            }
-            else{
-              this.$showMsg("请您选择搜索日期！")
-            }
-          })
+        }).then(async (value)=>{
+          if(value.code==-1){
+            this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
+          }
+          else{
+            await getSites(selectId).then((value)=>{
+              this.setSiteInfos(value.data)
+              if(this.currentTimes&&this.userFaceInfo){
+                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
+                uni.navigateTo({
+                  url: "../search-report/index",
+                })
+              }
+              if(!this.userFaceInfo){
+                this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
+              }
+              else{
+                this.$showMsg("请您选择搜索日期！")
+              }
+            })
+          }
         })
       },
       // 去个人页面

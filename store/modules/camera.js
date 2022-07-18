@@ -1,12 +1,17 @@
 export default {
   namespaced: true,
   state:{
-    // 用户照片信息转base64
-    imgSrc: "" 
+    // 用户的人脸验证照片是否通过
+    userFaceValiate: true,
+    // 用户当前的人脸信息
+    userFaceInfo:"",
   },
   mutations: {
-    updateImgSrc(state,payload) {
-      state.imgSrc = payload
+    setUserFaceValiate(state,payload) {
+      state.userFaceValiate = payload
+    },
+    setUserFaceInfo(state,payload){
+      state.userFaceInfo = payload
     }
   }
 }

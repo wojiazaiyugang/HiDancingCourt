@@ -1,6 +1,11 @@
 import Vue from "vue"
 import dayjs from "dayjs"
 
+//Uni中的手机振动问题
+Vue.prototype.$vs = uni.vibrateShort
+
+//手机发生较长时间的震动
+Vue.prototype.$vl = uni.vibrateLong
 
 // 消息提示
 Vue.prototype.$showMsg = function (title="数据请求失败！", duration = 1000) {
