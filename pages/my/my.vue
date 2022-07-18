@@ -51,9 +51,9 @@
         </view>
       </view>
       
-      <view class="bannerInfo background-cover">
+<!--      <view class="bannerInfo background-cover">
         
-      </view>
+      </view> -->
     </view>
   </view>
 </template>

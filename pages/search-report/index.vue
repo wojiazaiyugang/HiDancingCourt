@@ -90,6 +90,7 @@
     computed: {
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_video",["searchData","allSearchVideos"]),
+      ...mapState("m_user",["faceSelect"]),
     },
     created() {
       this.getRooms()
@@ -183,7 +184,7 @@
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         this.$showLoading("加载中！","none")
-        const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,true)
+        const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
         this.$hideLoading()
         this.loadingDone = data.length<this.perPage
         this.allVideos = [...this.allSearchVideos,...data]

@@ -1,6 +1,6 @@
 {
-  "id": "3354456",
-  "name": "HiCourt",
+  "id": "3530538",
+  "name": "跳舞小程序",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
@@ -11,6 +11,20 @@
       "font_class": "fanhui",
       "unicode": "e600",
       "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "1304882",
+      "name": "开关",
+      "font_class": "kaiguan",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "5387519",
+      "name": "对号",
+      "font_class": "duihao",
+      "unicode": "eaf1",
+      "unicode_decimal": 60145
     }
   ]
 }

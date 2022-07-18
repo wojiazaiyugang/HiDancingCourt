@@ -84,11 +84,20 @@
     <!-- End 第三个Long-Button -->
     <!-- Start 透明层 -->
     <view class="Four-LongButton  flex flex-center babotton">
-      <view class="First-LongButton-son bacamer babotton" >
+      <view class="First-LongButton-son" >
         
+      </view>
+      <view class="margright20 white">
+        人脸查询开关
+      </view>
+      <view @click="changeSelectFace" class="margright20 widchi40 heichi40 bawhite line-heichi40 boradiu42">
+        <view :class="['heichi30 line-heichi30 margin5 relative z-inde1 boradiu42 babotton',faceSearch?'widthchi30':'widchi15']" >
+          <view class="iconfont absolute top0 right0 icon-kaiguan white fon32" ></view>
+        </view>
       </view>
       <!-- Start 相机按钮 -->
     </view>
+    
     <view class="camera flex flex-center babotton"  @click="useCamera">
       <view class="camera-son bacamer flex flex-center babotton" >
         <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
@@ -189,6 +198,8 @@
         currentTimes:"",
         // 光标显示的状态
         focusStatus:false,
+        // 是否人脸搜索
+        faceSearch:true,
 			}
 		},
     watch:{
@@ -228,6 +239,14 @@
       ...mapMutations("m_device",["setDeviceInfo"]),
       ...mapMutations("m_venues",["setSiteInfos"]),
       ...mapMutations("m_camera",["setUserFaceInfo"]),
+      ...mapMutations("m_user",["setFaceSelect"]),
+      // 修改是否人脸查找
+      changeSelectFace(){
+        console.log("kaishi")
+        this.faceSearch = !this.faceSearch
+        console.log("差别",this.faceSearch)
+        this.setFaceSelect(this.faceSearch)
+      },
       // 点击外层获取光标位置让其显示
       getFocus(){
         this.focusStatus = !this.focusStatus

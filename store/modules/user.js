@@ -9,6 +9,8 @@ export default {
     userInfo:null,
     // 用户的user_id，用于获得用户的个人信息
     userId:"",
+    // 是否人脸搜索
+    faceSelect:true,
   },
   
   mutations: {
@@ -18,6 +20,9 @@ export default {
     setUserId(state,payload){
       state.userId = payload
     },
+    setFaceSelect(state,payload){
+      state.faceSelect = payload
+    }
   },
   actions: {
     async getToken({commit,state}) {
