@@ -87,11 +87,11 @@
       <view class="First-LongButton-son" >
         
       </view>
-      <view class="margright20 white">
+      <view class="margright20 black">
         人脸查询开关
       </view>
-      <view @click="changeSelectFace" class="margright20 widchi40 heichi40 bawhite line-heichi40 boradiu42">
-        <view :class="['heichi30 line-heichi30 margin5 relative z-inde1 boradiu42 babotton',faceSearch?'widthchi30':'widchi15']" >
+      <view @click="changeSelectFace" class="margright20 widchi40 flex alitem-center justify-start heichi40 bawhite boradiu42">
+        <view :class="['heichi30 line-heichi30 margleft5 relative z-inde1 boradiu42 babotton',faceSearch?'widchi30':'widchi15']" >
           <view class="iconfont absolute top0 right0 icon-kaiguan white fon32" ></view>
         </view>
       </view>
@@ -200,6 +200,8 @@
         focusStatus:false,
         // 是否人脸搜索
         faceSearch:true,
+        // 视频搜索防止二次检索
+        videoSearch:true,
 			}
 		},
     watch:{
@@ -231,6 +233,20 @@
       ...mapState("m_venues",["startTime","stopTime","allVenues"]),
       ...mapState("m_device",["locationInfo"]),
       ...mapState("m_camera",["userFaceInfo"])
+    },
+    // 分享到群聊
+    onShareAppMessage(res) {
+      return {
+        title: `快来欣赏我在${this.currentHourses}的精彩视频吧~`,
+        path:`/pages/index/index`,
+      }
+    },
+    // 分享朋友圈
+    onShareTimeline(){
+      return {
+        title: `快来欣赏我在${this.currentHourses}球场的精彩视频吧~`,
+        query: ``,
+      };
     },
 		methods: {
       ...mapActions("m_device",["getLocation",]),
@@ -302,6 +318,7 @@
           this.columnsDaysYear.push(calDateYear)
           this.currentTimes = this.columnsDaysYear[0]
         }
+        console.log("123456")
       },
       // 输出查看键盘输入
       keyInput(data){
@@ -334,56 +351,64 @@
       },
       // 查找视频
       async SearchVideo() {
-        
-        await getUserFace().then(async value=>{
-          if(value.code==-1){
-            this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000,"none")
-          }
-          if(value.code==0){
-            var tempImg = value.data.data.face_img
-            this.setUserFaceInfo(tempImg)
-          }
-        })
-        // 输入得四位验证码
-        var tempCode = ""
-        // 所选择的场馆id
-        var selectId = 0
-        this.verfication.map(item=>{
-          tempCode = tempCode + item.toString()
-        })
-        this.allVenues.map(item=>{
-          if(item.name==this.currentHourses){
-            selectId = item.id
-          }
-        })
-        await verifyCode({
-          // 场馆邀请码
-          invite_code: parseInt(tempCode),  
-          // 场馆id
-          venue_id: selectId,  
-          applet: "HiDancing"
-        }).then(async (value)=>{
-          if(value.code==-1){
-            this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
-          }
-          else{
-            await getSites(selectId).then((value)=>{
-              this.setSiteInfos(value.data)
-              if(this.currentTimes&&this.userFaceInfo){
-                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
-                uni.navigateTo({
-                  url: "../search-report/index",
-                })
-              }
-              if(!this.userFaceInfo){
-                this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
-              }
-              else{
-                this.$showMsg("请您选择搜索日期！")
-              }
-            })
-          }
-        })
+        if(this.videoSearch){
+          this.videoSearch = false
+          this.$showLoading("页面正在跳转！")
+          await getUserFace().then(async value=>{
+            if(value.code==-1){
+              this.videoSearch = true
+              this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000,"none")
+              return false
+            }
+            if(value.code==0){
+              var tempImg = value.data.data.face_img
+              this.setUserFaceInfo(tempImg)
+            }
+          })
+          // 输入得四位验证码
+          var tempCode = ""
+          // 所选择的场馆id
+          var selectId = 0
+          this.verfication.map(item=>{
+            tempCode = tempCode + item.toString()
+          })
+          this.allVenues.map(item=>{
+            if(item.name==this.currentHourses){
+              selectId = item.id
+            }
+          })
+          await verifyCode({
+            // 场馆邀请码
+            invite_code: parseInt(tempCode),  
+            // 场馆id
+            venue_id: selectId,  
+            applet: "HiDancing"
+          }).then(async (value)=>{
+            if(value.code==-1){
+              this.$hideLoading()
+              this.videoSearch = true
+              this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
+            }
+            else{
+              await getSites(selectId).then((value)=>{
+                this.setSiteInfos(value.data)
+                if(this.userFaceInfo){
+                  this.$hideLoading()
+                  this.videoSearch = true
+                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
+                  uni.navigateTo({
+                    url: "../search-report/index",
+                  })
+                }
+                else{
+                  this.$hideLoading()
+                  this.videoSearch = true
+                  this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
+                }
+              })
+            }
+          })
+        }
       },
       // 去个人页面
       navigateMy() {

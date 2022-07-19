@@ -1,8 +1,8 @@
 <template>
-	<view class="container flex flex-direction bawhite justify-start">
-    <view class="selectType">
+	<view class="width-shi heichi100 ba-f7 bawhite overflow-hidden">
+    <view class="heichixu80 marginy20">
       <view style="margin:0rpx 20rpx;white-space: nowrap">
-        <scroll-view scroll-x="true" class="scrollClass width-full" style=" margin-bottom: 40rpx;">
+        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in timeList"
             class="timeDuration letter-spacing1"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
@@ -12,7 +12,7 @@
             {{item}}
           </view>
         </scroll-view>
-        <scroll-view scroll-x="true" class="scrollClass" :scroll-top="scrollHeight">
+        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60" :scroll-top="scrollHeight">
           <view v-for="(item,index) in roomsList"
             class="timeDuration black letter-spacing1"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
@@ -26,23 +26,24 @@
     </view>
     <scroll-view 
       scroll-y="true" 
-      class="heichi100"
+      class="height-80 overflow-hidden"
+      :show-scrollbar="false"
       @scrolltoupper="scroolTop"
       @scrolltolower="scroolBottom" 
     >
-      <view v-if="allVideos.length==0" class="videoShow flex flex-center background-cover gray" >
-        当前时段暂无视频!
+      <view class="height-full " style="margin-top: 10rpx;">
+        <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
+          请尝试重新拍照查询或联系管理员查看所有视频!
+        </view>
+        <view v-else class="flex flexwrap height-full marginx10" style="align-content: flex-start;" >
+          <videoData 
+            v-for="(item,index) in allVideos" 
+            :key="index" 
+            :video="item">
+          </videoData>
+        </view>
       </view>
-      <view v-else style="display: flex;flex-wrap: wrap; margin:0rpx 20rpx;">
-        <videoData 
-          v-for="(item,index) in allVideos" 
-          :key="index" 
-          :video="item">
-        </videoData>
-      </view>
-      <view style="height: 200rpx;">
-        
-      </view>
+
     </scroll-view>
 	</view>
 </template>
@@ -106,14 +107,6 @@
       "setSearchData",
       "setVideoHouse",
       ]),
-      // 向上滑动更新所有的视频数据
-      scroolTop(){
-        this.currentPage = 1
-        this.loadingDone = false
-        this.allVideos = []
-        this.setAllSearchVideos([])
-        this.getVideosByFace()
-      },
       // 选择各个小时间段
       selectDuration(data){
         this.timeIndex = data.index
@@ -183,6 +176,9 @@
       },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
+        if(this.loadingDone){
+          return false
+        }
         this.$showLoading("加载中！","none")
         const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
         this.$hideLoading()
@@ -193,23 +189,41 @@
       },
       // 下拉到底刷新数据
       async scroolBottom() {
-        if(this.allVideos.length!=0){
+        if(this.allVideos.length>=this.perPage){
+          console.log("xiala1")
           if(this.loadingDone){
+            console.log("xiala2")
             this.$showMsg("数据已经加载完毕")
             return false
           }
           this.currentPage++
           this.getVideosByFace()
         }
-      }
+        
+      },
+      // 向上滑动更新所有的视频数据
+      scroolTop(){
+        console.log("上滑")
+        this.currentPage = 1
+        this.loadingDone = false
+        this.setAllSearchVideos([])
+        this.getVideosByFace()
+      },
     },
 	}
 </script>
 
 <style lang="scss">
-  scroll-view ::-webkit-scrollbar{
+  ::-webkit-scrollbar{
     display: none;
   }
-  @import "@/static/style/allVideo"
-  
+  .timeDuration{
+    display: inline-block;
+    text-align: center;
+    padding: 0rpx 50rpx;
+    height: 60rpx;
+    line-height: 60rpx;
+    font-size: 30rpx;
+    border-radius: 30rpx;
+  }
 </style>

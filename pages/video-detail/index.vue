@@ -1,8 +1,8 @@
 <template>
-  <view class="width-full" :style="{height:calHeight}">
+  <view class="width-full background-cover" :style="{height:calHeight}" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
     <view class="width-full height-full relative">
       <video
-      class="width-full height-full"
+       :class="['width-full',isTotal?'absolute top-half left-half translate--50 heichi210':'height-full'] "
        id="myVideo"
        :src="playVideo.download_src"
        @click="clickControl"
@@ -52,7 +52,10 @@
         <view 
           :style="{marginLeft:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}"
         >
-          <view class="white fon36" style="margin-bottom: 30rpx;">
+          <view v-show="isTotal" class="fon24 white marginbottom15">
+            集体视频
+          </view>
+          <view class="white fon36 marginbottom15 ellipsis widthchi210" >
             {{playVideo.venue_name}}
           </view>
           <view class="fon24 white">
@@ -98,10 +101,13 @@
         videoContent:null,
         // 当前视频播放与否
         isPlay:true,
+        // 是否是集体视频
+        isTotal:false,
       };
     },
     created() {
       this.playingVideo()
+      console.log("查看设备",this.deviceInfo)
     },
     computed: {
       ...mapState("m_video",[
@@ -134,6 +140,7 @@
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
+        this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
         this.nextPage = this.videoPages.curPage
       },
@@ -163,6 +170,7 @@
           	duration: 1000
           });
         }
+        this.isTotal = this.playVideo.name.split(".")[0].includes("group")
       },
       // 下一个视频
       async nextVideo(){
@@ -221,6 +229,7 @@
             this.playVideo = this.allSearchVideos[this.numberId+1]
           }
         }
+        this.isTotal = this.playVideo.name.split(".")[0].includes("group")
       },
       // 拒绝开启相册权限弹出窗关闭事件
       closeCamera(){

@@ -2,13 +2,16 @@
  import { mapActions, mapMutations, mapState } from "vuex"
 	export default {
 		onLaunch: function() {
+      console.log("123456")
+		},
+		onShow: function() {
+      console.log("onshow")
       this.getToken().finally(()=>{
         this.getLocation().finally(()=>{
+          console.log("123")
           this.getVenues()
         })
       })
-		},
-		onShow: function() {
       const updateManager = wx.getUpdateManager()
       // 检查是否版本更新
       updateManager.onCheckForUpdate(function (res) {

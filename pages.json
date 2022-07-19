@@ -34,7 +34,8 @@
       {
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor":"#fff",
-        "navigationStyle":"custom"
+        "navigationStyle":"custom",
+        "disableScroll": true
       }
     },
     {
@@ -44,7 +45,8 @@
         "navigationBarTitleText": "所有视频",
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor":"#fff",
-        "navigationStyle":"default"
+        "navigationStyle":"default",
+        "disableScroll": true
       }
     }],
 	"globalStyle": {

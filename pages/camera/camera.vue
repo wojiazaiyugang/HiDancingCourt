@@ -2,13 +2,9 @@
   <view class=" width-full heichi100 flex flex-direction justify-start bacamerPhto alitem-center" >
     <!-- 导航栏 -->
     <nvg-bar>
-      <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
-      <template v-slot:text><text class="black">拍照查询{{userFaceValiate}}</text></template>
+      <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
+      <template v-slot:text><text class="white">拍照查询</text></template>
     </nvg-bar>
-    <view class=" flex-direction margtop40 flex flex-center">
-      <view class="font-weight-500">请拍摄正面照</view>
-      <view class="fon28 margtop30" style="color: #c6c2cc;">点击头像拍照/更换照片</view>
-    </view>
    <view 
       @tap="navMask"
       v-if="userFaceValiate&&!isRePhoto"
@@ -32,6 +28,10 @@
         style="border: 200rpx solid #3F028B;"
         class="width-full height-full z-index10 absolute top-half left-half translate--50 boradiuoverall">
       </view>
+    </view>
+    <view class=" flex-direction margtop40 flex flex-center">
+      <view class="fon28 white" >点击头像重新拍照/更换照片</view>
+      <view class="font-weight-500 margtop30 white">请您保持与跳舞时一致妆容进行拍摄</view>
     </view>
     <view class="absolute bottom50 left-half translatex-50 widthchi210 heichixu100 boradiu42 text-center babotton line-heichi100" @click="useCamera">
       <text>点击拍照</text>

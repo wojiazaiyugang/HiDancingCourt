@@ -17,6 +17,9 @@
 .justify-start{
   justify-content: flex-start;
 }
+.flexwrap{
+  flex-wrap: wrap;
+}
 .alitem-center{
   align-items: center;
 }
@@ -26,11 +29,23 @@
 .margin5{
   margin: 5rpx 5rpx;
 }
-.margleft40{
-  margin-left: 40rpx;
+.marginy20{
+  margin: 40rpx 0rpx;
+}
+.marginx10{
+  margin: 0rpx 20rpx;
 }
 .margright20{
   margin-right: 20rpx;
+}
+.margleft5{
+  margin-left: 10rpx;
+}
+.margleft40{
+  margin-left: 40rpx;
+}
+.margleftchi50{
+  margin-left: 50%;
 }
 .margtop10{
   margin-top: 10rpx;
@@ -53,6 +68,18 @@
 .margtop120{
   margin-top: 120rpx;
 }
+.margtop200{
+  margin-top: 200rpx;
+}
+.margtop50zhi{
+  margin-top: 50%;
+}
+.marginbottom15{
+  margin-bottom: 30rpx;
+}
+.paddingy20{
+  padding: 40rpx 0rpx;
+}
 .z-inde1{
   z-index: 1;
 }
@@ -64,6 +91,9 @@
 }
 .relative{
   position: relative;
+}
+.fixed{
+  position: fixed;
 }
 .top0{
   top: 0rpx;
