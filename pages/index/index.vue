@@ -390,11 +390,16 @@
           this.verfication.map(item=>{
             tempCode = tempCode + item.toString()
           })
-          this.allVenues.map(item=>{
-            if(item.name==this.currentHourses){
-              selectId = item.id
-            }
-          })
+          if(this.currentHourses){
+            this.allVenues.map(item=>{
+              if(item.name==this.currentHourses){
+                selectId = item.id
+              }
+            })
+          }
+          else{
+            selectId = this.allVenues[0].id
+          }
           await verifyCode({
             // 场馆邀请码
             invite_code: parseInt(tempCode),  

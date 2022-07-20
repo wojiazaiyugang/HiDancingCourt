@@ -37,9 +37,6 @@
 		onHide: function() {
       
 		},
-    computed:{
-      ...mapState("m_user",["userId"]),
-    },
     methods: {
       ...mapActions("m_user",["getToken",]),
       ...mapActions("m_device",["getLocation"]),
