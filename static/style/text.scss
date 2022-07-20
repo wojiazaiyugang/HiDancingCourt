@@ -40,11 +40,14 @@
 .boradiu42{
   border-radius: 42rpx;
 }
+.boradiu50{
+  border-radius: 50rpx;
+}
+.boradiu90{
+  border-radius: 90rpx;
+}
 .boradiuoverall{
   border-radius: 100%;
-}
-.height-0{
-  height: 0rpx;
 }
 .heichi100{
   height: 100vh;
@@ -64,8 +67,14 @@
 .height-80{
   height: 80%;
 }
+.height-0{
+  height: 0rpx;
+}
 .heichi30{
   height: 30rpx;
+}
+.heichi36{
+  height: 36rpx;
 }
 .heichi40{
   height: 40rpx;
@@ -79,6 +88,9 @@
 .heichixu80{
   height: 160rpx;
 }
+.heichixu85{
+  height: 170rpx;
+}
 .heichifan120{
   height: 240rpx;
 }
@@ -87,6 +99,18 @@
 }
 .width-shi{
   width: 100vw;
+}
+.width60{
+  width: 60%;
+}
+.width80{
+  width: 80%;
+}
+.width90{
+  width: 90%;
+}
+.width-full{
+  width: 100%;
 }
 .width-0{
   width: 0rpx;
@@ -97,6 +121,9 @@
 .widchi15{
   width: 30rpx;
 }
+.widchi17{
+  width: 34rpx;
+}
 .widchi30{
   width: 60rpx;
 }
@@ -106,17 +133,17 @@
 .widchi60{
   width: 120rpx;
 }
+.widchi75{
+  width: 150rpx;
+}
+.widchi85{
+  width: 170rpx;
+}
+.widchi160{
+  width: 320rpx;
+}
 .widthchi210{
   width: 420rpx;
-}
-.width60{
-  width: 60%;
-}
-.width80{
-  width: 80%;
-}
-.width-full{
-  width: 100%;
 }
 .line-heichi30{
   line-height: 30rpx;

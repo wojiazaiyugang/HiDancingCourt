@@ -35,17 +35,20 @@
 .marginx10{
   margin: 0rpx 20rpx;
 }
-.margright20{
-  margin-right: 20rpx;
+.marginxy20{
+  margin: 40rpx 30rpx;
+}
+.margleftchi50{
+  margin-left: 50%;
 }
 .margleft5{
   margin-left: 10rpx;
 }
+.margleft25{
+  margin-left: 25rpx;
+}
 .margleft40{
   margin-left: 40rpx;
-}
-.margleftchi50{
-  margin-left: 50%;
 }
 .margtop10{
   margin-top: 10rpx;
@@ -74,8 +77,14 @@
 .margtop50zhi{
   margin-top: 50%;
 }
+.margright20{
+  margin-right: 20rpx;
+}
 .marginbottom15{
   margin-bottom: 30rpx;
+}
+.paddingx12{
+  padding: 0rpx 24rpx;
 }
 .paddingy20{
   padding: 40rpx 0rpx;
@@ -107,12 +116,6 @@
 .left-half{
   left: 50%;
 } 
-.translate--50{
-  transform: translate(-50%,-50%);
-}
-.translatex-50{
-  transform: translateX(-50%);
-}
 .left0{
   left: 0rpx;
 }
@@ -124,4 +127,10 @@
 }
 .bottom50{
   bottom: 50rpx;
+}
+.translate--50{
+  transform: translate(-50%,-50%);
+}
+.translatex-50{
+  transform: translateX(-50%);
 }

@@ -2,7 +2,7 @@
  import { mapActions, mapMutations, mapState } from "vuex"
 	export default {
 		onLaunch: function() {
-      console.log("123456")
+      console.log("123456789")
 		},
 		onShow: function() {
       console.log("onshow")

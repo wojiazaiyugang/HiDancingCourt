@@ -1,5 +1,5 @@
 <template>
-  <view class="container width-full background-cover">
+  <view class="heichi100 width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
     <!-- 导航栏 -->
     <nvg-bar>
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
@@ -7,8 +7,8 @@
     </nvg-bar>
     <!-- 没信息 -->
     <view v-if="isShow" class="flex flex-center height-full flex-direction">
-      <view class="btn-login fonweight" @click="loginUserinfo" >一键登录</view>
-      <view class="tips-text flex flex-center white fon28" @click="agreePrivacy">
+      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" @click="loginUserinfo" >一键登录</view>
+      <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
         </view>
@@ -23,26 +23,26 @@
    <!-- 有信息 -->
    <view v-if="!isShow" class="box">
      <!-- 头像 -->
-      <view class="userInfo flex flex-center" >
+      <view class="margtop40 paddingx12 flex flex-center" >
         <view v-if="userInfo" class="flex flex-center">
-          <image class="avatar flex flex-center" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+          <image class="avatar heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
           </image>
           
-          <text class="userName ellipsis white"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
+          <text class="margleft25 widchi160 ellipsis white"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
         </view>
         <view class="flex flex-center" v-else>
           <view @click="reLogin" class="avatar flex flex-center bamyava" >
             <image class="bamyava background-cover" style="height: 70rpx;width: 70rpx;" src="https://static.qiniuyun.highvenue.cn/image/DanceAvatar.png">
           </view>
-          <text class="userName fonweight" style="color: #3C3C3C;">请点击头像重新登录！</text>
+          <text class="margleft25 widchi160 fonweight" style="color: #3C3C3C;">请点击头像重新登录！</text>
         </view>
-        <view class="right flex flex-center">
+        <view class="widchi75 flex flex-center">
           <button type="default" open-type="contact" style="background: transparent; border: none!important;">
-            <view class="background-cover" style="width: 34rpx;height: 36rpx; background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceCustomer.png);">
+            <view class="background-cover widchi17 heichi36" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceCustomer.png);">
               
             </view>
           </button>
-          <view class="setting">
+          <view class="widchi17 heichi36">
             <image
             class="height-full width-full"
             @click="settings"
@@ -51,7 +51,7 @@
         </view>
       </view>
       
-     <view class="bannerInfo background-cover boradiu16">
+     <view class="marginxy20 background-cover heichi210 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
         
       </view>
     </view>
@@ -160,5 +160,5 @@
 </script>
 
 <style lang="scss">
-  @import "@/static/style/my"
+  
 </style>

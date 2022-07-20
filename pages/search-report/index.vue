@@ -24,6 +24,7 @@
         </scroll-view>
       </view>
     </view>
+
     <scroll-view 
       scroll-y="true" 
       class="height-80 overflow-hidden"
@@ -35,7 +36,7 @@
         <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
           请尝试重新拍照查询或联系管理员查看所有视频!
         </view>
-        <view v-else class="flex flexwrap height-full marginx10" style="align-content: flex-start;" >
+        <view v-if="allVideos.length!=0" class="flex flexwrap height-full marginx10" style="align-content: flex-start;" >
           <videoData 
             v-for="(item,index) in allVideos" 
             :key="index" 
@@ -83,6 +84,8 @@
         stopTime:"",
         // 滚动条的高度
         scrollHeight:0,
+        // 一次请求完事再进行下次请求
+        requestDone:true,
 			}
 		},
     components: {
@@ -109,6 +112,9 @@
       ]),
       // 选择各个小时间段
       selectDuration(data){
+        if(this.timeIndex==data.index){
+          return false
+        }
         this.timeIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
@@ -127,8 +133,10 @@
       },
       // 选择舞蹈房
       selectHouse(data){
+        if(this.houseIndex == data.index){
+          return false
+        }
         var siteId = data.item.id
-        console.log("查看id",siteId)
         this.scrollHeight = 0
         this.houseIndex = data.index
         this.currentPage = 1
@@ -151,7 +159,6 @@
       },
       // 初始化时间段
       initTime(){
-        console.log(this.searchData)
         this.houseId = this.searchData.houseId
         this.startTime = this.searchData.startTime 
         this.stopTime = this.searchData.stopTime 
@@ -161,39 +168,36 @@
           let tempStr = (tempTime - 2)>9?(tempTime - 2):"0"+(tempTime - 2)
           this.timeList.push(tempStr+":00~"+tempTime+":00")
         }
-        console.log("时间段",this.timeList)
       },
       // 根据舞蹈房ID获得教室
       async getRooms(){
-        console.log("查看所有场地",this.siteInfos)
         this.siteArray = this.siteInfos.map(item=>{
           return item.id
         })
         this.roomsList = this.siteInfos.concat([])
         this.roomsList.unshift("全部舞房")
-        console.log(this.roomsList)
-        console.log("输出站点数组",this.siteArray)
       },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
-        if(this.loadingDone){
-          return false
+        if(this.requestDone){
+          this.requestDone = false
+          if(this.loadingDone){
+            return false
+          }
+          this.$showLoading("加载中！","none")
+          const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
+          this.requestDone = true
+          this.$hideLoading()
+          this.loadingDone = data.length<this.perPage
+          this.allVideos = [...this.allSearchVideos,...data]
+          this.setAllSearchVideos([...this.allVideos])
+          this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
         }
-        this.$showLoading("加载中！","none")
-        const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
-        this.$hideLoading()
-        this.loadingDone = data.length<this.perPage
-        this.allVideos = [...this.allSearchVideos,...data]
-        this.setAllSearchVideos([...this.allVideos])
-        this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
       },
       // 下拉到底刷新数据
       async scroolBottom() {
         if(this.allVideos.length>=this.perPage){
-          console.log("xiala1")
           if(this.loadingDone){
-            console.log("xiala2")
-            this.$showMsg("数据已经加载完毕")
             return false
           }
           this.currentPage++
@@ -203,7 +207,6 @@
       },
       // 向上滑动更新所有的视频数据
       scroolTop(){
-        console.log("上滑")
         this.currentPage = 1
         this.loadingDone = false
         this.setAllSearchVideos([])

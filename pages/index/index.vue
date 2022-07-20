@@ -448,6 +448,96 @@
 </script>
 
 <style lang="scss">
-  @import "@/static/style/index";
   @import "@/static/style/vantprop";
+  .changeToolbar{
+    view:nth-of-type(1){
+      color: black;
+      font-size: 30rpx;
+    }
+    view:nth-of-type(2){
+      color: #7E70F1;
+      font-size: 30rpx;
+    }
+  }
+  view.selectStyle{
+      color: #7E70F1;
+      font-size: 35rpx;
+    }
+  .container {
+    background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);
+  }
+  .First-LongButton {
+    width: 95%;
+    margin-top: 310rpx;
+  }
+  .courtPicture {
+    height: 390rpx;
+    width: 600rpx;
+    background: linear-gradient(to right, #2de6f8 , #f76fed) ;
+    border-radius: 24rpx;
+  }
+  .Second-LongButton {
+    width: 95%;
+  }
+  .InputBoard{
+    height: 174rpx;
+    opacity: 0.2;
+    border-radius: 30rpx;
+  }
+  .InputItem{
+    width: 106rpx;
+    height: 106rpx;
+    line-height: 106rpx;
+    text-align: center;
+    font-size: 50rpx;
+    color: white;
+    opacity: 1;
+    border-radius: 10rpx;
+    border: 4rpx solid #FC06ED;
+  }
+  .Four-LongButton {
+    width: 95%;
+    height: 78rpx;
+    border-radius: 50rpx;
+    .First-LongButton-son{
+      flex: 1;
+      height: 66rpx;
+      margin: 6rpx 6rpx;
+      line-height: 66rpx;
+      border-radius: 40rpx;
+    }
+  }
+  .camera {
+    width: 105rpx;
+    height: 105rpx;
+    border-radius: 50%;
+    transform: translateY(-86.5%);
+    .camera-son {
+      width: 92rpx;
+      height: 92rpx;
+      border-radius: 50%; 
+    }
+  }
+  .bottomSearch {
+    width: 100%;
+    height: 159rpx;
+    margin-top: -50rpx;
+    justify-content: space-between;
+    .SearchVideo {
+      width: 400rpx;
+      height: 80rpx;
+      background: linear-gradient(to right, #2de6f8 , #f76fed);
+      margin: 14rpx 0rpx 14rpx 26rpx;
+      border-radius: 60rpx;
+      text-align: center;
+      line-height: 80rpx;
+    }
+    .my {
+      margin: 14rpx 26rpx 14rpx 0rpx;
+      width: 70rpx;
+      height: 70rpx;
+      background-image: url(https://static.qiniuyun.highvenue.cn/image/people.png);
+    }
+  }
+    
 </style>
