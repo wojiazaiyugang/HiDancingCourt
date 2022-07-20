@@ -1,168 +1,176 @@
 <template>
-	<view class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
-    <!-- Start 第一个Long-Button -->
-    <view class="First-LongButton" @click="chooseVenues">
-      <long-button>
-        <template v-slot:icon >
-        <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
-         class="height-full width-full"
-         mode="aspectFit"></image>
-        </template>
-        
-        <template v-slot:center-text>
-          <text class="fonweight fon28">{{currentHourses?currentHourses:"请选择您练舞的舞蹈房"}}</text>
-        </template>
-        
-        <template v-slot:i-choose>
-         <image src="https://static.qiniuyun.highvenue.cn/image/switch.png"
-          mode="aspectFit"
-          class="width60 height-full"></image >
-        </template>
-      </long-button>
-    </view>
-    <!-- End 第一个Long-Button -->
-    
-    <!-- Start 球馆图片 -->
-    <view class="courtPicture flex flex-center background-cover margtop40" >
-      <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
-       :style="{backgroundImage: `url(${currentBacimg})`}">
-        
+  <view>
+    <view v-if="loginComplete" class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
+      <!-- Start 第一个Long-Button -->
+      <view class="First-LongButton" @click="chooseVenues">
+        <long-button>
+          <template v-slot:icon >
+          <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
+           class="height-full width-full"
+           mode="aspectFit"></image>
+          </template>
+          
+          <template v-slot:center-text>
+            <text class="fonweight fon28">{{calName}}</text>
+          </template>
+          
+          <template v-slot:i-choose>
+           <image src="https://static.qiniuyun.highvenue.cn/image/switch.png"
+            mode="aspectFit"
+            class="width60 height-full"></image >
+          </template>
+        </long-button>
       </view>
-    </view>
-    <!-- End 球馆图片 -->
-    
-    <!-- Start 第二个Long-Button -->
-    <view class="Second-LongButton margtop40" @click="showTimePopup">
-      <long-button>
-        <template v-slot:icon>
-          <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
-        </template> 
-        <template v-slot:center-text>
-         <text class="fonweight fon28">{{currentTimes}}</text>
-        </template>
-        <template v-slot:i-choose>
-           <image class="height-full width60" 
-           src="https://static.qiniuyun.highvenue.cn/image/switch.png" 
-           mode="aspectFit" ></image >
-        </template>
-      </long-button>
-    </view>
-    <!-- End 第二个Long-Button -->
-    <!-- Start hide第三个Long-Button -->
-    <view style="width: 95%;margin-bottom: 45rpx; color: white;">
-      <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
-        <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
-      </view>
-      <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
-        <view
-         class="InputBoard flex flex-center bagreinput " >
-          <input
-            @input="keyInput"
-            :maxlength="4"
-            :focus="focusStatus"
-            :cursor-spacing="25"
-            type="number"
-            class="height-0 width-0 fon50 "/>
+      <!-- End 第一个Long-Button -->
+      
+      <!-- Start 球馆图片 -->
+      <view class="courtPicture flex flex-center background-cover margtop40" >
+        <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
+         :style="{backgroundImage: `url(${calBaimg})`}">
+          
         </view>
-        <view 
-        class="absolute top0 left0 z-inde10 width-full height-full">
-          <view class="width-full height-full flex justify-around alitem-center ">
-            <view class="InputItem bablack flex relative flex-center"
-            @click.stop="getFocus"
-              v-for= "(item,index) in verfication"
-              :key="index"
-              >
-               <view>{{item}}</view>
-               <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
-                 
+      </view>
+      <!-- End 球馆图片 -->
+      
+      <!-- Start 第二个Long-Button -->
+      <view class="Second-LongButton margtop40" @click="showTimePopup">
+        <long-button>
+          <template v-slot:icon>
+            <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
+          </template> 
+          <template v-slot:center-text>
+           <text class="fonweight fon28">{{currentTimes}}</text>
+          </template>
+          <template v-slot:i-choose>
+             <image class="height-full width60" 
+             src="https://static.qiniuyun.highvenue.cn/image/switch.png" 
+             mode="aspectFit" ></image >
+          </template>
+        </long-button>
+      </view>
+      <!-- End 第二个Long-Button -->
+      <!-- Start hide第三个Long-Button -->
+      <view style="width: 95%;margin-bottom: 45rpx; color: white;">
+        <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
+          <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
+        </view>
+        <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
+          <view
+           class="InputBoard flex flex-center bagreinput " >
+            <input
+              @input="keyInput"
+              :maxlength="4"
+              :focus="focusStatus"
+              :cursor-spacing="25"
+              type="number"
+              class="height-0 width-0 fon50 "/>
+          </view>
+          <view 
+          class="absolute top0 left0 z-inde10 width-full height-full">
+            <view class="width-full height-full flex justify-around alitem-center ">
+              <view class="InputItem bablack flex relative flex-center"
+              @click.stop="getFocus"
+                v-for= "(item,index) in verfication"
+                :key="index"
+                >
+                 <view>{{item}}</view>
+                 <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
+                   
+                 </view>
                </view>
-             </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
-    <!-- End 第三个Long-Button -->
-    <!-- Start 透明层 -->
-    <view class="Four-LongButton  flex flex-center babotton">
-      <view class="First-LongButton-son" >
-        
+      <!-- End 第三个Long-Button -->
+      <!-- Start 透明层 -->
+      <view class="Four-LongButton  flex flex-center babotton">
+        <view class="First-LongButton-son" >
+          
+        </view>
+        <view class="margright20 black">
+          人脸查询开关
+        </view>
+        <view @click="changeSelectFace" class="margright20 widchi40 flex alitem-center justify-start heichi40 bawhite boradiu42">
+          <view :class="['heichi30 line-heichi30 margleft5 relative z-inde1 boradiu42 babotton',faceSearch?'widchi30':'widchi15']" >
+            <view class="iconfont absolute top0 right0 icon-kaiguan white fon32" ></view>
+          </view>
+        </view>
+        <!-- Start 相机按钮 -->
       </view>
-      <view class="margright20 black">
-        人脸查询开关
-      </view>
-      <view @click="changeSelectFace" class="margright20 widchi40 flex alitem-center justify-start heichi40 bawhite boradiu42">
-        <view :class="['heichi30 line-heichi30 margleft5 relative z-inde1 boradiu42 babotton',faceSearch?'widchi30':'widchi15']" >
-          <view class="iconfont absolute top0 right0 icon-kaiguan white fon32" ></view>
+      
+      <view class="camera flex flex-center babotton"  @click="useCamera">
+        <view class="camera-son bacamer flex flex-center babotton" >
+          <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
+           mode="aspectFit" class="height-full width60"></image>
         </view>
       </view>
-      <!-- Start 相机按钮 -->
-    </view>
     
-    <view class="camera flex flex-center babotton"  @click="useCamera">
-      <view class="camera-son bacamer flex flex-center babotton" >
-        <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
-         mode="aspectFit" class="height-full width60"></image>
-      </view>
-    </view>
-  
-    <!-- Start底部 -->
-    <view class="bottomSearch flex" >
-      <!-- 用于占位 -->
-      <view style="width: 93rpx;" >
-       
-      </view>
-      <view class="SearchVideo" @click="SearchVideo">
-        <text class="fon28 black fonweight">查找视频</text>
-      </view>
-      <view class="my background-cover flex flex-center" @click="navigateMy">
-        <view class="black fonweight fon16 margtop40">
-          我的
+      <!-- Start底部 -->
+      <view class="bottomSearch flex" >
+        <!-- 用于占位 -->
+        <view style="width: 93rpx;" >
+         
+        </view>
+        <view class="SearchVideo" @click="SearchVideo">
+          <text class="fon28 black fonweight">查找视频</text>
+        </view>
+        <view class="my background-cover flex flex-center" @click="navigateMy">
+          <view class="black fonweight fon16 margtop40">
+            我的
+          </view>
         </view>
       </view>
-    </view>
-    <!-- End底部 -->
-   
-   <!-- Start选择场馆弹出层 -->
-   <uni-popup ref="popupVenues" :safeArea="false">
-     <van-picker 
-      show-toolbar
-      cancel-button-text="请选择舞蹈房"
-      confirm-button-text="确认"
-      active-class="selectStyle"
-      :isRecently="true"
-      toolbar-class="changeToolbar"
-      @confirm="confirmHouse"
-      @change="selectHouse"
-      :columns="columnsHouses" item-height="40"/>
-   </uni-popup>
+      <!-- End底部 -->
      
-    
-   <!-- Start 时间选择组件 -->
-   <uni-popup ref="popup" :safeArea="false">
-     <van-picker
-      show-toolbar
-      cancel-button-text="请选择日期"
-      confirm-button-text="确认"
-      active-class="selectStyle"
-      :isToday="true"
-      toolbar-class="changeToolbar"
-      visible-item-count="5"
-      @confirm="confirmHours"
-      @change="selectHours"
-      :columns="columnsDays" item-height="40"/>
-   </uni-popup>
-   <!-- End 时间选择组件 -->
-   
-   <!-- Start权限提示信息 -->
-   <uni-popup ref="permissionsPopup" type="dialog">
-      <uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" 
-      :before-close="true" 
-      @close="closeProp" 
-      @confirm="confirmProp">
-      </uni-popup-dialog>
-   </uni-popup>
-   <!-- End权限提示信息 -->
+     <!-- Start选择场馆弹出层 -->
+     <uni-popup ref="popupVenues" :safeArea="false">
+       <van-picker 
+        show-toolbar
+        cancel-button-text="请选择舞蹈房"
+        confirm-button-text="确认"
+        active-class="selectStyle"
+        :isRecently="true"
+        toolbar-class="changeToolbar"
+        @confirm="confirmHouse"
+        @change="selectHouse"
+        :columns="columnsHouses" item-height="40"/>
+     </uni-popup>
+       
+      
+     <!-- Start 时间选择组件 -->
+     <uni-popup ref="popup" :safeArea="false">
+       <van-picker
+        show-toolbar
+        cancel-button-text="请选择日期"
+        confirm-button-text="确认"
+        active-class="selectStyle"
+        :isToday="true"
+        toolbar-class="changeToolbar"
+        visible-item-count="5"
+        @confirm="confirmHours"
+        @change="selectHours"
+        :columns="columnsDays" item-height="40"/>
+     </uni-popup>
+     <!-- End 时间选择组件 -->
+     
+     <!-- Start权限提示信息 -->
+     <uni-popup ref="permissionsPopup" type="dialog">
+        <uni-popup-dialog type="info" mode="base" :content="`您已拒绝${permissionType}授权，如需开启，请点击确认进入设置页面重新授权`" 
+        :before-close="true" 
+        @close="closeProp" 
+        @confirm="confirmProp">
+        </uni-popup-dialog>
+     </uni-popup>
+     <!-- End权限提示信息 -->
+    </view>
+    <image
+      v-else
+      class="loading-bg"
+      src="https://static.qiniuyun.highvenue.cn/image/hicourt/loading.svg"
+    />
   </view>
+	
 </template>
 
 <script>
@@ -202,49 +210,45 @@
         faceSearch:true,
         // 视频搜索防止二次检索
         videoSearch:true,
+        // 授权的种类
+        permissionType:"",
 			}
 		},
-    watch:{
-      locationInfo(newValue,oldValue){
-        if(!newValue.latitude){
-          this.$refs.permissionsPopup&&this.$refs.permissionsPopup.open("center")
-        }
-      },
-      allVenues(newValue,oldValue){
-        if(newValue.length!=0){
-          this.columnsHouses = this.allVenues.filter(item=>{
-            if(item.data.supprt_find){
-              return item
-            }
-          })
-          this.columnsHouses = this.columnsHouses.map(item=>{
-            return item.name
-          })
-          this.currentHourses = this.columnsHouses[0]
-          this.currentBacimg = this.allVenues[0].data.thumbnail
-        }
-      }
-    },
     created() {
+      console.log("输出index")
       this.getTimeData()
       this.getDeviceInfo()
     },
     computed: {
-      ...mapState("m_venues",["startTime","stopTime","allVenues"]),
+      ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
       ...mapState("m_device",["locationInfo"]),
-      ...mapState("m_camera",["userFaceInfo"])
+      ...mapState("m_camera",["userFaceInfo"]),
+      calName(){
+        var tempCourt = this.allVenues.filter(item=>{
+          if(item.data.supprt_find){
+            return item
+          }
+        })
+        tempCourt = tempCourt.map(item=>{
+          return item.name
+        })
+        return tempCourt[0]
+      },
+      calBaimg(){
+       return this.allVenues[0]&&this.allVenues[0].data.thumbnail
+      },
     },
     // 分享到群聊
     onShareAppMessage(res) {
       return {
-        title: `快来欣赏我在${this.currentHourses}的精彩视频吧~`,
+        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}的精彩视频吧~`,
         path:`/pages/index/index`,
       }
     },
     // 分享朋友圈
     onShareTimeline(){
       return {
-        title: `快来欣赏我在${this.currentHourses}球场的精彩视频吧~`,
+        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}球场的精彩视频吧~`,
         query: ``,
       };
     },
@@ -258,9 +262,7 @@
       ...mapMutations("m_user",["setFaceSelect"]),
       // 修改是否人脸查找
       changeSelectFace(){
-        console.log("kaishi")
         this.faceSearch = !this.faceSearch
-        console.log("差别",this.faceSearch)
         this.setFaceSelect(this.faceSearch)
       },
       // 点击外层获取光标位置让其显示
@@ -279,7 +281,24 @@
       },
       // 打开选择场馆
       chooseVenues() {
-        this.$refs.popupVenues.open("bottom")
+        console.log("asdhajs",this.locationInfo)
+        // 定位没有完成
+        if(this.locationInfo.latitude){
+          this.columnsHouses = this.allVenues.filter(item=>{
+            if(item.data.supprt_find){
+              return item
+            }
+          })
+          this.columnsHouses = this.columnsHouses.map(item=>{
+            return item.name
+          })
+          console.log("suoyou",this.columnsHouses)
+          this.$refs.popupVenues.open("bottom")
+        }
+        else{
+          this.permissionType = "位置"
+          this.$refs.permissionsPopup.open("center")
+        }
       },
       // 选择舞房点击确认
       confirmHouse(){
@@ -318,7 +337,6 @@
           this.columnsDaysYear.push(calDateYear)
           this.currentTimes = this.columnsDaysYear[0]
         }
-        console.log("123456")
       },
       // 输出查看键盘输入
       keyInput(data){
@@ -336,7 +354,6 @@
       },
       // 调用相机
       useCamera() {
-        // this.$showMsg("暂不支持人脸查询！")
         uni.authorize({
           scope: "scope.camera",
           success: (res) => {
@@ -345,6 +362,7 @@
             })
           },
           fail: () => {
+            this.permissionType = "相机"
             this.$refs.permissionsPopup.open("center")
           }
         })
@@ -449,6 +467,14 @@
 
 <style lang="scss">
   @import "@/static/style/vantprop";
+  .loading-bg {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+  }
   .changeToolbar{
     view:nth-of-type(1){
       color: black;

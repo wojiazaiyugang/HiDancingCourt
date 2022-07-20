@@ -11,6 +11,8 @@ export default {
     siteIdVideo: [],
     // 根据场馆id搜索的场地信息
     siteInfos:[],
+    // 场地获取完成登录的标志
+    loginComplete:false,
   },
   
   mutations: {
@@ -23,6 +25,9 @@ export default {
     updateSiteIdVideo(state,payload) {
       state.siteIdVideo.push(...payload)
     },
+    setLoginComplete(state,payload){
+      state.loginComplete = payload
+    }
   },
   actions: {
     async getVenues({commit,state}){
@@ -38,6 +43,7 @@ export default {
         return item
       }))
       list.sort((pre,cur)=>pre.unDistance-cur.unDistance)
+      commit("setLoginComplete",true)
       commit("setAllVenues",list)
     },
   }
