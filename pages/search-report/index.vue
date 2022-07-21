@@ -190,14 +190,17 @@
           this.$hideLoading()
           this.loadingDone = data.length<this.perPage
           this.allVideos = [...this.allSearchVideos,...data]
+          console.log("正常拉取",this.allVideos)
           this.setAllSearchVideos([...this.allVideos])
           this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
         }
       },
       // 下拉到底刷新数据
       async scroolBottom() {
+        console.log("下滑")
         if(this.allVideos.length>=this.perPage){
           if(this.loadingDone){
+            this.$showMsg("视频已加载完毕！")
             return false
           }
           this.currentPage++
@@ -206,11 +209,28 @@
         
       },
       // 向上滑动更新所有的视频数据
-      scroolTop(){
-        this.currentPage = 1
-        this.loadingDone = false
-        this.setAllSearchVideos([])
-        this.getVideosByFace()
+      async scroolTop(){
+        console.log("上滑")
+        var upPage = 1
+        if(this.requestDone){
+          this.requestDone = false
+          this.$showLoading("加载中！","none")
+          const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect)
+          this.$hideLoading()
+          this.requestDone = true
+          // 上滑数组筛选
+          this.allVideos = this.allVideos.filter((item,index)=>{
+            if(data[index]&&data[index].id!=item.id){
+              return item
+            }
+            if(!data[index]){
+              return item
+            }
+          })
+          this.allVideos = [...data,...this.allVideos]
+          this.setAllSearchVideos([...this.allVideos])
+          this.setVideoPages({curPage:upPage,perPage:this.perPage})
+        }
       },
     },
 	}

@@ -113,6 +113,9 @@
 .top-half{
   top: 50%;
 } 
+.top-70{
+  top: 70%;
+} 
 .left-half{
   left: 50%;
 } 
@@ -125,12 +128,27 @@
 .right20{
   right: 20rpx;
 }
+.bottom0{
+  bottom: 0rpx;
+}
 .bottom50{
   bottom: 50rpx;
+}
+.bottom100{
+  bottom: 100rpx;
+}
+.bottom140{
+  bottom: 140rpx;
+}
+.bottom200{
+  bottom: 200rpx;
 }
 .translate--50{
   transform: translate(-50%,-50%);
 }
 .translatex-50{
   transform: translateX(-50%);
+}
+.translatey-50{
+  transform: translateY(-50%);
 }

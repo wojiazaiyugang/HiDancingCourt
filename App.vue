@@ -6,33 +6,36 @@
       this.getToken().finally(()=>{
         this.getLocation().finally(()=>{
           this.getVenues()
+          this.getDeviceInfo()
         })
       })
 		},
 		onShow: function() {
       console.log("onshow")
       const updateManager = wx.getUpdateManager()
-      // 检查是否版本更新
-      updateManager.onCheckForUpdate(function (res) {
-        // 请求完新版本信息的回调
-        // 版本有更新发生提示
-        updateManager.onUpdateReady(function () {
-          wx.showModal({
-            title: "更新提示",
-            content: "新版本已经准备好，是否重启应用？",
-            success: function (res) {
-              if (res.confirm) {
-                // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-                updateManager.applyUpdate()
+      if(updateManager){
+        // 检查是否版本更新
+        updateManager.onCheckForUpdate(function (res) {
+          // 请求完新版本信息的回调
+          // 版本有更新发生提示
+          updateManager.onUpdateReady(function () {
+            wx.showModal({
+              title: "更新提示",
+              content: "新版本已经准备好，是否重启应用？",
+              success: function (res) {
+                if (res.confirm) {
+                  // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                  updateManager.applyUpdate()
+                }
               }
-            }
+            })
+          })
+          // 新版本更新失败进行提示
+          updateManager.onUpdateFailed(function () {
+          
           })
         })
-        // 新版本更新失败进行提示
-        updateManager.onUpdateFailed(function () {
-        
-        })
-      })
+      }
 		},
 		onHide: function() {
       
@@ -41,6 +44,17 @@
       ...mapActions("m_user",["getToken",]),
       ...mapActions("m_device",["getLocation"]),
       ...mapActions("m_venues",["getVenues"]),
+      ...mapMutations("m_device",["setDeviceInfo"]),
+      // 存储当前设备的信息
+      async getDeviceInfo(){
+        await uni.getSystemInfo({
+          success:async(res)=> {
+            // 得到胶囊位置信息
+            let menuInfo = await uni.getMenuButtonBoundingClientRect()
+            this.setDeviceInfo(Object.assign({}, res, {menuInfo}))
+          }
+        })
+      },
     }
 	}
 </script>

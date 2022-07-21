@@ -20,7 +20,8 @@
           
         </view>
         <view class="width-full flex flex-center" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
-          <view class="iconfont icon-fanhui absolute fon28 white widchi60" :style="{lineHeight: ((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" @click="goBack">
+          <view class="iconfont icon-fanhui absolute fon28 white widchi60" :style="{lineHeight: ((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" 
+          @click="goBack">
             
           </view>
           <view style="color: white;">
@@ -28,27 +29,30 @@
           </view>
         </view>
       </view>
-      <view 
+      <view
+        v-show="!isShare"
         @click="preVideo"
-        class="flex flex-center absolute bablack"
-        style="left: 0rpx;opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;" 
-        :style="{top:deviceInfo.screenHeight+'rpx'}">
+        class="flex flex-center absolute bablack left0 top-half translatey-50"
+        style="opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;" >
         <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
           
         </view>
       </view>
       <view
+        v-show="!isShare"
         @click="nextVideo"
-        class="flex flex-center absolute bablack"
-        style="right: 0rpx;opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;" 
-        :style="{top:deviceInfo.screenHeight+'rpx'}">
+        class="flex flex-center absolute bablack right0 top-half translatey-50"
+        style="opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;" >
         <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
           
         </view>
       </view>
+      
+      
+      
+      
       <view 
-        class="flex absolute width-full justify-between alitem-center"
-        style="bottom: 100rpx;height: 150rpx;">
+        class="flex absolute width-full justify-between alitem-center left0 heichishi100 bottom100">
         <view 
           :style="{marginLeft:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}"
         >
@@ -62,20 +66,29 @@
             {{playVideo.goal_time}}
           </view>
         </view>
-        <view
-          @click="downloadVideo"
-          class="flex flex-center bapruple"
-          style="width: 250rpx;height: 80rpx;border-radius: 50rpx;" 
-          :style="{marginRight:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}">
-          <view class="fon28 white" style="margin-right: 15rpx;">
-            获取
-          </view>
-          <view class="background-cover white" style="width: 37rpx;height: 30rpx;background-image: url(https://static.qiniuyun.highvenue.cn/image/downlogo.png);">
-            
-          </view>
-        </view>
       </view>
     </view>
+    
+    
+    <view v-show="!isShare" class="absolute right20 top-70 translatey-50 widchi50 heichifan150 flex flex-direction justify-between alitem-center">
+      <view
+        @click="downloadVideo"
+        class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
+         <view class="iconfont icon-xiazaidaoru white fon60 opcity10" ></view>
+      </view>
+      <view class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
+        <button
+          class="bg-trans widchi20 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center"
+          open-type="share"
+        >
+          <view class="iconfont icon-zhuanfa white fon60 white opcity10" ></view>
+        </button>
+      </view>
+    </view>
+    
+    
+    
+    
     <uni-popup ref="cameraPermiss" type="dialog">
     	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" :duration="2000" :before-close="true" @close="closeCamera" @confirm="confirmCamera"></uni-popup-dialog>
     </uni-popup>
@@ -84,7 +97,7 @@
 
 <script>
   import { mapState, mapMutations } from "vuex"
-  import { addDownload } from "@/api/video.js"
+  import { addDownload, getVideo, } from "@/api/video.js"
   import { getAllvideos } from "@/api/search.js"
   export default {
     data() {
@@ -103,11 +116,22 @@
         isPlay:true,
         // 是否是集体视频
         isTotal:false,
+        // 是否分享视频
+        isShare:false,
+        // 分享进来的video_id
+        shareId:0,
       };
     },
-    created() {
+    onLoad(e) {
+      console.log("查看分享",e)
+      if(e.id){
+        console.log("分享")
+        this.isShare = true
+        this.shareId = e.id
+        this.getVideoDetail()
+        return false
+      }
       this.playingVideo()
-      console.log("查看设备",this.deviceInfo)
     },
     computed: {
       ...mapState("m_video",[
@@ -123,8 +147,28 @@
         return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
       }
     },
+    // 分享到群聊
+    onShareAppMessage(res) {
+      return {
+        title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
+        path:`/pages/video-detail/index?id=${this.playVideo.id}`,
+      }
+    },
+    // 分享朋友圈
+    onShareTimeline(){
+      return {
+        title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
+        query: `id=${this.playVideo.id}`,
+      };
+    },
     methods: {
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 根据视频ID获得视频信息
+      async getVideoDetail(){
+        let {data} = await getVideo(this.shareId)
+        this.playVideo = data
+        this.isTotal = this.playVideo.name.split(".")[0].includes("group")
+      },
       // 点击视频进行播放与否
       clickControl(){
         if(this.isPlay){
@@ -140,12 +184,19 @@
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
+        console.log("查看当前播放视频",this.playVideo)
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
         this.nextPage = this.videoPages.curPage
       },
       // 返回上一页
       goBack(){
+        if(this.isShare){
+          uni.navigateTo({
+            url: "../index/index",
+          })
+          return false
+        }
         uni.navigateBack({
         	delta: 1,
         });
@@ -287,19 +338,9 @@
       },
       // 下载视频的动作
       async saveToAlbum() {
-        let that = this;
-        that.$showLoading("下载中！")
-        var myDate = new Date();
-        that.$download({
-          url: that.playVideo.download_src,
-          async success() {
-            await addDownload(that.playVideo.id) 
-            that.$hideLoading()
-            that.$showMsg("下载成功！")
-          },
-          fail() {
-            that.$showMsg("下载失败！")
-          },
+        this.$download({
+          url: this.playVideo.download_src,
+          video_id: this.playVideo.id,
         });
       },
     }

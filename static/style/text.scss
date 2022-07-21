@@ -22,6 +22,9 @@
 .fon50{
   font-size: 50rpx;
 }
+.fon60{
+  font-size: 60rpx;
+}
 .fonweight{
   font-weight: 550;
 }
@@ -82,6 +85,9 @@
 .heichi60{
   height: 60rpx;
 }
+.heichiduan80{
+  height: 80rpx;
+}
 .heichixu100{
   height: 100rpx;
 }
@@ -91,8 +97,14 @@
 .heichixu85{
   height: 170rpx;
 }
+.heichishi100{
+  height: 200rpx;
+}
 .heichifan120{
   height: 240rpx;
+}
+.heichifan150{
+  height: 300rpx;
 }
 .heichi210{
   height: 420rpx;
@@ -124,11 +136,20 @@
 .widchi17{
   width: 34rpx;
 }
+.widchi20{
+  width: 40rpx;
+}
+.widchi25{
+  width: 50rpx;
+}
 .widchi30{
   width: 60rpx;
 }
 .widchi40{
   width: 80rpx;
+}
+.widchi50{
+  width: 100rpx;
 }
 .widchi60{
   width: 120rpx;
@@ -171,6 +192,9 @@
 }
 .text-center{
   text-align: center;
+}
+.opcity10{
+  opacity: 1;
 }
 .ellipsis {
   white-space:nowrap;

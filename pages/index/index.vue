@@ -217,7 +217,6 @@
     created() {
       console.log("输出index")
       this.getTimeData()
-      this.getDeviceInfo()
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
@@ -248,7 +247,7 @@
     // 分享朋友圈
     onShareTimeline(){
       return {
-        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}球场的精彩视频吧~`,
+        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}的精彩视频吧~`,
         query: ``,
       };
     },
@@ -256,7 +255,6 @@
       ...mapActions("m_device",["getLocation",]),
       ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
-      ...mapMutations("m_device",["setDeviceInfo"]),
       ...mapMutations("m_venues",["setSiteInfos"]),
       ...mapMutations("m_camera",["setUserFaceInfo"]),
       ...mapMutations("m_user",["setFaceSelect"]),
@@ -268,16 +266,6 @@
       // 点击外层获取光标位置让其显示
       getFocus(){
         this.focusStatus = !this.focusStatus
-      },
-      // 存储当前设备的信息
-      async getDeviceInfo(){
-        await uni.getSystemInfo({
-          success:async(res)=> {
-            // 得到胶囊位置信息
-            let menuInfo = await uni.getMenuButtonBoundingClientRect()
-            this.setDeviceInfo(Object.assign({}, res, {menuInfo}))
-          }
-        })
       },
       // 打开选择场馆
       chooseVenues() {
