@@ -1,12 +1,15 @@
 <script>
  import { mapActions, mapMutations, mapState } from "vuex"
+ import { getUserFace, } from "@/api/user.js"
 	export default {
 		onLaunch: function() {
       console.log("onlaunch")
       this.getToken().finally(()=>{
         this.getLocation().finally(()=>{
+          console.log("1234")
           this.getVenues()
           this.getDeviceInfo()
+          this.getFaceInfo()
         })
       })
 		},
@@ -45,6 +48,7 @@
       ...mapActions("m_device",["getLocation"]),
       ...mapActions("m_venues",["getVenues"]),
       ...mapMutations("m_device",["setDeviceInfo"]),
+      ...mapMutations("m_camera",["setUserFaceInfo"]),
       // 存储当前设备的信息
       async getDeviceInfo(){
         await uni.getSystemInfo({
@@ -54,6 +58,11 @@
             this.setDeviceInfo(Object.assign({}, res, {menuInfo}))
           }
         })
+      },
+      async getFaceInfo(){
+        // 获取人脸信息
+        let {data} = await getUserFace()
+          this.setUserFaceInfo(data.data.face_img)
       },
     }
 	}

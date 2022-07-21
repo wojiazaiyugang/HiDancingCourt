@@ -1,7 +1,7 @@
 <template>
 	<view class="width-shi heichi100 ba-f7 bawhite overflow-hidden">
     <view class="heichixu80 marginy20">
-      <view style="margin:0rpx 20rpx;white-space: nowrap">
+      <view style="white-space: nowrap" class="marginx10">
         <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in timeList"
             class="timeDuration letter-spacing1"
@@ -32,16 +32,21 @@
       @scrolltoupper="scroolTop"
       @scrolltolower="scroolBottom" 
     >
-      <view class="height-full " style="margin-top: 10rpx;">
+      <view class=" " style="margin-top: 10rpx;">
         <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
           请尝试重新拍照查询或联系管理员查看所有视频!
         </view>
-        <view v-if="allVideos.length!=0" class="flex flexwrap height-full marginx10" style="align-content: flex-start;" >
-          <videoData 
+        <view v-if="allVideos.length!=0" class="marginx10">
+<!--          <videoData 
             v-for="(item,index) in allVideos" 
             :key="index" 
             :video="item">
-          </videoData>
+          </videoData> -->
+          <videoAll
+            v-for="(item,index) in allVideos.slice(0,1)" 
+            :key="index" 
+            :videoAll="item">
+          </videoAll>
         </view>
       </view>
 
@@ -52,7 +57,9 @@
 <script>
   import { mapState, mapMutations, } from "vuex"
   import { getAllvideos } from "@/api/search.js"
-  import { videoData } from "@/components/videoData"
+  import { getSites } from "@/api/venues.js"
+  import videoData from "@/components/videoData"
+  import videoAll  from "@/components/videoAll"
 	export default {
 		data() {
 			return {
@@ -90,6 +97,7 @@
 		},
     components: {
       videoData,
+      videoAll,
     },
     computed: {
       ...mapState("m_venues",["siteInfos"]),
@@ -99,7 +107,6 @@
     created() {
       this.getRooms()
       this.initTime()
-      this.getVideosByFace()
       this.setAllSearchVideos([])
     },
 		methods: {
@@ -110,6 +117,19 @@
       "setSearchData",
       "setVideoHouse",
       ]),
+      ...mapMutations("m_venues",["setSiteInfos"]),
+      // 获得舞房有多少个房间
+      async getRooms(){
+        let {data} = await getSites(this.searchData.houseId)
+        console.log("chakan",data)
+        this.setSiteInfos(data)
+        this.siteArray = data.map(item=>{
+          return item.id
+        })
+        this.getVideosByFace()
+        this.roomsList = this.siteInfos.concat([])
+        this.roomsList.unshift("全部舞房")
+      },
       // 选择各个小时间段
       selectDuration(data){
         if(this.timeIndex==data.index){
@@ -169,14 +189,6 @@
           this.timeList.push(tempStr+":00~"+tempTime+":00")
         }
       },
-      // 根据舞蹈房ID获得教室
-      async getRooms(){
-        this.siteArray = this.siteInfos.map(item=>{
-          return item.id
-        })
-        this.roomsList = this.siteInfos.concat([])
-        this.roomsList.unshift("全部舞房")
-      },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         if(this.requestDone){
@@ -216,6 +228,7 @@
           this.requestDone = false
           this.$showLoading("加载中！","none")
           const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect)
+          console.log("拉取数据",data)
           this.$hideLoading()
           this.requestDone = true
           // 上滑数组筛选

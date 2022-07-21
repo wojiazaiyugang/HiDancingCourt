@@ -33,7 +33,15 @@
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
-        "navigationBarBackgroundColor":"#fff",
+        "navigationStyle":"custom",
+        "disableScroll": true
+      }
+    },
+    {
+      "path" : "pages/clip-video/index",
+      "style" :                                                                                    
+      {
+        "enablePullDownRefresh": false,
         "navigationStyle":"custom",
         "disableScroll": true
       }

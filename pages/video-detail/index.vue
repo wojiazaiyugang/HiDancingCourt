@@ -47,10 +47,6 @@
           
         </view>
       </view>
-      
-      
-      
-      
       <view 
         class="flex absolute width-full justify-between alitem-center left0 heichishi100 bottom100">
         <view 
@@ -69,13 +65,7 @@
       </view>
     </view>
     
-    
-    <view v-show="!isShare" class="absolute right20 top-70 translatey-50 widchi50 heichifan150 flex flex-direction justify-between alitem-center">
-      <view
-        @click="downloadVideo"
-        class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
-         <view class="iconfont icon-xiazaidaoru white fon60 opcity10" ></view>
-      </view>
+    <view v-show="!isShare" class="absolute right20 top-80 translatey-50 widchi50 heichifan150 flex flex-direction justify-between alitem-center">
       <view class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
         <button
           class="bg-trans widchi20 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center"
@@ -83,6 +73,11 @@
         >
           <view class="iconfont icon-zhuanfa white fon60 white opcity10" ></view>
         </button>
+      </view>
+      <view
+        @click="downloadVideo"
+        class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
+         <view class="iconfont icon-xiazaidaoru white fon60 opcity10" ></view>
       </view>
     </view>
     
@@ -349,4 +344,7 @@
 
 <style lang="scss">
   @import "@/static/style/vantprop";
+  button::after {
+    border: none;
+  }
 </style>

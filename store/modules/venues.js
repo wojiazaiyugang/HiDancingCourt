@@ -44,6 +44,7 @@ export default {
       }))
       list.sort((pre,cur)=>pre.unDistance-cur.unDistance)
       commit("setLoginComplete",true)
+      console.log("dengludangwei")
       commit("setAllVenues",list)
     },
   }

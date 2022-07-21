@@ -176,9 +176,7 @@
 <script>
   import { mapMutations,mapState,mapActions } from "vuex"
   import { verifyCode } from "@/api/search.js"
-  import { getSites } from "@/api/venues.js"
-  import { getUserFace, } from "@/api/user.js"
-  import LongButton from "@/components/long-button"
+  import LongButton from "@/components/longButton"
   import Vue from "vue"
 	export default {
     components:{
@@ -255,8 +253,6 @@
       ...mapActions("m_device",["getLocation",]),
       ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
-      ...mapMutations("m_venues",["setSiteInfos"]),
-      ...mapMutations("m_camera",["setUserFaceInfo"]),
       ...mapMutations("m_user",["setFaceSelect"]),
       // 修改是否人脸查找
       changeSelectFace(){
@@ -360,17 +356,6 @@
         if(this.videoSearch){
           this.videoSearch = false
           this.$showLoading("页面正在跳转！")
-          await getUserFace().then(async value=>{
-            if(value.code==-1){
-              this.videoSearch = true
-              this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000,"none")
-              return false
-            }
-            if(value.code==0){
-              var tempImg = value.data.data.face_img
-              this.setUserFaceInfo(tempImg)
-            }
-          })
           // 输入得四位验证码
           var tempCode = ""
           // 所选择的场馆id
@@ -401,22 +386,19 @@
               this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
             }
             else{
-              await getSites(selectId).then((value)=>{
-                this.setSiteInfos(value.data)
-                if(this.userFaceInfo){
-                  this.$hideLoading()
-                  this.videoSearch = true
-                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
-                  uni.navigateTo({
-                    url: "../search-report/index",
-                  })
-                }
-                else{
-                  this.$hideLoading()
-                  this.videoSearch = true
-                  this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
-                }
-              })
+              if(this.userFaceInfo){
+                this.$hideLoading()
+                this.videoSearch = true
+                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
+                uni.navigateTo({
+                  url: "../search-report/index",
+                })
+              }
+              else{
+                this.$hideLoading()
+                this.videoSearch = true
+                this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
+              }
             }
           })
         }
