@@ -107,7 +107,7 @@
     },
     created() {
       this.playingVideo()
-      console.log("查看设备",this.deviceInfo)
+      console.log("查看设备",this.deviceInfo,this.userInfo,)
     },
     computed: {
       ...mapState("m_video",[
@@ -119,6 +119,7 @@
       ]),
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_device",["deviceInfo"]),
+      ...mapState("m_user",["userInfo"]),
       calHeight(){
         return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
       }
@@ -140,9 +141,18 @@
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
+        console.log("查看当前视频",this.playVideo)
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
         this.nextPage = this.videoPages.curPage
+        // we分析统计观看视频的次数
+        wx.reportEvent("watch_video", {
+          "dancingroom_name": this.playVideo.venue_name,
+          "dancingroom_id": this.playVideo.venue_id,
+          "video_id":this.playVideo.id,
+          "user_name": this.userInfo.data.open_data.nickName,
+          "user_id": this.userInfo.data.id
+        })
       },
       // 返回上一页
       goBack(){
@@ -170,6 +180,14 @@
           	duration: 1000
           });
         }
+        // we分析统计观看视频的次数
+        wx.reportEvent("watch_video", {
+          "dancingroom_name": this.playVideo.venue_name,
+          "dancingroom_id": this.playVideo.venue_id,
+          "video_id":this.playVideo.id,
+          "user_name": this.userInfo.data.open_data.nickName,
+          "user_id": this.userInfo.data.id
+        })
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
       },
       // 下一个视频
@@ -229,6 +247,14 @@
             this.playVideo = this.allSearchVideos[this.numberId+1]
           }
         }
+        // we分析统计观看视频的次数
+        wx.reportEvent("watch_video", {
+          "dancingroom_name": this.playVideo.venue_name,
+          "dancingroom_id": this.playVideo.venue_id,
+          "video_id":this.playVideo.id,
+          "user_name": this.userInfo.data.open_data.nickName,
+          "user_id": this.userInfo.data.id
+        })
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
       },
       // 拒绝开启相册权限弹出窗关闭事件
