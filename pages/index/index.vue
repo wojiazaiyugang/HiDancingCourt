@@ -11,7 +11,7 @@
           </template>
           
           <template v-slot:center-text>
-            <text class="fonweight fon28">{{calName}}</text>
+            <text class="fonweight fon28">{{currentHourses?currentHourses:calName}}</text>
           </template>
           
           <template v-slot:i-choose>
@@ -26,7 +26,7 @@
       <!-- Start 球馆图片 -->
       <view class="courtPicture flex flex-center background-cover margtop40" >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
-         :style="{backgroundImage: `url(${calBaimg})`}">
+         :style="{backgroundImage: `url(${currentBacimg?currentBacimg:calBaimg})`}">
           
         </view>
       </view>
