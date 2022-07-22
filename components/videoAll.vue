@@ -1,6 +1,6 @@
 <template>
   <view class="width-full heichi210 boradiu24 background-cover relative"
-    style="background-color: #0077AA;"
+  :style="{backgroundImage:`url(${videoAll.download_src}?vframe/jpg/offset/8/w/266/h/150)`}"
     @click="clickVideo"
   >
     <view class="absolute right0 top0 babotton heichi60 white fon24 widchi75 line-heichi60 text-center " style="border-radius: 0rpx 24rpx 0rpx 24rpx;" >
@@ -39,8 +39,9 @@
     methods: {
       // 跳转剪辑视频页面
       clickVideo() {
+        console.log("查看集体视频",this.videoAll.data.record_name)
         uni.navigateTo({
-          url: "../../pages/clip-video/index"
+          url: `../../pages/clip-video/index?name=${this.videoAll.data.record_name}`
         })
       }
     }

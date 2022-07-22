@@ -4,7 +4,7 @@
       <view style="white-space: nowrap" class="marginx10">
         <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in timeList"
-            class="timeDuration letter-spacing1"
+            class="display-block paddingx25 line-heichi60 heichi60 fon28 boradiu30 text-center letter-spacing1"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
             @click="selectDuration({item,index})"
             :key="index"
@@ -12,9 +12,9 @@
             {{item}}
           </view>
         </scroll-view>
-        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60" :scroll-top="scrollHeight">
+        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60" >
           <view v-for="(item,index) in roomsList"
-            class="timeDuration black letter-spacing1"
+            class="display-block paddingx25 line-heichi60 heichi60 fon28 boradiu30 text-center black letter-spacing1"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
             @click="selectHouse({item,index})"
             :key="index"
@@ -24,26 +24,21 @@
         </scroll-view>
       </view>
     </view>
-
     <scroll-view 
       scroll-y="true" 
       class="height-80 overflow-hidden"
+      style="background-color: #0077AA;"
       :show-scrollbar="false"
       @scrolltoupper="scroolTop"
       @scrolltolower="scroolBottom" 
     >
-      <view class=" " style="margin-top: 10rpx;">
+      <view class=" margtop10">
         <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
           请尝试重新拍照查询或联系管理员查看所有视频!
         </view>
         <view v-if="allVideos.length!=0" class="marginx10">
-<!--          <videoData 
+         <videoAll
             v-for="(item,index) in allVideos" 
-            :key="index" 
-            :video="item">
-          </videoData> -->
-          <videoAll
-            v-for="(item,index) in allVideos.slice(0,1)" 
             :key="index" 
             :videoAll="item">
           </videoAll>
@@ -58,7 +53,6 @@
   import { mapState, mapMutations, } from "vuex"
   import { getAllvideos } from "@/api/search.js"
   import { getSites } from "@/api/venues.js"
-  import videoData from "@/components/videoData"
   import videoAll  from "@/components/videoAll"
 	export default {
 		data() {
@@ -89,46 +83,50 @@
         startTime:"",
         // 搜索的结束时间
         stopTime:"",
-        // 滚动条的高度
-        scrollHeight:0,
         // 一次请求完事再进行下次请求
         requestDone:true,
+        // 查找集体视频还是小视频
+        videoType:"",
+        // 下滑刷新
+        sliderDown:false
 			}
 		},
     components: {
-      videoData,
       videoAll,
     },
     computed: {
       ...mapState("m_venues",["siteInfos"]),
-      ...mapState("m_video",["searchData","allSearchVideos"]),
+      ...mapState("m_video",["searchData",]),
       ...mapState("m_user",["faceSelect"]),
     },
     created() {
       this.getRooms()
       this.initTime()
-      this.setAllSearchVideos([])
     },
 		methods: {
-      ...mapMutations("m_video",
-      ["setAllSearchVideos",
-      "setVideoPages",
+      ...mapMutations("m_video",[
       "setSearchData",
-      "setSearchData",
-      "setVideoHouse",
+      "setSelectSite",
+      "setSiteId",
       ]),
       ...mapMutations("m_venues",["setSiteInfos"]),
       // 获得舞房有多少个房间
       async getRooms(){
-        let {data} = await getSites(this.searchData.houseId)
-        console.log("chakan",data)
-        this.setSiteInfos(data)
-        this.siteArray = data.map(item=>{
-          return item.id
+        if(this.faceSelect){
+          this.videoType = "child"
+        }
+        else{
+          this.videoType = "parent"
+        }
+        await getSites(this.searchData.houseId).then(data=>{
+          this.setSiteInfos(data.data)
+          this.siteArray = data.data.map(item=>{
+            return item.id
+          })
+          this.getVideosByFace()
+          this.roomsList = this.siteInfos.concat([])
+          this.roomsList.unshift("全部舞房")
         })
-        this.getVideosByFace()
-        this.roomsList = this.siteInfos.concat([])
-        this.roomsList.unshift("全部舞房")
       },
       // 选择各个小时间段
       selectDuration(data){
@@ -138,7 +136,6 @@
         this.timeIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
-        this.setAllSearchVideos([])
         if(data.index==0){
           this.startTime = this.searchData.startTime.split(" ")[0]+" "+"00:00:00"
           this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+"24:00:00"
@@ -156,24 +153,23 @@
         if(this.houseIndex == data.index){
           return false
         }
-        var siteId = data.item.id
-        this.scrollHeight = 0
         this.houseIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
-        this.setAllSearchVideos([])
         if(data.index==0){
+          this.setSelectSite(false)
           this.siteArray = this.siteInfos.map(item=>{
             return item.id
           })
           this.getVideosByFace()
-          this.setVideoHouse({id:siteId,clickStatus:false})
           return false
         }
         else{
-          this.siteArray = [data.item.id]
+          let siteId = data.item.id
+          this.siteArray = [siteId]
+          this.setSiteId(siteId)
+          this.setSelectSite(true)
           this.getVideosByFace()
-          this.setVideoHouse({id:siteId,clickStatus:true})
           return false
         }
       },
@@ -197,20 +193,18 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
+          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType)
           this.requestDone = true
           this.$hideLoading()
           this.loadingDone = data.length<this.perPage
-          this.allVideos = [...this.allSearchVideos,...data]
-          console.log("正常拉取",this.allVideos)
-          this.setAllSearchVideos([...this.allVideos])
-          this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
+          this.allVideos = [...this.allVideos,...data]
         }
       },
       // 下拉到底刷新数据
       async scroolBottom() {
-        console.log("下滑")
+        console.log("xia外")
         if(this.allVideos.length>=this.perPage){
+          console.log("xia里")
           if(this.loadingDone){
             this.$showMsg("视频已加载完毕！")
             return false
@@ -218,31 +212,30 @@
           this.currentPage++
           this.getVideosByFace()
         }
-        
       },
       // 向上滑动更新所有的视频数据
       async scroolTop(){
-        console.log("上滑")
-        var upPage = 1
-        if(this.requestDone){
-          this.requestDone = false
-          this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect)
-          console.log("拉取数据",data)
-          this.$hideLoading()
-          this.requestDone = true
-          // 上滑数组筛选
-          this.allVideos = this.allVideos.filter((item,index)=>{
-            if(data[index]&&data[index].id!=item.id){
-              return item
-            }
-            if(!data[index]){
-              return item
-            }
-          })
-          this.allVideos = [...data,...this.allVideos]
-          this.setAllSearchVideos([...this.allVideos])
-          this.setVideoPages({curPage:upPage,perPage:this.perPage})
+        console.log("上外")
+        if(this.allVideos.length>=this.perPage){
+          console.log("上里")
+          var upPage = 1
+          if(this.requestDone){
+            this.requestDone = false
+            this.$showLoading("加载中！","none")
+            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType)
+            this.$hideLoading()
+            this.requestDone = true
+            // 上滑数组筛选
+            this.allVideos = this.allVideos.filter((item,index)=>{
+              if(data[index]&&data[index].id!=item.id){
+                return item
+              }
+              if(!data[index]){
+                return item
+              }
+            })
+            this.allVideos = [...data,...this.allVideos]
+          }
         }
       },
     },
@@ -252,14 +245,5 @@
 <style lang="scss">
   ::-webkit-scrollbar{
     display: none;
-  }
-  .timeDuration{
-    display: inline-block;
-    text-align: center;
-    padding: 0rpx 50rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    font-size: 30rpx;
-    border-radius: 30rpx;
   }
 </style>

@@ -115,6 +115,10 @@
         isShare:false,
         // 分享进来的video_id
         shareId:0,
+        // 查询视频得种类
+        videoType:"child",
+        // 战报搜索所选的站点
+        sitesList:[],
       };
     },
     onLoad(e) {
@@ -134,17 +138,25 @@
         "allSearchVideos",
         "videoPages",
         "searchData",
-        "videoHouse",
+        "siteId",
+        "selectSite",
       ]),
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_device",["deviceInfo"]),
-      ...mapState("m_user",["userInfo"]),
+      ...mapState("m_user",["userInfo","faceSelect"]),
       calHeight(){
         return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
       }
     },
     // 分享到群聊
     onShareAppMessage(res) {
+      wx.reportEvent("watch_video", {
+        "dancingroom_name": this.playVideo.venue_name,
+        "dancingroom_id": this.playVideo.venue_id,
+        "video_id":this.playVideo.id,
+        "user_name": this.userInfo.data.open_data.nickName,
+        "user_id": this.userInfo.data.id
+      })
       return {
         title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
         path:`/pages/video-detail/index?id=${this.playVideo.id}`,
@@ -152,6 +164,13 @@
     },
     // 分享朋友圈
     onShareTimeline(){
+      wx.reportEvent("watch_video", {
+        "dancingroom_name": this.playVideo.venue_name,
+        "dancingroom_id": this.playVideo.venue_id,
+        "video_id":this.playVideo.id,
+        "user_name": this.userInfo.data.open_data.nickName,
+        "user_id": this.userInfo.data.id
+      })
       return {
         title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
         query: `id=${this.playVideo.id}`,
@@ -177,6 +196,14 @@
       },
       // 播放当前视频
       playingVideo(){
+        if(this.selectSite){
+          this.sitesList = [this.siteId]
+        }
+        else{
+          this.sitesList = this.siteInfos.map(item=>{
+            return item.id
+          })
+        }
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
@@ -248,42 +275,19 @@
           // 下一个是最后一个视频
           if(this.numberId==this.allSearchVideos.length-1){
             this.nextPage++
-            if(this.videoHouse.clickStatus){
-              let {data} = await getAllvideos([this.videoHouse.id],this.searchData.startTime,
-              this.searchData.stopTime,this.nextPage,this.videoPages.perPage)
-              if(data.length==0){
-                uni.showToast({
-                	icon:"none",
-                  title: "当前视频已是最后一个视频！",
-                	duration: 1000
-                })
-                this.lastVideoStatus = true
-              }
-              else{
-                this.setAllSearchVideos([...this.allSearchVideos,...data])
-                this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
-                this.playVideo = this.allSearchVideos[this.numberId+1]
-              }
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.nextPage,this.perPage,this.faceSelect,this.videoType)
+            if(data.length==0){
+              uni.showToast({
+                icon:"none",
+                title: "当前视频已是最后一个视频！",
+                duration: 1000
+              })
+              this.lastVideoStatus = true
             }
             else{
-              let siteList = this.siteInfos.map(item=>{
-                return item.id
-              })
-              let {data} = await getAllvideos(siteList,this.searchData.startTime,
-              this.searchData.stopTime,this.nextPage,this.videoPages.perPage)
-              if(data.length==0){
-                uni.showToast({
-                	icon:"none",
-                  title: "当前视频已是最后一个视频！",
-                	duration: 1000
-                })
-                this.lastVideoStatus = true
-              }
-              else{
-                this.setAllSearchVideos([...this.allSearchVideos,...data])
-                this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
-                this.playVideo = this.allSearchVideos[this.numberId+1]
-              }
+              this.setAllSearchVideos([...this.allSearchVideos,...data])
+              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+              this.playVideo = this.allSearchVideos[this.numberId+1]
             }
           }
           // 不是最后一个视频
@@ -361,6 +365,13 @@
           url: this.playVideo.download_src,
           video_id: this.playVideo.id,
         });
+        wx.reportEvent("down_video", {
+          "user_id": this.userInfo.data.id,
+          "user_name": this.userInfo.data.open_data.nickName,
+          "dancingroom_id": this.playVideo.venue_id,
+          "dancingroom_name": this.playVideo.venue_name,
+          "video_id":this.playVideo.id,
+        })
       },
     }
   }

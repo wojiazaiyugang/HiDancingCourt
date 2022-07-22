@@ -7,8 +7,6 @@ export default {
   state:{
     // 所有的场馆信息
     allVenues: [],
-    // 根据场地id搜索到的视频
-    siteIdVideo: [],
     // 根据场馆id搜索的场地信息
     siteInfos:[],
     // 场地获取完成登录的标志
@@ -21,9 +19,6 @@ export default {
     },
     setAllVenues(state,payload) {
       state.allVenues = payload
-    },
-    updateSiteIdVideo(state,payload) {
-      state.siteIdVideo.push(...payload)
     },
     setLoginComplete(state,payload){
       state.loginComplete = payload
