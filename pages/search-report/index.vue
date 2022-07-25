@@ -27,10 +27,11 @@
     <scroll-view 
       scroll-y="true" 
       class="height-80 overflow-hidden"
-      style="background-color: #0077AA;"
       :show-scrollbar="false"
-      @scrolltoupper="scroolTop"
-      @scrolltolower="scroolBottom" 
+      @scrolltoupper="scroolTop(false)"
+      @scrolltolower="scroolBottom(false)"
+      @touchstart="startScrol"
+      @touchend="endScrol"
     >
       <view class=" margtop10">
         <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
@@ -87,8 +88,8 @@
         requestDone:true,
         // 查找集体视频还是小视频
         videoType:"",
-        // 下滑刷新
-        sliderDown:false
+        // 开始滑动时的坐标位置
+        startPosition:0,
 			}
 		},
     components: {
@@ -110,6 +111,23 @@
       "setSiteId",
       ]),
       ...mapMutations("m_venues",["setSiteInfos"]),
+      // 上滑
+      startScrol(data){
+        console.log("开始",data.changedTouches[0].pageY)
+        this.startPosition = data.changedTouches[0].pageY
+      },
+      // 滑动结束
+      endScrol(e){
+        console.log("结束",e.changedTouches[0].pageY)
+        if(this.allVideos.length<this.perPage&&this.allVideos){
+          if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
+            this.scroolTop(true)
+          }
+          if(e.changedTouches[0].pageY<this.startPosition&&(this.startPosition-e.changedTouches[0].pageY)>=10){
+            this.scroolBottom(true)
+          }
+        }
+      },
       // 获得舞房有多少个房间
       async getRooms(){
         if(this.faceSelect){
@@ -190,6 +208,8 @@
         if(this.requestDone){
           this.requestDone = false
           if(this.loadingDone){
+            this.$showMsg("视频已加载完毕！")
+            this.requestDone = true
             return false
           }
           this.$showLoading("加载中！","none")
@@ -201,23 +221,15 @@
         }
       },
       // 下拉到底刷新数据
-      async scroolBottom() {
-        console.log("xia外")
-        if(this.allVideos.length>=this.perPage){
-          console.log("xia里")
-          if(this.loadingDone){
-            this.$showMsg("视频已加载完毕！")
-            return false
-          }
+      async scroolBottom(status) {
+        if(this.allVideos.length>=this.perPage||JSON.parse(status)){
           this.currentPage++
           this.getVideosByFace()
         }
       },
       // 向上滑动更新所有的视频数据
-      async scroolTop(){
-        console.log("上外")
-        if(this.allVideos.length>=this.perPage){
-          console.log("上里")
+      async scroolTop(status){
+        if(this.allVideos.length>=this.perPage||JSON.parse(status)){
           var upPage = 1
           if(this.requestDone){
             this.requestDone = false

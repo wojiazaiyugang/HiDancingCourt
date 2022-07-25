@@ -103,6 +103,8 @@
         numberId:0,
         // 下一个视频当前的页数
         nextPage:0,
+        // 每一页请求的视频
+        perPage:12,
         // 最后一个视频的标志
         lastVideoStatus:false,
         // 当前微信创建的播放对象

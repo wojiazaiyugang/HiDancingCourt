@@ -8,8 +8,10 @@
       scroll-y="true" 
       class="height-full"
       :show-scrollbar="false"
-      @scrolltoupper="scroolTop"
-      @scrolltolower="scroolBottom" 
+      @scrolltoupper="scroolTop(false)"
+      @scrolltolower="scroolBottom(false)"
+      @touchstart="startScrol"
+      @touchend="endScrol"
     >
        <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " >
           <videoData
@@ -17,6 +19,9 @@
             :key="index" 
             :video="item">
           </videoData>
+        </view>
+        <view class="heichishi100">
+          
         </view>
     </scroll-view>
 	</view>
@@ -46,6 +51,8 @@
         requestOne:true,
         // 数据加载完毕
         loadingNone:false,
+        // 当内容不满时滑动的位置
+        startPosition:0,
 			}
 		},
     components: {
@@ -75,12 +82,30 @@
       ["setAllSearchVideos",
       "setVideoPages",
       ]),
+      // 上滑
+      startScrol(data){
+        console.log("开始",data.changedTouches[0].pageY)
+        this.startPosition = data.changedTouches[0].pageY
+      },
+      // 滑动结束
+      endScrol(e){
+        console.log("结束",e.changedTouches[0].pageY)
+        if(this.clipVideos.length<this.perPage&&this.clipVideos){
+          if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
+            this.scroolTop(true)
+          }
+          if(e.changedTouches[0].pageY<this.startPosition&&(this.startPosition-e.changedTouches[0].pageY)>=10){
+            this.scroolBottom(true)
+          }
+        }
+      },
       // 根据集体视频获得子视频
       async getClipVideos(){
         if(this.requestOne){
           this.requestOne = false
           if(this.loadingNone){
             this.$showMsg("视频已加载完毕！")
+            this.requestOne = true
             return false
           }
           this.$showLoading("加载中！","none")
@@ -89,17 +114,15 @@
           this.$hideLoading()
           this.loadingNone = data.length<this.perPage
           this.clipVideos = [...this.clipVideos,...data]
-          this.clipVideos = this.clipVideos.slice(0,10)
-          console.log("正常拉取",this.clipVideos)
+          this.clipVideos = this.clipVideos
           this.setAllSearchVideos([...this.clipVideos])
           this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
         }
       },
       // 上拉刷新新的小视频
-      async scroolTop(){
-        console.log("上外")
-
-          console.log("上里")
+      async scroolTop(status){
+        if(this.clipVideos.length>=this.perPage||JSON.parse(status)){
+          console.log("shanghua")
           var upPage = 1
           if(this.requestOne){
             this.requestOne = false
@@ -119,14 +142,12 @@
             })
             this.clipVideos = [...data,...this.clipVideos]
             this.setAllSearchVideos([...this.clipVideos])
-            console.log("shanghua123",this.clipVideos)
           }
+        }
       },
       // 下滑刷新新的小视频
-      async scroolBottom(){
-        console.log("xia外")
-        if(this.clipVideos.length>=this.perPage){
-          console.log("xia里")
+      async scroolBottom(status){
+        if(this.clipVideos.length>=this.perPage||JSON.parse(status)){
           this.currentPage++
           this.getClipVideos()
         }

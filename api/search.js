@@ -11,3 +11,8 @@ export const getAllvideos = (site_ids,start_time,stop_time,page,per_page,face_se
   let data = {site_ids,start_time,stop_time,page,per_page,face_search,applet,group,record_name}
   return request.post(`/search/`,data)
 }
+
+// 获取跳舞一键查找出来集体视频的标签
+export const getVideoLabel = (venue_id)=>{
+  return request.get(`/videos/label/?venue_id=${venue_id}`)
+}
