@@ -34,8 +34,7 @@
       {
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor":"#fff",
-        "navigationStyle":"custom",
-        "disableScroll": true
+        "navigationStyle":"custom"
       }
     },
     {
