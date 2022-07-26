@@ -13,6 +13,11 @@
       @touchstart="startScrol"
       @touchend="endScrol"
     >
+      <view class="marginxy10">
+       <videoAll
+          :videoAll="currentVideo" :isPlay="true">
+        </videoAll>
+      </view>
        <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " >
           <videoData
             v-for="(item,index) in clipVideos" 
@@ -30,7 +35,8 @@
 <script>
   import { mapState, mapMutations, } from "vuex"
   import { getAllvideos } from "@/api/search.js"
-  import { videoData } from "@/components/videoData"
+  import videoData from "@/components/videoData"
+  import videoAll from "@/components/videoAll"
   import nvgBar from "@/components/nvgBar"
 	export default {
 		data() {
@@ -57,10 +63,11 @@
 		},
     components: {
       videoData,
+      videoAll,
       nvgBar,
     },
     computed: {
-      ...mapState("m_video",["searchData","siteId","selectSite",]),
+      ...mapState("m_video",["searchData","siteId","selectSite","currentVideo"]),
       ...mapState("m_user",["faceSelect"]),
       ...mapState("m_venues",["siteInfos",])
     },
@@ -115,7 +122,7 @@
           this.loadingNone = data.length<this.perPage
           this.clipVideos = [...this.clipVideos,...data]
           this.clipVideos = this.clipVideos
-          this.setAllSearchVideos([...this.clipVideos])
+          this.setAllSearchVideos([this.currentVideo,...this.clipVideos])
           this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
         }
       },
@@ -141,7 +148,7 @@
               }
             })
             this.clipVideos = [...data,...this.clipVideos]
-            this.setAllSearchVideos([...this.clipVideos])
+            this.setAllSearchVideos([this.currentVideo,...this.clipVideos])
           }
         }
       },

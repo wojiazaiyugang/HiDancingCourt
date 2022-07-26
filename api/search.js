@@ -6,9 +6,9 @@ export const verifyCode = (data) =>{
 }
 
 // 人脸查找所有视频
-export const getAllvideos = (site_ids,start_time,stop_time,page,per_page,face_search,group,record_name) => {
+export const getAllvideos = (site_ids,start_time,stop_time,page,per_page,face_search,group,record_name,label) => {
   let applet = "HiDancing"
-  let data = {site_ids,start_time,stop_time,page,per_page,face_search,applet,group,record_name}
+  let data = {site_ids,start_time,stop_time,page,per_page,face_search,applet,group,record_name,label}
   return request.post(`/search/`,data)
 }
 

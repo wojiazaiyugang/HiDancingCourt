@@ -9,7 +9,6 @@ import video from "./modules/video.js"
 import device from "./modules/device.js"
 
 Vue.use(Vuex)
-
 const store = new Vuex.Store({
   modules: {
     // 命名空间名称

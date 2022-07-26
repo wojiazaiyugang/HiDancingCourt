@@ -1,6 +1,5 @@
 export default {
   namespaced: true,
-  
   state:{
     // 用户是否选择场地
     selectSite:false,

@@ -209,6 +209,7 @@
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
         this.playVideo = this.currentVideo
+        console.log("chakandangqianshi",this.playVideo)
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
         this.nextPage = this.videoPages.curPage

@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view >
     <view v-if="loginComplete" class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
       <!-- Start 第一个Long-Button -->
       <view class="First-LongButton" @click="chooseVenues">
@@ -121,56 +121,53 @@
           </view>
         </view>
       </view>
-      <!-- End底部 -->
-     
-     <!-- Start选择场馆弹出层 -->
-     <uni-popup ref="popupVenues" :safeArea="false">
-       <van-picker 
-        show-toolbar
-        cancel-button-text="请选择舞蹈房"
-        confirm-button-text="确认"
-        active-class="selectStyle"
-        :isRecently="true"
-        toolbar-class="changeToolbar"
-        @confirm="confirmHouse"
-        @change="selectHouse"
-        :columns="columnsHouses" item-height="40"/>
-     </uni-popup>
-       
-      
-     <!-- Start 时间选择组件 -->
-     <uni-popup ref="popup" :safeArea="false">
-       <van-picker
-        show-toolbar
-        cancel-button-text="请选择日期"
-        confirm-button-text="确认"
-        active-class="selectStyle"
-        :isToday="true"
-        toolbar-class="changeToolbar"
-        visible-item-count="5"
-        @confirm="confirmHours"
-        @change="selectHours"
-        :columns="columnsDays" item-height="40"/>
-     </uni-popup>
-     <!-- End 时间选择组件 -->
-     
-     <!-- Start权限提示信息 -->
-     <uni-popup ref="permissionsPopup" type="dialog">
-        <uni-popup-dialog type="info" mode="base" :content="`您已拒绝${permissionType}授权，如需开启，请点击确认进入设置页面重新授权`" 
-        :before-close="true" 
-        @close="closeProp" 
-        @confirm="confirmProp">
-        </uni-popup-dialog>
-     </uni-popup>
-     <!-- End权限提示信息 -->
     </view>
     <image
       v-else
       class="loading-bg"
       src="https://static.qiniuyun.highvenue.cn/image/hicourt/loading.svg"
     />
+    <!-- Start选择场馆弹出层 -->
+    <uni-popup ref="popupVenues" :safeArea="false">
+      <van-picker 
+       show-toolbar
+       cancel-button-text="请选择舞蹈房"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isRecently="true"
+       toolbar-class="changeToolbar"
+       @confirm="confirmHouse"
+       @change="selectHouse"
+       :columns="columnsHouses" item-height="40"/>
+    </uni-popup>
+      
+     
+    <!-- Start 时间选择组件 -->
+    <uni-popup ref="popup" :safeArea="false">
+      <van-picker
+       show-toolbar
+       cancel-button-text="请选择日期"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isToday="true"
+       toolbar-class="changeToolbar"
+       visible-item-count="5"
+       @confirm="confirmHours"
+       @change="selectHours"
+       :columns="columnsDays" item-height="40"/>
+    </uni-popup>
+    <!-- End 时间选择组件 -->
+    
+    <!-- Start权限提示信息 -->
+    <uni-popup ref="permissionsPopup" type="dialog">
+       <uni-popup-dialog type="info" mode="base" :content="`您已拒绝${permissionType}授权，如需开启，请点击确认进入设置页面重新授权`" 
+       :before-close="true" 
+       @close="closeProp" 
+       @confirm="confirmProp">
+       </uni-popup-dialog>
+    </uni-popup>
+    <!-- End权限提示信息 -->
   </view>
-	
 </template>
 
 <script>
@@ -213,7 +210,6 @@
 			}
 		},
     created() {
-      console.log("输出index")
       this.getTimeData()
     },
     computed: {
@@ -265,7 +261,6 @@
       },
       // 打开选择场馆
       chooseVenues() {
-        console.log("asdhajs",this.locationInfo)
         // 定位没有完成
         if(this.locationInfo.latitude){
           this.columnsHouses = this.allVenues.filter(item=>{
@@ -327,6 +322,7 @@
         var keyNumber = [...data.target.value+""]
         this.verfication = [...keyNumber]
         this.currentIndex = keyNumber.length-1
+        // 若没有输入满则用空格填充
         for(var i=0;i<4;i++){
           if(!this.verfication[i]){
             this.verfication[i] = ""
@@ -363,6 +359,7 @@
           this.verfication.map(item=>{
             tempCode = tempCode + item.toString()
           })
+          // 下滑选择了其他场馆
           if(this.currentHourses){
             this.allVenues.map(item=>{
               if(item.name==this.currentHourses){
@@ -370,6 +367,7 @@
               }
             })
           }
+          // 没有选择场馆
           else{
             selectId = this.allVenues[0].id
           }
@@ -394,6 +392,7 @@
                   url: "../search-report/index",
                 })
               }
+              // 尚未人脸拍照
               else{
                 this.$hideLoading()
                 this.videoSearch = true
@@ -413,7 +412,7 @@
       closeProp() {
         this.$refs.permissionsPopup.close()
       },
-      // 同意授权
+      // 打开授权页面进行二次授权
       confirmProp() {
         // 二次授权
         var that = this 

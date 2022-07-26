@@ -3,7 +3,7 @@
     <view class="heichixu80 marginy20">
       <view style="white-space: nowrap" class="marginx10">
         <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
-         <view v-for="(item,index) in timeList"
+         <view v-for="(item,index) in techDancTypes"
             class="display-block paddingx25 line-heichi60 heichi60 fon28 boradiu30 text-center letter-spacing1"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
             @click="selectDuration({item,index})"
@@ -37,13 +37,24 @@
         <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
           请尝试重新拍照查询或联系管理员查看所有视频!
         </view>
-        <view v-if="allVideos.length!=0" class="marginx10">
+        <view v-if="allVideos.length!=0&&!faceSelect" class="marginx10">
          <videoAll
             v-for="(item,index) in allVideos" 
             :key="index" 
             :videoAll="item">
           </videoAll>
         </view>
+        <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " 
+        v-if="allVideos.length!=0&&faceSelect" >
+         <videoData
+            v-for="(item,index) in allVideos" 
+            :key="index" 
+            :videoAll="item">
+          </videoData>
+        </view>
+         <view class="heichishi100">
+           
+         </view>
       </view>
 
     </scroll-view>
@@ -52,7 +63,7 @@
 
 <script>
   import { mapState, mapMutations, } from "vuex"
-  import { getAllvideos } from "@/api/search.js"
+  import { getAllvideos, getVideoLabel } from "@/api/search.js"
   import { getSites } from "@/api/venues.js"
   import videoAll  from "@/components/videoAll"
 	export default {
@@ -90,6 +101,10 @@
         videoType:"",
         // 开始滑动时的坐标位置
         startPosition:0,
+        // 所有老师的标签
+        techDancTypes:[],
+        // 查询单个老师的标签
+        selectLabel:"",
 			}
 		},
     components: {
@@ -102,7 +117,7 @@
     },
     created() {
       this.getRooms()
-      this.initTime()
+      this.getAllDancTypes()
     },
 		methods: {
       ...mapMutations("m_video",[
@@ -146,23 +161,32 @@
           this.roomsList.unshift("全部舞房")
         })
       },
+      // 获得所有舞蹈老师的跳舞种类
+      async getAllDancTypes(){
+        this.houseId = this.searchData.houseId
+        this.startTime = this.searchData.startTime 
+        this.stopTime = this.searchData.stopTime
+        let {data} = await getVideoLabel(this.searchData.houseId)
+        this.techDancTypes = data
+        this.techDancTypes = this.techDancTypes.map(item=>{
+          return item.label
+        })
+        this.techDancTypes.unshift("全部老师")
+      },
       // 选择各个小时间段
       selectDuration(data){
         if(this.timeIndex==data.index){
           return false
         }
+        this.allVideos = []
         this.timeIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
         if(data.index==0){
-          this.startTime = this.searchData.startTime.split(" ")[0]+" "+"00:00:00"
-          this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+"24:00:00"
-          this.setSearchData({houseId:this.houseId,startTime:this.startTime,stopTime:this.stopTime})
+          this.selectLabel = ""
         }
         else{
-          this.startTime = this.searchData.startTime.split(" ")[0]+" "+data.item.split("~")[0]+":00"
-          this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+data.item.split("~")[1]+":00"
-          this.setSearchData({houseId:this.houseId,startTime:this.startTime,stopTime:this.stopTime})
+          this.selectLabel = this.techDancTypes[data.index]
         }
         this.getVideosByFace()
       },
@@ -171,6 +195,7 @@
         if(this.houseIndex == data.index){
           return false
         }
+        this.allVideos = []
         this.houseIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
@@ -191,18 +216,6 @@
           return false
         }
       },
-      // 初始化时间段
-      initTime(){
-        this.houseId = this.searchData.houseId
-        this.startTime = this.searchData.startTime 
-        this.stopTime = this.searchData.stopTime 
-        this.timeList.push("所有时段")
-        for(var i=1;i<=12;i++){
-          let tempTime = i*2>9?i*2:"0"+i*2
-          let tempStr = (tempTime - 2)>9?(tempTime - 2):"0"+(tempTime - 2)
-          this.timeList.push(tempStr+":00~"+tempTime+":00")
-        }
-      },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         if(this.requestDone){
@@ -213,7 +226,8 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType)
+          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
+          console.log("输出数值",data)
           this.requestDone = true
           this.$hideLoading()
           this.loadingDone = data.length<this.perPage
