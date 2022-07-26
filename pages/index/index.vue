@@ -1,6 +1,6 @@
 <template>
   <view >
-    <view v-if="loginComplete" class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
+    <view v-if="loginComplete" class="container heichi100 width-full flex alitem-center justify-start flex-direction fon24 background-cover">
       <!-- Start 第一个Long-Button -->
       <view class="First-LongButton" @click="chooseVenues">
         <long-button>
@@ -211,10 +211,13 @@
 		},
     created() {
       this.getTimeData()
+      setTimeout(()=>{
+        console.log("输出查看",this.deviceInfo)
+      },3000)
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
-      ...mapState("m_device",["locationInfo"]),
+      ...mapState("m_device",["locationInfo","deviceInfo"]),
       ...mapState("m_camera",["userFaceInfo"]),
       calName(){
         var tempCourt = this.allVenues.filter(item=>{
