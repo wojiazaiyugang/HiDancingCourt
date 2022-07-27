@@ -86,7 +86,7 @@
         // 搜索初始的页码数
         currentPage:1,
         // 每个页码所存放的视频数
-        perPage:12,
+        perPage:0,
         // 数据是否加载完毕
         loadingDone:false,
         // 所选舞房ID
@@ -128,12 +128,10 @@
       ...mapMutations("m_venues",["setSiteInfos"]),
       // 上滑
       startScrol(data){
-        console.log("开始",data.changedTouches[0].pageY)
         this.startPosition = data.changedTouches[0].pageY
       },
       // 滑动结束
       endScrol(e){
-        console.log("结束",e.changedTouches[0].pageY)
         if(this.allVideos.length<this.perPage&&this.allVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
             this.scroolTop(true)
@@ -147,9 +145,11 @@
       async getRooms(){
         if(this.faceSelect){
           this.videoType = "child"
+          this.perPage = 12
         }
         else{
           this.videoType = "parent"
+          this.perPage = 3
         }
         await getSites(this.searchData.houseId).then(data=>{
           this.setSiteInfos(data.data)
@@ -166,10 +166,8 @@
         this.houseId = this.searchData.houseId
         this.startTime = this.searchData.startTime 
         this.stopTime = this.searchData.stopTime
-        console.log("开始时间",this.startTime,this.searchData.startTime)
         var start = this.startTime.split(" ")[0] +"_"+ this.startTime.split(" ")[1].replace(/:/g,"-")
         var end = this.stopTime.split(" ")[0] +"_"+ this.stopTime.split(" ")[1].replace(/:/g,"-")
-        console.log("asdjsa",start)
         let {data} = await getVideoLabel(this.searchData.houseId,start,end)
         this.techDancTypes = data
         this.techDancTypes = this.techDancTypes&&this.techDancTypes.map(item=>{
@@ -231,7 +229,6 @@
           }
           this.$showLoading("加载中！","none")
           let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
-          console.log("输出数值",data)
           this.requestDone = true
           this.$hideLoading()
           this.loadingDone = data.length<this.perPage
@@ -252,7 +249,7 @@
           if(this.requestDone){
             this.requestDone = false
             this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
+            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
             this.$hideLoading()
             this.requestDone = true
             // 上滑数组筛选
