@@ -81,8 +81,9 @@
           return item.id
         })
       }
-      this.getClipVideos()
       this.setAllSearchVideos([])
+      this.getClipVideos()
+      console.log("chushihua",this.currentVideo)
     },
 		methods: {
       ...mapMutations("m_video",
@@ -116,7 +117,7 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType)
+          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,"",this.currentVideo.data.record_name)
           this.requestOne = true
           this.$hideLoading()
           this.loadingNone = data.length<this.perPage
@@ -134,7 +135,7 @@
           if(this.requestOne){
             this.requestOne = false
             this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType)
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,"",this.currentVideo.data.record_name)
             console.log("shanghua",data)
             this.$hideLoading()
             this.requestOne = true
