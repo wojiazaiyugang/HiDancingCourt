@@ -390,7 +390,7 @@
               if(this.userFaceInfo){
                 this.$hideLoading()
                 this.videoSearch = true
-                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
+                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                 uni.navigateTo({
                   url: "../search-report/index",
                 })

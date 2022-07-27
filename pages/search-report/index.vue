@@ -166,9 +166,13 @@
         this.houseId = this.searchData.houseId
         this.startTime = this.searchData.startTime 
         this.stopTime = this.searchData.stopTime
-        let {data} = await getVideoLabel(this.searchData.houseId)
+        console.log("开始时间",this.startTime,this.searchData.startTime)
+        var start = this.startTime.split(" ")[0] +"_"+ this.startTime.split(" ")[1].replace(/:/g,"-")
+        var end = this.stopTime.split(" ")[0] +"_"+ this.stopTime.split(" ")[1].replace(/:/g,"-")
+        console.log("asdjsa",start)
+        let {data} = await getVideoLabel(this.searchData.houseId,start,end)
         this.techDancTypes = data
-        this.techDancTypes = this.techDancTypes.map(item=>{
+        this.techDancTypes = this.techDancTypes&&this.techDancTypes.map(item=>{
           return item.label
         })
         this.techDancTypes.unshift("全部老师")
@@ -248,7 +252,7 @@
           if(this.requestDone){
             this.requestDone = false
             this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType)
+            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
             this.$hideLoading()
             this.requestDone = true
             // 上滑数组筛选
