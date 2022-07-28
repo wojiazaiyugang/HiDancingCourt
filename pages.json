@@ -32,9 +32,16 @@
       "path" : "pages/video-detail/index",
       "style" :                                                                                    
       {
-        "enablePullDownRefresh": false,
-        "navigationBarBackgroundColor":"#fff",
         "navigationStyle":"custom"
+      }
+    },
+    {
+      "path" : "pages/clip-video/index",
+      "style" :                                                                                    
+      {
+        "enablePullDownRefresh": false,
+        "navigationStyle":"custom",
+        "disableScroll": true
       }
     },
     {

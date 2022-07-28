@@ -1,10 +1,10 @@
 <template>
 	<view class="width-shi heichi100 ba-f7 bawhite overflow-hidden">
     <view class="heichixu80 marginy20">
-      <view style="margin:0rpx 20rpx;white-space: nowrap">
+      <view style="white-space: nowrap" class="marginx10">
         <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
-         <view v-for="(item,index) in timeList"
-            class="timeDuration letter-spacing1"
+         <view v-for="(item,index) in techDancTypes"
+            class="display-block paddingx25 line-heichi60 heichi60 fon28 boradiu30 text-center letter-spacing1"
             :style="{backgroundColor:timeIndex==index?'#7E71F0':'',color:timeIndex==index?'white':'balck'}"
             @click="selectDuration({item,index})"
             :key="index"
@@ -12,9 +12,9 @@
             {{item}}
           </view>
         </scroll-view>
-        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60" :scroll-top="scrollHeight">
+        <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60" >
           <view v-for="(item,index) in roomsList"
-            class="timeDuration black letter-spacing1"
+            class="display-block paddingx25 line-heichi60 heichi60 fon28 boradiu30 text-center black letter-spacing1"
             :style="{backgroundColor:houseIndex==index?'#7E71F0':'',color:houseIndex==index?'white':'balck'}"
             @click="selectHouse({item,index})"
             :key="index"
@@ -24,25 +24,32 @@
         </scroll-view>
       </view>
     </view>
-
     <scroll-view 
       scroll-y="true" 
       class="height-80 overflow-hidden"
       :show-scrollbar="false"
-      @scrolltoupper="scroolTop"
-      @scrolltolower="scroolBottom" 
+      @scrolltolower="scroolBottom(false)"
+      @scrolltoupper="scroolTop(false)"
+      @touchstart="startScrol"
+      @touchend="endScrol"
     >
-      <view class="height-full " style="margin-top: 10rpx;">
-        <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
-          请尝试重新拍照查询或联系管理员查看所有视频!
-        </view>
-        <view v-if="allVideos.length!=0" class="flex flexwrap height-full marginx10" style="align-content: flex-start;" >
-          <videoData 
-            v-for="(item,index) in allVideos" 
-            :key="index" 
-            :video="item">
-          </videoData>
-        </view>
+      <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
+        请尝试重新拍照查询或联系管理员查看所有视频!
+      </view>
+      <view v-if="allVideos.length!=0&&!faceSelect" class="marginx10">
+       <videoAll
+          v-for="(item,index) in allVideos" 
+          :key="index" 
+          :videoAll="item">
+        </videoAll>
+      </view>
+      <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " 
+      v-if="allVideos.length!=0&&faceSelect" >
+       <videoData
+          v-for="(item,index) in allVideos" 
+          :key="index" 
+          :videoAll="item">
+        </videoData>
       </view>
 
     </scroll-view>
@@ -51,8 +58,9 @@
 
 <script>
   import { mapState, mapMutations, } from "vuex"
-  import { getAllvideos } from "@/api/search.js"
-  import { videoData } from "@/components/videoData"
+  import { getAllvideos, getVideoLabel } from "@/api/search.js"
+  import { getSites } from "@/api/venues.js"
+  import videoAll  from "@/components/videoAll"
 	export default {
 		data() {
 			return {
@@ -73,7 +81,7 @@
         // 搜索初始的页码数
         currentPage:1,
         // 每个页码所存放的视频数
-        perPage:12,
+        perPage:0,
         // 数据是否加载完毕
         loadingDone:false,
         // 所选舞房ID
@@ -82,52 +90,106 @@
         startTime:"",
         // 搜索的结束时间
         stopTime:"",
-        // 滚动条的高度
-        scrollHeight:0,
         // 一次请求完事再进行下次请求
         requestDone:true,
+        // 查找集体视频还是小视频
+        videoType:"",
+        // 开始滑动时的坐标位置
+        startPosition:0,
+        // 所有老师的标签
+        techDancTypes:[],
+        // 查询单个老师的标签
+        selectLabel:"",
+        // 防抖上滑定时器
+        upTimer:null,
+        // 防抖下滑定时器
+        downTimer:null,
 			}
 		},
     components: {
-      videoData,
+      videoAll,
     },
     computed: {
       ...mapState("m_venues",["siteInfos"]),
-      ...mapState("m_video",["searchData","allSearchVideos"]),
+      ...mapState("m_video",["searchData",]),
       ...mapState("m_user",["faceSelect"]),
     },
     created() {
       this.getRooms()
-      this.initTime()
-      this.getVideosByFace()
-      this.setAllSearchVideos([])
+      this.getAllDancTypes()
     },
 		methods: {
-      ...mapMutations("m_video",
-      ["setAllSearchVideos",
-      "setVideoPages",
+      ...mapMutations("m_video",[
       "setSearchData",
-      "setSearchData",
-      "setVideoHouse",
+      "setSelectSite",
+      "setSiteId",
       ]),
+      ...mapMutations("m_venues",["setSiteInfos"]),
+      // 上滑
+      startScrol(data){
+        this.startPosition = data.changedTouches[0].pageY
+      },
+      // 滑动结束
+      endScrol(e){
+        if(this.allVideos.length<this.perPage&&this.allVideos){
+          if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
+            console.log("上touch")
+            this.scroolTop(true)
+          }
+          if(e.changedTouches[0].pageY<this.startPosition&&(this.startPosition-e.changedTouches[0].pageY)>=10){
+            console.log("下touch")
+            this.scroolBottom(true)
+          }
+        }
+      },
+      // 获得舞房有多少个房间
+      async getRooms(){
+        if(this.faceSelect){
+          this.videoType = "child"
+          this.perPage = 12
+        }
+        else{
+          this.videoType = "parent"
+          this.perPage = 3
+        }
+        await getSites(this.searchData.houseId).then(data=>{
+          this.setSiteInfos(data.data)
+          this.siteArray = data.data.map(item=>{
+            return item.id
+          })
+          this.getVideosByFace()
+          this.roomsList = this.siteInfos.concat([])
+          this.roomsList.unshift("全部舞房")
+        })
+      },
+      // 获得所有舞蹈老师的跳舞种类
+      async getAllDancTypes(){
+        this.houseId = this.searchData.houseId
+        this.startTime = this.searchData.startTime 
+        this.stopTime = this.searchData.stopTime
+        var start = this.startTime.split(" ")[0] +"_"+ this.startTime.split(" ")[1].replace(/:/g,"-")
+        var end = this.stopTime.split(" ")[0] +"_"+ this.stopTime.split(" ")[1].replace(/:/g,"-")
+        let {data} = await getVideoLabel(this.searchData.houseId,start,end)
+        this.techDancTypes = data
+        this.techDancTypes = this.techDancTypes&&this.techDancTypes.map(item=>{
+          return item.label
+        })
+        this.techDancTypes.unshift("全部老师")
+      },
       // 选择各个小时间段
       selectDuration(data){
         if(this.timeIndex==data.index){
           return false
         }
+        this.allVideos = []
         this.timeIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
-        this.setAllSearchVideos([])
         if(data.index==0){
-          this.startTime = this.searchData.startTime.split(" ")[0]+" "+"00:00:00"
-          this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+"24:00:00"
-          this.setSearchData({houseId:this.houseId,startTime:this.startTime,stopTime:this.stopTime})
+          this.selectLabel = ""
         }
         else{
-          this.startTime = this.searchData.startTime.split(" ")[0]+" "+data.item.split("~")[0]+":00"
-          this.stopTime = this.searchData.stopTime.split(" ")[0]+" "+data.item.split("~")[1]+":00"
-          this.setSearchData({houseId:this.houseId,startTime:this.startTime,stopTime:this.stopTime})
+          this.selectLabel = this.techDancTypes[data.index]
         }
         this.getVideosByFace()
       },
@@ -136,81 +198,83 @@
         if(this.houseIndex == data.index){
           return false
         }
-        var siteId = data.item.id
-        this.scrollHeight = 0
+        this.allVideos = []
         this.houseIndex = data.index
         this.currentPage = 1
         this.loadingDone = false
-        this.setAllSearchVideos([])
         if(data.index==0){
+          this.setSelectSite(false)
           this.siteArray = this.siteInfos.map(item=>{
             return item.id
           })
           this.getVideosByFace()
-          this.setVideoHouse({id:siteId,clickStatus:false})
           return false
         }
         else{
-          this.siteArray = [data.item.id]
+          let siteId = data.item.id
+          this.siteArray = [siteId]
+          this.setSiteId(siteId)
+          this.setSelectSite(true)
           this.getVideosByFace()
-          this.setVideoHouse({id:siteId,clickStatus:true})
           return false
         }
-      },
-      // 初始化时间段
-      initTime(){
-        this.houseId = this.searchData.houseId
-        this.startTime = this.searchData.startTime 
-        this.stopTime = this.searchData.stopTime 
-        this.timeList.push("所有时段")
-        for(var i=1;i<=12;i++){
-          let tempTime = i*2>9?i*2:"0"+i*2
-          let tempStr = (tempTime - 2)>9?(tempTime - 2):"0"+(tempTime - 2)
-          this.timeList.push(tempStr+":00~"+tempTime+":00")
-        }
-      },
-      // 根据舞蹈房ID获得教室
-      async getRooms(){
-        this.siteArray = this.siteInfos.map(item=>{
-          return item.id
-        })
-        this.roomsList = this.siteInfos.concat([])
-        this.roomsList.unshift("全部舞房")
       },
       // 根据人脸以及时间站点信息获得全部搜索视频
       async getVideosByFace(){
         if(this.requestDone){
           this.requestDone = false
           if(this.loadingDone){
+            this.$showMsg("视频已加载完毕！")
+            this.requestDone = true
             return false
           }
           this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect)
+          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
           this.requestDone = true
           this.$hideLoading()
           this.loadingDone = data.length<this.perPage
-          this.allVideos = [...this.allSearchVideos,...data]
-          this.setAllSearchVideos([...this.allVideos])
-          this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
+          this.allVideos = [...this.allVideos,...data]
         }
       },
       // 下拉到底刷新数据
-      async scroolBottom() {
-        if(this.allVideos.length>=this.perPage){
-          if(this.loadingDone){
-            return false
-          }
-          this.currentPage++
-          this.getVideosByFace()
+      async scroolBottom(status) {
+        if(this.downTimer){
+          clearTimeout(this.downTimer)
         }
-        
+        this.downTimer = setTimeout(()=>{
+          if(this.allVideos.length>=this.perPage||JSON.parse(status)){
+            this.currentPage++
+            this.getVideosByFace()
+          }
+        },500)
       },
       // 向上滑动更新所有的视频数据
-      scroolTop(){
-        this.currentPage = 1
-        this.loadingDone = false
-        this.setAllSearchVideos([])
-        this.getVideosByFace()
+      async scroolTop(status){
+          if(this.upTimer){
+            clearTimeout(this.upTimer)
+          }
+          this.upTimer = setTimeout(async ()=>{
+            if(this.allVideos.length>=this.perPage||JSON.parse(status)){
+              var upPage = 1
+              if(this.requestDone){
+                this.requestDone = false
+                this.$showLoading("加载中！","none")
+                let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
+                this.$hideLoading()
+                this.requestDone = true
+                // 上滑数组筛选
+                this.allVideos = this.allVideos.filter((item,index)=>{
+                  if(data[index]&&data[index].id!=item.id){
+                    return item
+                  }
+                  if(!data[index]){
+                    return item
+                  }
+                })
+                this.allVideos = [...data,...this.allVideos]
+              }
+            }
+          },500)
       },
     },
 	}
@@ -219,14 +283,5 @@
 <style lang="scss">
   ::-webkit-scrollbar{
     display: none;
-  }
-  .timeDuration{
-    display: inline-block;
-    text-align: center;
-    padding: 0rpx 50rpx;
-    height: 60rpx;
-    line-height: 60rpx;
-    font-size: 30rpx;
-    border-radius: 30rpx;
   }
 </style>

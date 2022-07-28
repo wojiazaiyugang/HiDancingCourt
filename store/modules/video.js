@@ -1,13 +1,13 @@
 export default {
   namespaced: true,
-  
   state:{
-    // 当前选择的教室id以及是否点击教室
-    videoHouse:{
-      id:"",
-      clickStatus:false,
-    },
-    // 视频播放页面当前播放的视频
+    // 用户是否选择场地
+    selectSite:false,
+    // 用户选择单个场地搜索的场地ID
+    siteId:0,
+    // 当前播放的集体视频
+    currentAllVideos:null,
+    // 视频播放页面当前播放的剪辑视频
     currentVideo: null,
     // 根据条件搜索出来的全部视频
     allSearchVideos:[],
@@ -21,11 +21,14 @@ export default {
       houseId:[],
       startTime:"",
       stopTime:"",
-    }
+    },
   },
   mutations: {
-    setVideoHouse(state,payload){
-      state.videoHouse = payload
+    setSelectSite(state,payload){
+      state.selectSite = payload
+    },
+    setSiteId(state,payload){
+      state.siteId = payload
     },
     setSearchData(state,payload){
       state.searchData = payload
@@ -38,7 +41,9 @@ export default {
     },
     setVideoPages(state,payload){
       state.videoPages = payload
+    },
+    setCurrentAllVideos(state,payload){
+      state.currentAllVideos = payload
     }
   }
-  
 }

@@ -22,8 +22,14 @@
 .fon50{
   font-size: 50rpx;
 }
+.fon60{
+  font-size: 60rpx;
+}
 .fonweight{
-  font-weight: 550;
+  font-weight: 600;
+}
+.boradiu8{
+  border-radius: 8rpx;
 }
 .boradiu12{
   border-radius: 12rpx;
@@ -36,6 +42,9 @@
 }
 .boradiu24{
   border-radius: 24rpx;
+}
+.boradiu30{
+  border-radius: 30rpx;
 }
 .boradiu42{
   border-radius: 42rpx;
@@ -67,6 +76,9 @@
 .height-80{
   height: 80%;
 }
+.height-70{
+  height: 70%;
+}
 .height-0{
   height: 0rpx;
 }
@@ -79,8 +91,17 @@
 .heichi40{
   height: 40rpx;
 }
+.heichi50{
+  height: 50rpx;
+}
 .heichi60{
   height: 60rpx;
+}
+.heichi70{
+  height: 70rpx;
+}
+.heichiduan80{
+  height: 80rpx;
 }
 .heichixu100{
   height: 100rpx;
@@ -91,14 +112,26 @@
 .heichixu85{
   height: 170rpx;
 }
+.heichishi100{
+  height: 200rpx;
+}
 .heichifan120{
   height: 240rpx;
+}
+.heichifan150{
+  height: 300rpx;
+}
+.heichifan190{
+  height: 380rpx;
 }
 .heichi210{
   height: 420rpx;
 }
 .width-shi{
   width: 100vw;
+}
+.width-90{
+  width: 90vw;
 }
 .width60{
   width: 60%;
@@ -118,17 +151,32 @@
 .widchi2{
   width: 2rpx;
 }
+.widchi6{
+  width: 6rpx;
+}
 .widchi15{
   width: 30rpx;
 }
 .widchi17{
   width: 34rpx;
 }
+.widchi20{
+  width: 40rpx;
+}
+.widchi25{
+  width: 50rpx;
+}
 .widchi30{
   width: 60rpx;
 }
+.widchi35{
+  width: 70rpx;
+}
 .widchi40{
   width: 80rpx;
+}
+.widchi50{
+  width: 100rpx;
 }
 .widchi60{
   width: 120rpx;
@@ -139,11 +187,26 @@
 .widchi85{
   width: 170rpx;
 }
+.widchi100{
+  width: 200rpx;
+}
+.widchi110{
+  width: 220rpx;
+}
+.widchi120{
+  width: 240rpx;
+}
+.widchi150{
+  width: 300rpx;
+}
 .widchi160{
   width: 320rpx;
 }
 .widthchi210{
   width: 420rpx;
+}
+.widthchi300{
+  width: 600rpx;
 }
 .line-heichi30{
   line-height: 30rpx;
@@ -151,8 +214,14 @@
 .line-heichi40{
   line-height: 40rpx;
 }
+.line-heichi50{
+  line-height: 50rpx;
+}
 .line-heichi60{
   line-height: 60rpx;
+}
+.line-heichi80{
+  line-height: 80rpx;
 }
 .line-heichi100{
   line-height: 100rpx;
@@ -171,6 +240,12 @@
 }
 .text-center{
   text-align: center;
+}
+.opcity10{
+  opacity: 1;
+}
+.opcity6{
+  opacity: 0.6;
 }
 .ellipsis {
   white-space:nowrap;

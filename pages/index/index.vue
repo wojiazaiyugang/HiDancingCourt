@@ -1,6 +1,6 @@
 <template>
-  <view>
-    <view v-if="loginComplete" class="container height-full width-full flex alitem-center justify-start flex-direction fon24 background-cover">
+  <view >
+    <view v-if="loginComplete" class="container heichi100 width-full flex alitem-center justify-start flex-direction fon24 background-cover">
       <!-- Start 第一个Long-Button -->
       <view class="First-LongButton" @click="chooseVenues">
         <long-button>
@@ -59,9 +59,9 @@
            class="InputBoard flex flex-center bagreinput " >
             <input
               @input="keyInput"
+              v-model="verfication"
               :maxlength="4"
               :focus="focusStatus"
-              :cursor-spacing="25"
               type="number"
               class="height-0 width-0 fon50 "/>
           </view>
@@ -70,10 +70,10 @@
             <view class="width-full height-full flex justify-around alitem-center ">
               <view class="InputItem bablack flex relative flex-center"
               @click.stop="getFocus"
-                v-for= "(item,index) in verfication"
+                v-for= "(item,index) in 4"
                 :key="index"
                 >
-                 <view>{{item}}</view>
+                 <view>{{verfication[index]}}</view>
                  <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
                    
                  </view>
@@ -121,64 +121,59 @@
           </view>
         </view>
       </view>
-      <!-- End底部 -->
-     
-     <!-- Start选择场馆弹出层 -->
-     <uni-popup ref="popupVenues" :safeArea="false">
-       <van-picker 
-        show-toolbar
-        cancel-button-text="请选择舞蹈房"
-        confirm-button-text="确认"
-        active-class="selectStyle"
-        :isRecently="true"
-        toolbar-class="changeToolbar"
-        @confirm="confirmHouse"
-        @change="selectHouse"
-        :columns="columnsHouses" item-height="40"/>
-     </uni-popup>
-       
-      
-     <!-- Start 时间选择组件 -->
-     <uni-popup ref="popup" :safeArea="false">
-       <van-picker
-        show-toolbar
-        cancel-button-text="请选择日期"
-        confirm-button-text="确认"
-        active-class="selectStyle"
-        :isToday="true"
-        toolbar-class="changeToolbar"
-        visible-item-count="5"
-        @confirm="confirmHours"
-        @change="selectHours"
-        :columns="columnsDays" item-height="40"/>
-     </uni-popup>
-     <!-- End 时间选择组件 -->
-     
-     <!-- Start权限提示信息 -->
-     <uni-popup ref="permissionsPopup" type="dialog">
-        <uni-popup-dialog type="info" mode="base" :content="`您已拒绝${permissionType}授权，如需开启，请点击确认进入设置页面重新授权`" 
-        :before-close="true" 
-        @close="closeProp" 
-        @confirm="confirmProp">
-        </uni-popup-dialog>
-     </uni-popup>
-     <!-- End权限提示信息 -->
     </view>
     <image
       v-else
       class="loading-bg"
       src="https://static.qiniuyun.highvenue.cn/image/hicourt/loading.svg"
     />
+    <!-- Start选择场馆弹出层 -->
+    <uni-popup ref="popupVenues" :safeArea="false">
+      <van-picker 
+       show-toolbar
+       cancel-button-text="请选择舞蹈房"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isRecently="true"
+       toolbar-class="changeToolbar"
+       @confirm="confirmHouse"
+       @change="selectHouse"
+       :columns="columnsHouses" item-height="40"/>
+    </uni-popup>
+      
+     
+    <!-- Start 时间选择组件 -->
+    <uni-popup ref="popup" :safeArea="false">
+      <van-picker
+       show-toolbar
+       cancel-button-text="请选择日期"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isToday="true"
+       toolbar-class="changeToolbar"
+       visible-item-count="5"
+       @confirm="confirmHours"
+       @change="selectHours"
+       :columns="columnsDays" item-height="40"/>
+    </uni-popup>
+    <!-- End 时间选择组件 -->
+    
+    <!-- Start权限提示信息 -->
+    <uni-popup ref="permissionsPopup" type="dialog">
+       <uni-popup-dialog type="info" mode="base" :content="`您已拒绝${permissionType}授权，如需开启，请点击确认进入设置页面重新授权`" 
+       :before-close="true" 
+       @close="closeProp" 
+       @confirm="confirmProp">
+       </uni-popup-dialog>
+    </uni-popup>
+    <!-- End权限提示信息 -->
   </view>
-	
 </template>
 
 <script>
   import { mapMutations,mapState,mapActions } from "vuex"
   import { verifyCode } from "@/api/search.js"
-  import { getSites } from "@/api/venues.js"
-  import { getUserFace, } from "@/api/user.js"
-  import LongButton from "@/components/long-button"
+  import LongButton from "@/components/longButton"
   import Vue from "vue"
 	export default {
     components:{
@@ -199,7 +194,7 @@
         // input框自动获取焦点
         currentIndex:-1,
         // 四位验证码用于战报搜索
-        verfication:["","","",""],
+        verfication:[],
         // 选定的舞房
         currentHourses:"",
         // 选定的时间段
@@ -215,13 +210,11 @@
 			}
 		},
     created() {
-      console.log("输出index")
       this.getTimeData()
-      this.getDeviceInfo()
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
-      ...mapState("m_device",["locationInfo"]),
+      ...mapState("m_device",["locationInfo","deviceInfo"]),
       ...mapState("m_camera",["userFaceInfo"]),
       calName(){
         var tempCourt = this.allVenues.filter(item=>{
@@ -248,7 +241,7 @@
     // 分享朋友圈
     onShareTimeline(){
       return {
-        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}球场的精彩视频吧~`,
+        title: `快来欣赏我在${this.currentHourses?this.currentHourses:this.allVenues[0].name}的精彩视频吧~`,
         query: ``,
       };
     },
@@ -256,9 +249,6 @@
       ...mapActions("m_device",["getLocation",]),
       ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
-      ...mapMutations("m_device",["setDeviceInfo"]),
-      ...mapMutations("m_venues",["setSiteInfos"]),
-      ...mapMutations("m_camera",["setUserFaceInfo"]),
       ...mapMutations("m_user",["setFaceSelect"]),
       // 修改是否人脸查找
       changeSelectFace(){
@@ -269,19 +259,8 @@
       getFocus(){
         this.focusStatus = !this.focusStatus
       },
-      // 存储当前设备的信息
-      async getDeviceInfo(){
-        await uni.getSystemInfo({
-          success:async(res)=> {
-            // 得到胶囊位置信息
-            let menuInfo = await uni.getMenuButtonBoundingClientRect()
-            this.setDeviceInfo(Object.assign({}, res, {menuInfo}))
-          }
-        })
-      },
       // 打开选择场馆
       chooseVenues() {
-        console.log("asdhajs",this.locationInfo)
         // 定位没有完成
         if(this.locationInfo.latitude){
           this.columnsHouses = this.allVenues.filter(item=>{
@@ -306,6 +285,11 @@
       },
       // 滑动选择舞房
       selectHouse(data){
+        console.log("滑动123",typeof(this.verfication))
+        if(this.currentHourses!=this.columnsHouses[data.detail.index]){
+          this.verfication = []
+          this.currentIndex = -1
+        }
         this.currentHourses = this.columnsHouses[data.detail.index]
         this.currentBacimg = this.allVenues[data.detail.index].data.thumbnail
       },
@@ -340,15 +324,11 @@
       },
       // 输出查看键盘输入
       keyInput(data){
-        var keyNumber = [...data.target.value+""]
-        this.verfication = [...keyNumber]
-        this.currentIndex = keyNumber.length-1
-        for(var i=0;i<4;i++){
-          if(!this.verfication[i]){
-            this.verfication[i] = ""
-          }
-        }
-        if(keyNumber.length==4){
+        console.log("开始")
+        this.verfication = data.target.value
+        this.currentIndex = this.verfication.length-1
+        // 若没有输入满则用空格填充
+        if(this.verfication.length==4){
           wx.hideKeyboard()
         }
       },
@@ -372,24 +352,9 @@
         if(this.videoSearch){
           this.videoSearch = false
           this.$showLoading("页面正在跳转！")
-          await getUserFace().then(async value=>{
-            if(value.code==-1){
-              this.videoSearch = true
-              this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000,"none")
-              return false
-            }
-            if(value.code==0){
-              var tempImg = value.data.data.face_img
-              this.setUserFaceInfo(tempImg)
-            }
-          })
-          // 输入得四位验证码
-          var tempCode = ""
           // 所选择的场馆id
           var selectId = 0
-          this.verfication.map(item=>{
-            tempCode = tempCode + item.toString()
-          })
+          // 下滑选择了其他场馆
           if(this.currentHourses){
             this.allVenues.map(item=>{
               if(item.name==this.currentHourses){
@@ -397,12 +362,13 @@
               }
             })
           }
+          // 没有选择场馆
           else{
             selectId = this.allVenues[0].id
           }
           await verifyCode({
             // 场馆邀请码
-            invite_code: parseInt(tempCode),  
+            invite_code: parseInt(this.verfication),  
             // 场馆id
             venue_id: selectId,  
             applet: "HiDancing"
@@ -413,22 +379,20 @@
               this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
             }
             else{
-              await getSites(selectId).then((value)=>{
-                this.setSiteInfos(value.data)
-                if(this.userFaceInfo){
-                  this.$hideLoading()
-                  this.videoSearch = true
-                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "24:00:00"})
-                  uni.navigateTo({
-                    url: "../search-report/index",
-                  })
-                }
-                else{
-                  this.$hideLoading()
-                  this.videoSearch = true
-                  this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
-                }
-              })
+              if(this.userFaceInfo){
+                this.$hideLoading()
+                this.videoSearch = true
+                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
+                uni.navigateTo({
+                  url: "../search-report/index",
+                })
+              }
+              // 尚未人脸拍照
+              else{
+                this.$hideLoading()
+                this.videoSearch = true
+                this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
+              }
             }
           })
         }
@@ -443,7 +407,7 @@
       closeProp() {
         this.$refs.permissionsPopup.close()
       },
-      // 同意授权
+      // 打开授权页面进行二次授权
       confirmProp() {
         // 二次授权
         var that = this 

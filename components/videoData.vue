@@ -1,12 +1,13 @@
 <template>
   <view>
-    <view class="video">
+    <view class="widchi110 heichifan150 relative" style="margin: 20rpx 8rpx 0rpx 8rpx;">
       <view 
-      class="coverImage background-cover"
-      :style="{backgroundImage:video.human_src?`url(${video.human_src})`:`url(${video.download_src}?vframe/jpg/offset/4/w/600/h/360)`}"
+      class="width-full boradiu24 height-full background-cover"
+      :style="{backgroundImage:`url(${video.human_src})`}"
       @click="clickVideo"
       >
-        <view class="leftBottom">
+        <view class="flex flex-direction flex-center absolute left0 bottom0 width-full heichi50 fon20 white z-inde10 "
+        style="border-radius: 0rpx 0rpx 25rpx 25rpx;background-color: rgba(0,0,0,.5);">
           <view>{{video.goal_time}}</view>
         </view>
       </view>
@@ -36,7 +37,7 @@
         // 存储当前的视频对象，进入视频播放页面不需要再拉取组件了
         this.setCurrentVideo(this.video)
         uni.navigateTo({
-          url: "../../pages/video-detail/index"
+          url: "../../pages/video-detail/index?all=false"
         })
       }
     }
@@ -44,33 +45,6 @@
 </script>
 
 <style lang="scss">
-  .video {
-    position: relative;
-    width: 221rpx;
-    height: 300rpx;
-    margin-top: 20rpx;
-    margin-left: 8rpx;
-    margin-right: 8rpx;
-    .coverImage{
-      height: 100%;
-      width: 100%;
-      border-radius: 25rpx;
-    }
-    .leftBottom {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 3;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 50rpx;
-      border-radius: 0rpx 0rpx 25rpx 25rpx;
-      font-size: 20rpx;
-      background-color: rgba(0,0,0,.5);
-      color: #fff;
-    }
-  }
+
+  
 </style>

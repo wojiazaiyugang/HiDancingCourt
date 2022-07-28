@@ -7,7 +7,8 @@
     </nvg-bar>
     <!-- 没信息 -->
     <view v-if="isShow" class="flex flex-center height-full flex-direction">
-      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" @click="loginUserinfo" >一键登录</view>
+      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
+      @click="loginUserinfo" >一键登录</view>
       <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
@@ -20,15 +21,35 @@
         </view>
       </view>
     </view>
-   <!-- 有信息 -->
-   <view v-if="!isShow" class="box">
+    <!-- 有信息 -->
+    <view v-if="!isShow" class="paddingx12">
      <!-- 头像 -->
-      <view class="margtop40 paddingx12 flex flex-center" >
-        <view v-if="userInfo" class="flex flex-center">
-          <image class="avatar heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+      <view class="margtop40 flex flex-center" >
+        <view v-if="userInfo" class="flex relative widthchi300 alitem-center">
+          <image class=" heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+
           </image>
-          
-          <text class="margleft25 widchi160 ellipsis white"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
+          <view class="margleft25 "  v-if="userInfo">
+            <view class="flex">
+              <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis letter-spacing1">
+                {{(selfName?selfName:userInfo.data.open_data.nickName)}}
+              </view>
+              <view v-show="isMaster" class="margleft10 fon24 widchi85 heichi50 line-heichi50 vipcolor vipback text-center"
+              style="border-radius: 0rpx 30rpx 30rpx 30rpx;">
+                VIP管理员
+              </view>
+            </view>
+<!--            <view v-show="isMaster" class="white margtop20">
+              时间
+            </view> -->
+          </view>
+          <view v-show="isMaster"
+           style="margin-left: 4rpx;"
+           class="absolute left0 bottom0 widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
+            <view class="ellipsis marginx10">
+              {{courtInfo.name}}
+            </view>
+          </view>
         </view>
         <view class="flex flex-center" v-else>
           <view @click="reLogin" class="avatar flex flex-center bamyava" >
@@ -50,9 +71,44 @@
           </view>
         </view>
       </view>
-      
-     <view class="marginxy20 background-cover heichi210 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
-        
+      <view v-show="isMaster" class=" flex">
+        <view class="heichi50 widchi6 margtop50 boradiu8" style="background-color: #7C6DFB;">
+          
+        </view>
+        <view class="margleft10 white margtop50 fonweight fon36">
+          今日密码
+        </view>
+      </view>
+      <view v-show="isMaster" class="heichixu85 boradiu90 relative" 
+      style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
+        <view class=" height-full width-full boradiu90" style="opacity: 0.3; background-color: #7C6DFB;">
+          
+        </view>
+        <view class=" height-full width-full absolute left0 top0 boradiu90 flex alitem-center justify-around">
+          <view class="heichixu100 widchi50 fonweight fon40 boradiuoverall line-heichi100 text-center vipcolor vipback" 
+          v-for="(item,index) in bossInviteCode"
+          :key="index">
+            {{item}}
+          </view>
+        </view>
+        <view
+         @tap="confirmCopy"
+         class="absolute right0 bottom0 flex flex-center flex-direction text-center translate-50 letter-spacing1 vipcolor vipback fon24 heichiduan80 widchi40"
+         style="border-radius: 0rpx 40rpx 40rpx 40rpx;"
+         >
+         <view>
+           一键
+         </view>
+         <view>
+           复制
+         </view>
+        </view>
+      </view>
+      <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
+        *快去分享给学员让他们查看自己的专属C位视频吧~
+      </view>
+      <view v-show="!isMaster" class="margtop60 width-full background-cover heichifan190 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
+              
       </view>
     </view>
   </view>
@@ -61,6 +117,7 @@
 <script>
   import { mapMutations,mapState } from "vuex"
   import { updateInfo } from "@/api/user.js"
+  import { getPassword, getIsBoss } from "@/api/venues.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
@@ -73,6 +130,14 @@
         selfAvatar:"",
         // 个人名字
         selfName:"",
+        // 防止多次点击状态量
+        stopClicks:true,
+        // 是否是场馆主
+        isMaster:false,
+        // 场馆相应的信息
+        courtInfo:{},
+        // 场馆主的邀请码
+        bossInviteCode:"",
       };
     },
     components: {
@@ -83,10 +148,36 @@
     },
     created() {
       this.calShowPrivacy()
-      console.log("查看信息",this.userInfo)
+      this.selectBoss()
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
+      // 赋值用户的账号密码
+      confirmCopy(){
+        var that = this
+        wx.setClipboardData({
+          data: that.bossInviteCode,
+          success (res) {
+            wx.getClipboardData({
+              success (res) {
+                console.log(res.data) // data
+              }
+            })
+          }
+        })
+      },
+      // 查看该用户是否是场馆老板
+      async selectBoss(){
+        await getIsBoss().then(async value=>{
+          if(value.data.length!=0){
+            this.isMaster = true
+            this.courtInfo.name = value.data[0].name
+          }
+          console.log("老板",value.data)
+          let {data} = await getPassword(value.data[0].id)
+          this.bossInviteCode = String(data.invite_code)
+        })
+      },
       // 拒绝授权之后重新登陆
       reLogin(){
         this.isAgree = true
@@ -130,11 +221,17 @@
       },
       // 点击登陆获得个人信息页面
       async loginUserinfo() {
+        if(!this.stopClicks){
+          return false
+        }
+        this.stopClicks = false
+        var that = this
         if(this.isAgree){
           wx.getUserProfile({
             lang: "zh_CN",
             desc: "用于完善用户资料",
             success: async (res) => {
+              this.stopClicks = true
               let date = new Date()
               wx.setStorageSync("date",date)
               let tempInfo = this.userInfo
@@ -152,6 +249,7 @@
           })
         }
         else{
+          this.stopClicks = true
           this.$showMsg("请您同意用户隐私协议！")
         }
       },

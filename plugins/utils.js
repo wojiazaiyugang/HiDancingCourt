@@ -1,5 +1,6 @@
 import Vue from "vue"
 import dayjs from "dayjs"
+import { addDownload } from "@/api/video.js"
 
 //Uni中的手机振动问题
 Vue.prototype.$vs = uni.vibrateShort
@@ -45,7 +46,11 @@ Vue.prototype.$getDistance = (lat1, lng1, lat2, lng2) => {
 Vue.prototype.$dayjs = dayjs
 
 // 下载视频
-Vue.prototype.$download = ({url, name, success, fail}) => {
+Vue.prototype.$download = ({url, name, video_id}) => {
+  uni.showLoading({
+    title:"下载中！",
+    icon: "none"
+  })
   name = name || new Date().getTime()
   wx.authorize({
     /* 这个就是保存相册的 */
@@ -70,12 +75,33 @@ Vue.prototype.$download = ({url, name, success, fail}) => {
         success: res => {
           wx.saveVideoToPhotosAlbum({
             filePath: res.filePath,
-            fail: error => fail(error),
-            success: res => success(res)
+            success: async res => {
+              console.log("123")
+              await addDownload(video_id)
+              uni.hideLoading()
+              uni.showToast({
+                title:"下载成功！",
+                duration:1500,
+                icon: "success"
+              })
+            },
+            fail: error => {
+              console.log("123456")
+              uni.showToast({
+                title:"您已取消下载！",
+                duration:1500,
+                icon: "none"
+              })
+            }
           })
         },
         fail: error => {
-          fail(error)
+          console.log("789")
+          uni.showToast({
+            title:"下载失败，请您检查网络重新下载！",
+            duration:1500,
+            icon: "error"
+          })
         },
       })
     }

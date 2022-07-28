@@ -35,6 +35,9 @@
 .marginx10{
   margin: 0rpx 20rpx;
 }
+.marginxy10{
+  margin: 20rpx 20rpx;
+}
 .marginxy20{
   margin: 40rpx 30rpx;
 }
@@ -43,6 +46,9 @@
 }
 .margleft5{
   margin-left: 10rpx;
+}
+.margleft10{
+  margin-left: 20rpx;
 }
 .margleft25{
   margin-left: 25rpx;
@@ -80,11 +86,20 @@
 .margright20{
   margin-right: 20rpx;
 }
+.marginbottom10{
+  margin-bottom: 20rpx;
+}
 .marginbottom15{
   margin-bottom: 30rpx;
 }
+.marginbottom20{
+  margin-bottom: 40rpx;
+}
 .paddingx12{
   padding: 0rpx 24rpx;
+}
+.paddingx25{
+  padding: 0rpx 50rpx;
 }
 .paddingy20{
   padding: 40rpx 0rpx;
@@ -113,9 +128,18 @@
 .top-half{
   top: 50%;
 } 
+.top-70{
+  top: 70%;
+} 
+.top-80{
+  top: 80%;
+} 
 .left-half{
   left: 50%;
 } 
+.left20{
+  left: 20rpx;
+}
 .left0{
   left: 0rpx;
 }
@@ -125,12 +149,45 @@
 .right20{
   right: 20rpx;
 }
+.bottom0{
+  bottom: 0rpx;
+}
 .bottom50{
   bottom: 50rpx;
+}
+.bottom60{
+  bottom: 60rpx;
+}
+.bottom80{
+  bottom: 80rpx;
+}
+.bottom100{
+  bottom: 100rpx;
+}
+.bottom140{
+  bottom: 140rpx;
+}
+.bottom200{
+  bottom: 200rpx;
 }
 .translate--50{
   transform: translate(-50%,-50%);
 }
+.translate-50{
+  transform: translate(50%,50%);
+}
 .translatex-50{
   transform: translateX(-50%);
+}
+.translatex50{
+  transform: translateX(50%);
+}
+.translatey-50{
+  transform: translateY(-50%);
+}
+.translatey50{
+  transform: translateY(-50%);
+}
+.translatey100{
+  transform: translateY(100%);
 }
