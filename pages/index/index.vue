@@ -59,9 +59,9 @@
            class="InputBoard flex flex-center bagreinput " >
             <input
               @input="keyInput"
+              v-model="verfication"
               :maxlength="4"
               :focus="focusStatus"
-              :cursor-spacing="25"
               type="number"
               class="height-0 width-0 fon50 "/>
           </view>
@@ -70,10 +70,10 @@
             <view class="width-full height-full flex justify-around alitem-center ">
               <view class="InputItem bablack flex relative flex-center"
               @click.stop="getFocus"
-                v-for= "(item,index) in verfication"
+                v-for= "(item,index) in 4"
                 :key="index"
                 >
-                 <view>{{item}}</view>
+                 <view>{{verfication[index]}}</view>
                  <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
                    
                  </view>
@@ -194,7 +194,7 @@
         // input框自动获取焦点
         currentIndex:-1,
         // 四位验证码用于战报搜索
-        verfication:["","","",""],
+        verfication:[],
         // 选定的舞房
         currentHourses:"",
         // 选定的时间段
@@ -211,9 +211,6 @@
 		},
     created() {
       this.getTimeData()
-      setTimeout(()=>{
-        console.log("输出查看",this.deviceInfo)
-      },3000)
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
@@ -288,6 +285,11 @@
       },
       // 滑动选择舞房
       selectHouse(data){
+        console.log("滑动123",typeof(this.verfication))
+        if(this.currentHourses!=this.columnsHouses[data.detail.index]){
+          this.verfication = []
+          this.currentIndex = -1
+        }
         this.currentHourses = this.columnsHouses[data.detail.index]
         this.currentBacimg = this.allVenues[data.detail.index].data.thumbnail
       },
@@ -322,16 +324,11 @@
       },
       // 输出查看键盘输入
       keyInput(data){
-        var keyNumber = [...data.target.value+""]
-        this.verfication = [...keyNumber]
-        this.currentIndex = keyNumber.length-1
+        console.log("开始")
+        this.verfication = data.target.value
+        this.currentIndex = this.verfication.length-1
         // 若没有输入满则用空格填充
-        for(var i=0;i<4;i++){
-          if(!this.verfication[i]){
-            this.verfication[i] = ""
-          }
-        }
-        if(keyNumber.length==4){
+        if(this.verfication.length==4){
           wx.hideKeyboard()
         }
       },
@@ -355,13 +352,8 @@
         if(this.videoSearch){
           this.videoSearch = false
           this.$showLoading("页面正在跳转！")
-          // 输入得四位验证码
-          var tempCode = ""
           // 所选择的场馆id
           var selectId = 0
-          this.verfication.map(item=>{
-            tempCode = tempCode + item.toString()
-          })
           // 下滑选择了其他场馆
           if(this.currentHourses){
             this.allVenues.map(item=>{
@@ -376,7 +368,7 @@
           }
           await verifyCode({
             // 场馆邀请码
-            invite_code: parseInt(tempCode),  
+            invite_code: parseInt(this.verfication),  
             // 场馆id
             venue_id: selectId,  
             applet: "HiDancing"

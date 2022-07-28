@@ -3,10 +3,8 @@
  import { getUserFace, } from "@/api/user.js"
 	export default {
 		onLaunch: function() {
-      console.log("onlaunch")
       this.getToken().finally(()=>{
         this.getLocation().finally(()=>{
-          console.log("1234")
           this.getVenues()
           this.getDeviceInfo()
           this.getFaceInfo()
@@ -14,7 +12,6 @@
       })
 		},
 		onShow: function() {
-      console.log("onshow")
       const updateManager = wx.getUpdateManager()
       if(updateManager){
         // 检查是否版本更新

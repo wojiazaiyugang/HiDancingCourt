@@ -28,33 +28,28 @@
       scroll-y="true" 
       class="height-80 overflow-hidden"
       :show-scrollbar="false"
-      @scrolltoupper="scroolTop(false)"
       @scrolltolower="scroolBottom(false)"
+      @scrolltoupper="scroolTop(false)"
       @touchstart="startScrol"
       @touchend="endScrol"
     >
-      <view class=" margtop10">
-        <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
-          请尝试重新拍照查询或联系管理员查看所有视频!
-        </view>
-        <view v-if="allVideos.length!=0&&!faceSelect" class="marginx10">
-         <videoAll
-            v-for="(item,index) in allVideos" 
-            :key="index" 
-            :videoAll="item">
-          </videoAll>
-        </view>
-        <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " 
-        v-if="allVideos.length!=0&&faceSelect" >
-         <videoData
-            v-for="(item,index) in allVideos" 
-            :key="index" 
-            :videoAll="item">
-          </videoData>
-        </view>
-         <view class="heichishi100">
-           
-         </view>
+      <view v-if="allVideos.length==0" class="absolute margtop50zhi text-center margleftchi50 translatex-50 widthchi210 line-heichi60 gray" >
+        请尝试重新拍照查询或联系管理员查看所有视频!
+      </view>
+      <view v-if="allVideos.length!=0&&!faceSelect" class="marginx10">
+       <videoAll
+          v-for="(item,index) in allVideos" 
+          :key="index" 
+          :videoAll="item">
+        </videoAll>
+      </view>
+      <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " 
+      v-if="allVideos.length!=0&&faceSelect" >
+       <videoData
+          v-for="(item,index) in allVideos" 
+          :key="index" 
+          :videoAll="item">
+        </videoData>
       </view>
 
     </scroll-view>
@@ -105,6 +100,10 @@
         techDancTypes:[],
         // 查询单个老师的标签
         selectLabel:"",
+        // 防抖上滑定时器
+        upTimer:null,
+        // 防抖下滑定时器
+        downTimer:null,
 			}
 		},
     components: {
@@ -134,9 +133,11 @@
       endScrol(e){
         if(this.allVideos.length<this.perPage&&this.allVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
+            console.log("上touch")
             this.scroolTop(true)
           }
           if(e.changedTouches[0].pageY<this.startPosition&&(this.startPosition-e.changedTouches[0].pageY)>=10){
+            console.log("下touch")
             this.scroolBottom(true)
           }
         }
@@ -237,33 +238,43 @@
       },
       // 下拉到底刷新数据
       async scroolBottom(status) {
-        if(this.allVideos.length>=this.perPage||JSON.parse(status)){
-          this.currentPage++
-          this.getVideosByFace()
+        if(this.downTimer){
+          clearTimeout(this.downTimer)
         }
+        this.downTimer = setTimeout(()=>{
+          if(this.allVideos.length>=this.perPage||JSON.parse(status)){
+            this.currentPage++
+            this.getVideosByFace()
+          }
+        },500)
       },
       // 向上滑动更新所有的视频数据
       async scroolTop(status){
-        if(this.allVideos.length>=this.perPage||JSON.parse(status)){
-          var upPage = 1
-          if(this.requestDone){
-            this.requestDone = false
-            this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
-            this.$hideLoading()
-            this.requestDone = true
-            // 上滑数组筛选
-            this.allVideos = this.allVideos.filter((item,index)=>{
-              if(data[index]&&data[index].id!=item.id){
-                return item
-              }
-              if(!data[index]){
-                return item
-              }
-            })
-            this.allVideos = [...data,...this.allVideos]
+          if(this.upTimer){
+            clearTimeout(this.upTimer)
           }
-        }
+          this.upTimer = setTimeout(async ()=>{
+            if(this.allVideos.length>=this.perPage||JSON.parse(status)){
+              var upPage = 1
+              if(this.requestDone){
+                this.requestDone = false
+                this.$showLoading("加载中！","none")
+                let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
+                this.$hideLoading()
+                this.requestDone = true
+                // 上滑数组筛选
+                this.allVideos = this.allVideos.filter((item,index)=>{
+                  if(data[index]&&data[index].id!=item.id){
+                    return item
+                  }
+                  if(!data[index]){
+                    return item
+                  }
+                })
+                this.allVideos = [...data,...this.allVideos]
+              }
+            }
+          },500)
       },
     },
 	}
