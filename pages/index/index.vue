@@ -60,6 +60,7 @@
             <input
               @input="keyInput"
               v-model="verfication"
+              :cursor-spacing="50"
               :maxlength="4"
               :focus="focusStatus"
               type="number"
