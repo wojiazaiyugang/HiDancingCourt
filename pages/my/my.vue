@@ -31,20 +31,24 @@
           </image>
           <view class="margleft25 "  v-if="userInfo">
             <view class="flex">
-              <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis">
+              <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis letter-spacing1">
                 {{(selfName?selfName:userInfo.data.open_data.nickName)}}
               </view>
-              <view v-show="isMaster" class="margleft10 widchi85 heichi50 line-heichi50 vipcolor vipback text-center"
+              <view v-show="isMaster" class="margleft10 fon24 widchi85 heichi50 line-heichi50 vipcolor vipback text-center"
               style="border-radius: 0rpx 30rpx 30rpx 30rpx;">
                 VIP管理员
               </view>
             </view>
-            <view v-show="isMaster" class="white margtop20">
+<!--            <view v-show="isMaster" class="white margtop20">
               时间
-            </view>
+            </view> -->
           </view>
-          <view v-show="isMaster" class="absolute left0 bottom0 widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" style="margin-left: 4rpx;">
-            海瑟和
+          <view v-show="isMaster"
+           style="margin-left: 4rpx;"
+           class="absolute left0 bottom0 widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
+            <view class="ellipsis marginx10">
+              {{courtInfo.name}}
+            </view>
           </view>
         </view>
         <view class="flex flex-center" v-else>
@@ -67,7 +71,7 @@
           </view>
         </view>
       </view>
-      <view class=" flex">
+      <view v-show="isMaster" class=" flex">
         <view class="heichi50 widchi6 margtop50 boradiu8" style="background-color: #7C6DFB;">
           
         </view>
@@ -75,19 +79,36 @@
           今日密码
         </view>
       </view>
-      <view class="heichishi100 boradiu90 relative" 
+      <view v-show="isMaster" class="heichixu85 boradiu90 relative" 
       style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
         <view class=" height-full width-full boradiu90" style="opacity: 0.3; background-color: #7C6DFB;">
           
         </view>
-        <view class="absolute right0 bottom0 text-center translate-50  vipcolor vipback fon24 heichiduan80 widchi40"
-         style="border-radius: 0rpx 40rpx 40rpx 40rpx;">
-         <text style="margin-right: 20rpx;">一键</text>
-         <text>赋值</text>
+        <view class=" height-full width-full absolute left0 top0 boradiu90 flex alitem-center justify-around">
+          <view class="heichixu100 widchi50 fonweight fon40 boradiuoverall line-heichi100 text-center vipcolor vipback" 
+          v-for="(item,index) in bossInviteCode"
+          :key="index">
+            {{item}}
+          </view>
+        </view>
+        <view
+         @tap="confirmCopy"
+         class="absolute right0 bottom0 flex flex-center flex-direction text-center translate-50 letter-spacing1 vipcolor vipback fon24 heichiduan80 widchi40"
+         style="border-radius: 0rpx 40rpx 40rpx 40rpx;"
+         >
+         <view>
+           一键
+         </view>
+         <view>
+           复制
+         </view>
         </view>
       </view>
-      <view class="text-center width-full margtop20 white fon20">
+      <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
         *快去分享给学员让他们查看自己的专属C位视频吧~
+      </view>
+      <view v-show="!isMaster" class="margtop60 width-full background-cover heichifan190 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
+              
       </view>
     </view>
   </view>
@@ -96,6 +117,7 @@
 <script>
   import { mapMutations,mapState } from "vuex"
   import { updateInfo } from "@/api/user.js"
+  import { getPassword, getIsBoss } from "@/api/venues.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
@@ -111,7 +133,11 @@
         // 防止多次点击状态量
         stopClicks:true,
         // 是否是场馆主
-        isMaster:true,
+        isMaster:false,
+        // 场馆相应的信息
+        courtInfo:{},
+        // 场馆主的邀请码
+        bossInviteCode:"",
       };
     },
     components: {
@@ -122,9 +148,36 @@
     },
     created() {
       this.calShowPrivacy()
+      this.selectBoss()
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
+      // 赋值用户的账号密码
+      confirmCopy(){
+        var that = this
+        wx.setClipboardData({
+          data: that.bossInviteCode,
+          success (res) {
+            wx.getClipboardData({
+              success (res) {
+                console.log(res.data) // data
+              }
+            })
+          }
+        })
+      },
+      // 查看该用户是否是场馆老板
+      async selectBoss(){
+        await getIsBoss().then(async value=>{
+          if(value.data.length!=0){
+            this.isMaster = true
+            this.courtInfo.name = value.data[0].name
+          }
+          console.log("老板",value.data)
+          let {data} = await getPassword(value.data[0].id)
+          this.bossInviteCode = String(data.invite_code)
+        })
+      },
       // 拒绝授权之后重新登陆
       reLogin(){
         this.isAgree = true
