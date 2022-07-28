@@ -37,7 +37,7 @@
         // 存储当前的视频对象，进入视频播放页面不需要再拉取组件了
         this.setCurrentVideo(this.video)
         uni.navigateTo({
-          url: "../../pages/video-detail/index"
+          url: "../../pages/video-detail/index?all=false"
         })
       }
     }

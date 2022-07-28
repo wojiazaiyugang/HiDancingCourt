@@ -92,6 +92,9 @@
 .marginbottom15{
   margin-bottom: 30rpx;
 }
+.marginbottom20{
+  margin-bottom: 40rpx;
+}
 .paddingx12{
   padding: 0rpx 24rpx;
 }
@@ -170,9 +173,21 @@
 .translate--50{
   transform: translate(-50%,-50%);
 }
+.translate-50{
+  transform: translate(50%,50%);
+}
 .translatex-50{
   transform: translateX(-50%);
 }
+.translatex50{
+  transform: translateX(50%);
+}
 .translatey-50{
   transform: translateY(-50%);
+}
+.translatey50{
+  transform: translateY(-50%);
+}
+.translatey100{
+  transform: translateY(100%);
 }

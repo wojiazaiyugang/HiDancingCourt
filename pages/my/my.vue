@@ -7,7 +7,8 @@
     </nvg-bar>
     <!-- 没信息 -->
     <view v-if="isShow" class="flex flex-center height-full flex-direction">
-      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" @click="loginUserinfo" >一键登录</view>
+      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
+      @click="loginUserinfo" >一键登录</view>
       <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
@@ -20,15 +21,31 @@
         </view>
       </view>
     </view>
-   <!-- 有信息 -->
-   <view v-if="!isShow" class="box">
+    <!-- 有信息 -->
+    <view v-if="!isShow" class="paddingx12">
      <!-- 头像 -->
-      <view class="margtop40 paddingx12 flex flex-center" >
-        <view v-if="userInfo" class="flex flex-center">
-          <image class="avatar heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+      <view class="margtop40 flex flex-center" >
+        <view v-if="userInfo" class="flex relative widthchi300 alitem-center">
+          <image class=" heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+
           </image>
-          
-          <text class="margleft25 widchi160 ellipsis white"  v-if="userInfo">{{"ID: "+(selfName?selfName:userInfo.data.open_data.nickName)}}</text>
+          <view class="margleft25 "  v-if="userInfo">
+            <view class="flex">
+              <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis">
+                {{(selfName?selfName:userInfo.data.open_data.nickName)}}
+              </view>
+              <view v-show="isMaster" class="margleft10 widchi85 heichi50 line-heichi50 vipcolor vipback text-center"
+              style="border-radius: 0rpx 30rpx 30rpx 30rpx;">
+                VIP管理员
+              </view>
+            </view>
+            <view v-show="isMaster" class="white margtop20">
+              时间
+            </view>
+          </view>
+          <view v-show="isMaster" class="absolute left0 bottom0 widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" style="margin-left: 4rpx;">
+            海瑟和
+          </view>
         </view>
         <view class="flex flex-center" v-else>
           <view @click="reLogin" class="avatar flex flex-center bamyava" >
@@ -50,9 +67,27 @@
           </view>
         </view>
       </view>
-      
-     <view class="marginxy20 background-cover heichi210 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
-        
+      <view class=" flex">
+        <view class="heichi50 widchi6 margtop50 boradiu8" style="background-color: #7C6DFB;">
+          
+        </view>
+        <view class="margleft10 white margtop50 fonweight fon36">
+          今日密码
+        </view>
+      </view>
+      <view class="heichishi100 boradiu90 relative" 
+      style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
+        <view class=" height-full width-full boradiu90" style="opacity: 0.3; background-color: #7C6DFB;">
+          
+        </view>
+        <view class="absolute right0 bottom0 text-center translate-50  vipcolor vipback fon24 heichiduan80 widchi40"
+         style="border-radius: 0rpx 40rpx 40rpx 40rpx;">
+         <text style="margin-right: 20rpx;">一键</text>
+         <text>赋值</text>
+        </view>
+      </view>
+      <view class="text-center width-full margtop20 white fon20">
+        *快去分享给学员让他们查看自己的专属C位视频吧~
       </view>
     </view>
   </view>
@@ -73,6 +108,10 @@
         selfAvatar:"",
         // 个人名字
         selfName:"",
+        // 防止多次点击状态量
+        stopClicks:true,
+        // 是否是场馆主
+        isMaster:true,
       };
     },
     components: {
@@ -83,7 +122,6 @@
     },
     created() {
       this.calShowPrivacy()
-      console.log("查看信息",this.userInfo)
     },
     methods: {
       ...mapMutations('m_user',["setUserInfo"]),
@@ -130,11 +168,17 @@
       },
       // 点击登陆获得个人信息页面
       async loginUserinfo() {
+        if(!this.stopClicks){
+          return false
+        }
+        this.stopClicks = false
+        var that = this
         if(this.isAgree){
           wx.getUserProfile({
             lang: "zh_CN",
             desc: "用于完善用户资料",
             success: async (res) => {
+              this.stopClicks = true
               let date = new Date()
               wx.setStorageSync("date",date)
               let tempInfo = this.userInfo
@@ -152,6 +196,7 @@
           })
         }
         else{
+          this.stopClicks = true
           this.$showMsg("请您同意用户隐私协议！")
         }
       },

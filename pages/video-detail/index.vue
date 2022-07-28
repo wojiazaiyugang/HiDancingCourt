@@ -121,6 +121,8 @@
         videoType:"child",
         // 战报搜索所选的站点
         sitesList:[],
+        // 是否是查看集体视频
+        isAll:false,
       };
     },
     onLoad(e) {
@@ -132,7 +134,7 @@
         this.getVideoDetail()
         return false
       }
-      this.playingVideo()
+      this.playingVideo(e.all)
     },
     computed: {
       ...mapState("m_video",[
@@ -146,6 +148,7 @@
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_device",["deviceInfo"]),
       ...mapState("m_user",["userInfo","faceSelect"]),
+      ...mapState("m_video",["currentAllVideos"]),
       calHeight(){
         return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
       }
@@ -197,7 +200,7 @@
         this.isPlay = !this.isPlay
       },
       // 播放当前视频
-      playingVideo(){
+      playingVideo(value){
         if(this.selectSite){
           this.sitesList = [this.siteId]
         }
@@ -208,7 +211,12 @@
         }
         this.videoContent = wx.createVideoContext("myVideo")
         // 当前页面接收传递过来的视频对象
-        this.playVideo = this.currentVideo
+        if(JSON.parse(value)){
+          this.playVideo = this.currentAllVideos
+        }
+        else{
+          this.playVideo = this.currentVideo
+        }
         console.log("chakandangqianshi",this.playVideo)
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
@@ -278,7 +286,7 @@
           // 下一个是最后一个视频
           if(this.numberId==this.allSearchVideos.length-1){
             this.nextPage++
-            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.nextPage,this.perPage,this.faceSelect,this.videoType)
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.nextPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
             if(data.length==0){
               uni.showToast({
                 icon:"none",

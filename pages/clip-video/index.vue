@@ -15,7 +15,7 @@
     >
       <view class="marginxy10">
        <videoAll
-          :videoAll="currentVideo" :isPlay="true">
+          :videoAll="currentAllVideos" :isPlay="true">
         </videoAll>
       </view>
        <view class="flex flexwrap " style="align-content: flex-start;margin: 10rpx 20rpx 0rpx 20rpx; " >
@@ -67,7 +67,7 @@
       nvgBar,
     },
     computed: {
-      ...mapState("m_video",["searchData","siteId","selectSite","currentVideo"]),
+      ...mapState("m_video",["searchData","siteId","selectSite","currentAllVideos"]),
       ...mapState("m_user",["faceSelect"]),
       ...mapState("m_venues",["siteInfos",])
     },
@@ -83,7 +83,7 @@
       }
       this.setAllSearchVideos([])
       this.getClipVideos()
-      console.log("chushihua",this.currentVideo)
+      console.log("chushihua",this.currentAllVideos)
     },
 		methods: {
       ...mapMutations("m_video",
@@ -117,13 +117,13 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,"",this.currentVideo.data.record_name)
+          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
           this.requestOne = true
           this.$hideLoading()
           this.loadingNone = data.length<this.perPage
           this.clipVideos = [...this.clipVideos,...data]
           this.clipVideos = this.clipVideos
-          this.setAllSearchVideos([this.currentVideo,...this.clipVideos])
+          this.setAllSearchVideos([this.currentAllVideos,...this.clipVideos])
           this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
         }
       },
@@ -135,7 +135,7 @@
           if(this.requestOne){
             this.requestOne = false
             this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,"",this.currentVideo.data.record_name)
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
             console.log("shanghua",data)
             this.$hideLoading()
             this.requestOne = true
@@ -149,7 +149,7 @@
               }
             })
             this.clipVideos = [...data,...this.clipVideos]
-            this.setAllSearchVideos([this.currentVideo,...this.clipVideos])
+            this.setAllSearchVideos([this.currentAllVideos,...this.clipVideos])
           }
         }
       },

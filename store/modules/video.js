@@ -5,7 +5,9 @@ export default {
     selectSite:false,
     // 用户选择单个场地搜索的场地ID
     siteId:0,
-    // 视频播放页面当前播放的视频
+    // 当前播放的集体视频
+    currentAllVideos:null,
+    // 视频播放页面当前播放的剪辑视频
     currentVideo: null,
     // 根据条件搜索出来的全部视频
     allSearchVideos:[],
@@ -40,5 +42,8 @@ export default {
     setVideoPages(state,payload){
       state.videoPages = payload
     },
+    setCurrentAllVideos(state,payload){
+      state.currentAllVideos = payload
+    }
   }
 }

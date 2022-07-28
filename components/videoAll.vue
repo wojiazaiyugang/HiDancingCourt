@@ -43,14 +43,14 @@
       }
     },
     methods: {
-      ...mapMutations("m_video",["setCurrentVideo"]),
+      ...mapMutations("m_video",["setCurrentAllVideos"]),
       // 跳转剪辑视频页面
       clickVideo() {
-        console.log("chakan",this.isPlay,typeof(this.isPlay))
-        this.setCurrentVideo(this.videoAll)
+        console.log("chakan",this.videoAll)
+        this.setCurrentAllVideos(this.videoAll)
         if(this.isPlay){
           uni.navigateTo({
-            url: "../../pages/video-detail/index"
+            url: "../../pages/video-detail/index?all=true"
           })
         }
         else{
