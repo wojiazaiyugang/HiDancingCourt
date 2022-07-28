@@ -368,7 +368,7 @@
           }
           await verifyCode({
             // 场馆邀请码
-            invite_code: parseInt(this.verfication),  
+            invite_code: this.verfication,  
             // 场馆id
             venue_id: selectId,  
             applet: "HiDancing"
