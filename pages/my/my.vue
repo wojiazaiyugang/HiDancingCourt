@@ -7,8 +7,10 @@
     </nvg-bar>
     <!-- 没信息 -->
     <view v-if="isShow" class="flex flex-center height-full flex-direction">
-      <view class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
-      @click="loginUserinfo" >一键登录</view>
+      <view v-show="userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
+      @click="loginUserinfo" >头像信息授权</view>
+      <view v-show="!userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight"
+      @click="openAuthority" >短信信息授权</view>
       <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
@@ -138,6 +140,8 @@
         courtInfo:{},
         // 场馆主的邀请码
         bossInviteCode:"",
+        // 头像信息授权与电话授权的标志
+        userAuthorization:true,
       };
     },
     components: {
@@ -251,6 +255,18 @@
         else{
           this.stopClicks = true
           this.$showMsg("请您同意用户隐私协议！")
+        }
+      },
+      // 打开手机号
+      async openAuthority(e){
+        if(e.detail.errMsg == "getPhoneNumber:ok") {
+          // 用户点击同意获取电话
+          if(e.detail.code){
+            await getPhone(e.detail.code)
+          }
+        }
+        if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
+          
         }
       },
     }

@@ -1,5 +1,8 @@
 <template>
-  <view class="width-full background-cover" :style="{height:calHeight}" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
+  <view 
+    @touchstart="selectPre"
+    @touchend="selectNext"
+    class="width-full background-cover" :style="{height:calHeight}" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
     <view class="width-full height-full relative">
       <video
        :class="['width-full',isTotal?'absolute top-half left-half translate--50 heichi210':'height-full'] "
@@ -29,7 +32,11 @@
           </view>
         </view>
       </view>
-      <view
+      
+      
+      
+      
+<!--      <view
         v-show="!isShare"
         @click="preVideo"
         class="flex flex-center absolute bablack left0 top-half translatey-50"
@@ -46,29 +53,47 @@
         <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
           
         </view>
-      </view>
-      <view 
-        class="flex absolute width-full justify-between alitem-center left0 heichishi100 bottom100">
+      </view> -->
+      
+      
+      
+      
+      <view
+        class=" absolute width-full left0 heichifan120 bottom200">
         <view 
           :style="{marginLeft:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}"
         >
-          <view v-show="isTotal" class="fon24 white marginbottom15">
+          <view v-show="isTotal" class="fon24 white heichi50 line-heichi50 marginbottom10">
             集体视频
           </view>
-          <view class="white fon36 marginbottom15 ellipsis widthchi210" >
+          <view class="white fon36 ellipsis widthchi210 heichi50 line-heichi50 marginbottom10" >
             {{playVideo.venue_name}}
           </view>
-          <view class="fon24 white">
+          <view class="heichi50 paddingx12 line-heichi50 bayello boradiu50 fon24 white widthtext marginbottom10">
+            {{"#" + playVideo.data.label}}
+          </view>
+          <view class="fon24 white heichi50 line-heichi50">
             {{playVideo.goal_time}}
           </view>
         </view>
       </view>
+      
+      
+      
+      <view v-if="!isShare" class="absolute background-cover widchi30 heichiduan73 left-half bottom50 translate--50"
+        style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_.png);"
+        >
+        
+      </view>
+      
+      
     </view>
     
-    <view v-show="!isShare" class="absolute right20 top-80 translatey-50 widchi50 heichifan150 flex flex-direction justify-between alitem-center">
-      <view class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
+    <view v-show="!isShare" 
+      class="absolute right20 bottom200  widchi50 heichifan150 flex flex-direction justify-between alitem-center">
+      <view class="widchi50 bawhite bg-father heichixu100 boradiu20 flex justify-center alitem-center">
         <button
-          class="bg-trans widchi20 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center"
+          class="bg-trans widchi20 bawhite bg-father heichixu100 boradiu20 flex justify-center alitem-center"
           open-type="share"
         >
           <view class="iconfont icon-zhuanfa white fon60 white opcity10" ></view>
@@ -76,7 +101,7 @@
       </view>
       <view
         @click="downloadVideo"
-        class="widchi50 bawhite bg-father heichixu100 boradiu16 flex justify-center alitem-center">
+        class="widchi50 bawhite bg-father heichixu100 boradiu20 flex justify-center alitem-center">
          <view class="iconfont icon-xiazaidaoru white fon60 opcity10" ></view>
       </view>
     </view>
@@ -123,6 +148,8 @@
         sitesList:[],
         // 是否是查看集体视频
         isAll:false,
+        // 开始滑动的位置
+        sliderPosition:0,
       };
     },
     onLoad(e) {
@@ -183,6 +210,22 @@
     },
     methods: {
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
+      // 上一个视频
+      async selectPre(data){
+        console.log("上滑")
+        this.sliderPosition = data.changedTouches[0].pageY
+      },
+      async selectNext(value){
+        if(value.changedTouches[0].pageY>this.sliderPosition&&(value.changedTouches[0].pageY-this.sliderPosition)>=20){
+          console.log("上touch")
+          this.preVideo()
+        }
+        if(value.changedTouches[0].pageY<this.sliderPosition&&(this.sliderPosition-value.changedTouches[0].pageY)>=20){
+          console.log("下touch")
+          this.nextVideo()
+        }
+        console.log("xiahua")
+      },
       // 根据视频ID获得视频信息
       async getVideoDetail(){
         let {data} = await getVideo(this.shareId)

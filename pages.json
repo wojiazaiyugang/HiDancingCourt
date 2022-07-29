@@ -32,7 +32,8 @@
       "path" : "pages/video-detail/index",
       "style" :                                                                                    
       {
-        "navigationStyle":"custom"
+        "navigationStyle":"custom",
+        "disableScroll": true
       }
     },
     {
