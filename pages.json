@@ -14,7 +14,12 @@
       }
     },
     {
-      "path" : "pages/my/my"
+      "path" : "pages/my/my",
+      "style":{
+        "usingComponents":{
+          "van-picker": "/wxcomponents/vant/picker/index"
+        }
+      }
     },
     {
       "path" : "pages/privacy/privacy",

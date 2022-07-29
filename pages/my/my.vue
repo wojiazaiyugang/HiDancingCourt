@@ -9,8 +9,17 @@
     <view v-if="isShow" class="flex flex-center height-full flex-direction">
       <view v-show="userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
       @click="loginUserinfo" >头像信息授权</view>
-      <view v-show="!userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight"
-      @click="openAuthority" >短信信息授权</view>
+      <view v-show="!userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" >
+      
+        
+        <button
+        class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight"
+        open-type="getPhoneNumber" @getphonenumber="openAuthority"
+         >短信通知授权</button>
+        
+        
+        
+      </view>
       <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
           <view v-show="isAgree" class="iconfont icon-duihao white fon32" ></view>
@@ -46,10 +55,16 @@
             </view> -->
           </view>
           <view v-show="isMaster"
+          @tap="chengeCourt"
            style="margin-left: 4rpx;"
-           class="absolute left0 bottom0 widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
-            <view class="ellipsis marginx10">
-              {{courtInfo.name}}
+           class="absolute left0 bottom0 flex widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
+            <view class="ellipsis margleft5">
+              {{currentName}}
+            </view>
+            <view class="widchi15 height-full marginx5">
+              <image src="https://static.qiniuyun.highvenue.cn/image/switch.png"
+               mode="aspectFit"
+               class="widchi15 height-full"></image >
             </view>
           </view>
         </view>
@@ -113,19 +128,31 @@
               
       </view>
     </view>
+    <uni-popup ref="popupCourt" :safeArea="false" :mask-click="false">
+      <van-picker 
+       show-toolbar
+       cancel-button-text="请选择您的另一家舞蹈房"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isRecently="true"
+       toolbar-class="changeToolbar"
+       @confirm="confirmCourt"
+       @change="selectCourt"
+       :columns="columnsCourts" item-height="40"/>
+    </uni-popup>
   </view>
 </template>
 
 <script>
   import { mapMutations,mapState } from "vuex"
-  import { updateInfo } from "@/api/user.js"
+  import { updateInfo, getPhone } from "@/api/user.js"
   import { getPassword, getIsBoss } from "@/api/venues.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
       return {
         // 是否显示获得个人信息页面
-        isShow:true,
+        isShow:false,
         // 是否同意隐私协议
         isAgree:false,
         // 个人头像
@@ -136,12 +163,18 @@
         stopClicks:true,
         // 是否是场馆主
         isMaster:false,
-        // 场馆相应的信息
-        courtInfo:{},
         // 场馆主的邀请码
         bossInviteCode:"",
         // 头像信息授权与电话授权的标志
         userAuthorization:true,
+        // 场馆主所有的场馆名字
+        columnsCourts:[],
+        // 当前显示场馆的相关信息
+        currentName:"",
+        // 当前场馆的ID
+        currentId:0,
+        // 场馆主所有的场馆ID
+        columnsIds:[],
       };
     },
     components: {
@@ -155,7 +188,22 @@
       this.selectBoss()
     },
     methods: {
-      ...mapMutations('m_user',["setUserInfo"]),
+      ...mapMutations("m_user",["setUserInfo"]),
+      // 重新选择场馆
+      async confirmCourt(){
+        let {data} = await getPassword(this.currentId)
+        this.bossInviteCode = String(data.invite_code)
+        this.$refs.popupCourt.close()
+      },
+      // 滑动条改变时的选择
+      selectCourt(data){
+        this.currentName = data.detail.value
+        this.currentId = this.columnsIds[this.columnsCourts.indexOf(this.currentName)]
+      },
+      // 多个场馆主切换舞蹈房
+      chengeCourt(){
+        this.$refs.popupCourt.open("bottom")
+      },
       // 赋值用户的账号密码
       confirmCopy(){
         var that = this
@@ -175,11 +223,16 @@
         await getIsBoss().then(async value=>{
           if(value.data.length!=0){
             this.isMaster = true
-            this.courtInfo.name = value.data[0].name
+            this.columnsCourts = value.data.map(item=>{
+              return item.name
+            })
+            this.columnsIds = value.data.map(item=>{
+              return item.id
+            })
+            this.currentName = value.data[0].name
+            let {data} = await getPassword(value.data[0].id)
+            this.bossInviteCode = String(data.invite_code)
           }
-          console.log("老板",value.data)
-          let {data} = await getPassword(value.data[0].id)
-          this.bossInviteCode = String(data.invite_code)
         })
       },
       // 拒绝授权之后重新登陆
@@ -235,19 +288,17 @@
             lang: "zh_CN",
             desc: "用于完善用户资料",
             success: async (res) => {
+              this.userAuthorization = false
               this.stopClicks = true
-              let date = new Date()
-              wx.setStorageSync("date",date)
               let tempInfo = this.userInfo
               tempInfo.data.open_data = res.userInfo
               this.setUserInfo(tempInfo)
               this.selfAvatar = res.userInfo.avatarUrl
               this.selfName = res.userInfo.nickName
-              this.isShow = false
               await updateInfo({data:res.userInfo})
             },
             fail: error => {
-              this.isShow = false
+              this.userAuthorization = false
               this.$showMsg("为了保证用户您信息更新的即时性，请同意授权！",2000)
             }
           })
@@ -262,11 +313,15 @@
         if(e.detail.errMsg == "getPhoneNumber:ok") {
           // 用户点击同意获取电话
           if(e.detail.code){
+            let date = new Date()
+            wx.setStorageSync("date",date)
+            this.isShow = false
             await getPhone(e.detail.code)
           }
         }
         if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
-          
+          this.isShow = false
+          this.$showMsg("为了获取数据信息，请您同意授权！")
         }
       },
     }
@@ -274,5 +329,5 @@
 </script>
 
 <style lang="scss">
-  
+  @import "@/static/style/vantprop";
 </style>

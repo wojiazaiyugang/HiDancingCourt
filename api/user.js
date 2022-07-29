@@ -29,3 +29,8 @@ export const getUserFace = () => {
 export const changeUserFace = (data) => {
   return request.put("/records/face",data)
 }
+
+// 获取用户的手机号
+export const getPhone = (code) => {
+  return request.get(`/users/phone?code=${code}&applet=HiDancing`)
+}

@@ -455,20 +455,6 @@
     width: 200px;
     height: 200px;
   }
-  .changeToolbar{
-    view:nth-of-type(1){
-      color: black;
-      font-size: 30rpx;
-    }
-    view:nth-of-type(2){
-      color: #7E70F1;
-      font-size: 30rpx;
-    }
-  }
-  view.selectStyle{
-      color: #7E70F1;
-      font-size: 35rpx;
-    }
   .container {
     background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);
   }
