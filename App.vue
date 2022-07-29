@@ -58,8 +58,12 @@
       },
       async getFaceInfo(){
         // 获取人脸信息
-        let {data} = await getUserFace()
-          this.setUserFaceInfo(data.data.face_img)
+        await getUserFace().then(value=>{
+          if(value.code==0){
+            console.log("执行")
+            this.setUserFaceInfo(value.data.data.face_img)
+          }
+        })
       },
     }
 	}

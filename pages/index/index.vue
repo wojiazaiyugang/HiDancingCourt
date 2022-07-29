@@ -203,7 +203,7 @@
         // 光标显示的状态
         focusStatus:false,
         // 是否人脸搜索
-        faceSearch:true,
+        faceSearch:false,
         // 视频搜索防止二次检索
         videoSearch:true,
         // 授权的种类
@@ -380,19 +380,29 @@
               this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
             }
             else{
-              if(this.userFaceInfo){
+              if(this.faceSearch){
+                if(this.userFaceInfo){
+                  this.$hideLoading()
+                  this.videoSearch = true
+                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
+                  uni.navigateTo({
+                    url: "../search-report/index",
+                  })
+                }
+                // 尚未人脸拍照
+                else{
+                  this.$hideLoading()
+                  this.videoSearch = true
+                  this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
+                }
+              }
+              else{
                 this.$hideLoading()
                 this.videoSearch = true
                 this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                 uni.navigateTo({
                   url: "../search-report/index",
                 })
-              }
-              // 尚未人脸拍照
-              else{
-                this.$hideLoading()
-                this.videoSearch = true
-                this.$showMsg("您尚未拍照，无法进行人脸搜索，请您先拍照！",2000)
               }
             }
           })
