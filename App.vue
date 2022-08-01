@@ -60,7 +60,6 @@
         // 获取人脸信息
         await getUserFace().then(value=>{
           if(value.code==0){
-            console.log("执行")
             this.setUserFaceInfo(value.data.data.face_img)
           }
         })

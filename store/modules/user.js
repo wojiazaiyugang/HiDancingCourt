@@ -29,7 +29,6 @@ export default {
       uni.login({
         provider: "weixin",
         success: async ({code}) => {
-          console.log("code",code)
           await loginByCode(code).then(async value=>{
             uni.setStorageSync("token",value.data.token)
             commit("setUserId",value.data.user_id)

@@ -232,7 +232,6 @@
        return this.allVenues[0]&&this.allVenues[0].data.thumbnail
       },
       calHeight(){
-        console.log("查看设备",this.deviceInfo)
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
     },
@@ -276,7 +275,6 @@
           this.columnsHouses = this.columnsHouses.map(item=>{
             return item.name
           })
-          console.log("suoyou",this.columnsHouses)
           this.$refs.popupVenues.open("bottom")
         }
         else{
@@ -290,7 +288,6 @@
       },
       // 滑动选择舞房
       selectHouse(data){
-        console.log("滑动123",typeof(this.verfication))
         if(this.currentHourses!=this.columnsHouses[data.detail.index]){
           this.verfication = []
           this.currentIndex = -1
@@ -329,7 +326,6 @@
       },
       // 输出查看键盘输入
       keyInput(data){
-        console.log("开始")
         this.verfication = data.target.value
         this.currentIndex = this.verfication.length-1
         // 若没有输入满则用空格填充

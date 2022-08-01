@@ -3,7 +3,7 @@
     @touchstart="selectPre"
     @touchend="selectNext"
     class="width-full background-cover" :style="{height:calHeight}" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
-    <view class="width-full height-full relative">
+    <view :style="{height:calVideoHeight}" class="width-full relative">
       <video
        :class="['width-full',isTotal?'absolute top-half left-half translate--50 heichi210':'height-full'] "
        id="myVideo"
@@ -32,32 +32,6 @@
           </view>
         </view>
       </view>
-      
-      
-      
-      
-<!--      <view
-        v-show="!isShare"
-        @click="preVideo"
-        class="flex flex-center absolute bablack left0 top-half translatey-50"
-        style="opacity: 0.5; border-radius: 0rpx 40rpx 40rpx 0rpx; width: 120rpx;height: 120rpx;" >
-        <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/pref_video.png);">
-          
-        </view>
-      </view>
-      <view
-        v-show="!isShare"
-        @click="nextVideo"
-        class="flex flex-center absolute bablack right0 top-half translatey-50"
-        style="opacity: 0.5;border-radius: 40rpx 0rpx 0rpx 40rpx; width: 120rpx;height: 120rpx;" >
-        <view class="background-cover" style="width: 60rpx;height: 60rpx;opacity: 1; background-image: url(https://static.qiniuyun.highvenue.cn/image/next_video.png);">
-          
-        </view>
-      </view> -->
-      
-      
-      
-      
       <view
         class=" absolute width-full left0 heichifan120 bottom200">
         <view 
@@ -178,7 +152,10 @@
       ...mapState("m_video",["currentAllVideos"]),
       calHeight(){
         return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
-      }
+      },
+      calVideoHeight(){
+        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+      },
     },
     // 分享到群聊
     onShareAppMessage(res) {

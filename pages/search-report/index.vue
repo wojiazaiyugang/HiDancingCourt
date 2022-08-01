@@ -113,10 +113,12 @@
       ...mapState("m_venues",["siteInfos"]),
       ...mapState("m_video",["searchData",]),
       ...mapState("m_user",["faceSelect"]),
+      ...mapState("m_device",["deviceInfo"]),
     },
     created() {
       this.getRooms()
       this.getAllDancTypes()
+      console.log("输出查看设备信息",this.deviceInfo)
     },
 		methods: {
       ...mapMutations("m_video",[
@@ -150,7 +152,7 @@
         }
         else{
           this.videoType = "parent"
-          this.perPage = 3
+          this.perPage = 5
         }
         await getSites(this.searchData.houseId).then(data=>{
           this.setSiteInfos(data.data)
