@@ -184,7 +184,6 @@
       ...mapState("m_user",["userInfo",]),
     },
     created() {
-      console.log("1243")
       this.calShowPrivacy()
       this.selectBoss()
     },
@@ -243,9 +242,7 @@
       },
       // 是否显示登录页面
       calShowPrivacy(){
-        console.log("外面")
         if(wx.getStorageSync("date")){
-          console.log("li面")
           // 将信息存储在本地，30天重新拿一次头像信息
           var date = new Date()
           // 当前时间戳
@@ -254,7 +251,6 @@
           var historyTime = this.$dayjs(wx.getStorageSync("date")).format("YYYY-MM-DD")
           // 30天重新登陆一下，拿取头像以及名字信息进行更新
           var timeDifference = (Date.parse(currentTime) - Date.parse(historyTime))/(1 * 24 * 60 * 60 * 1000)
-          console.log("chakanchaju",timeDifference,wx.getStorageSync("info"))
           this.userAuthorization = wx.getStorageSync("info")?false:true
           this.isShow = timeDifference>=30?true:false
         }
@@ -315,7 +311,6 @@
       },
       // 打开手机号
       async openAuthority(e){
-        console.log("chakanduanxin",e)
         if(e.detail.errMsg == "getPhoneNumber:ok") {
           // 用户点击同意获取电话
           if(e.detail.code){
