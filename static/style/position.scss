@@ -17,6 +17,9 @@
 .justify-start{
   justify-content: flex-start;
 }
+.justify-end{
+  justify-content: flex-end;
+}
 .flexwrap{
   flex-wrap: wrap;
 }
@@ -86,8 +89,14 @@
 .margtop50zhi{
   margin-top: 50%;
 }
+.margtop30zhi{
+  margin-top: 30%;
+}
 .margright20{
   margin-right: 20rpx;
+}
+.margright40{
+  margin-right: 40rpx;
 }
 .marginbottom10{
   margin-bottom: 20rpx;

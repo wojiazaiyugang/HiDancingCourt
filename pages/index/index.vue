@@ -1,8 +1,10 @@
 <template>
-  <view >
-    <view v-if="loginComplete" class="container heichi100 width-full flex alitem-center justify-start flex-direction fon24 background-cover">
+  <view class=" background-cover "
+   style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
+   :style="{height:calHeight}">
+    <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
       <!-- Start 第一个Long-Button -->
-      <view class="First-LongButton" @click="chooseVenues">
+      <view class="width95 margtop30zhi" @click="chooseVenues">
         <long-button>
           <template v-slot:icon >
           <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
@@ -24,7 +26,7 @@
       <!-- End 第一个Long-Button -->
       
       <!-- Start 球馆图片 -->
-      <view class="courtPicture flex flex-center background-cover margtop40" >
+      <view class="heichi25shi babotton boradiu24 width80 flex flex-center background-cover " >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
          :style="{backgroundImage: `url(${currentBacimg?currentBacimg:calBaimg})`}">
           
@@ -33,7 +35,7 @@
       <!-- End 球馆图片 -->
       
       <!-- Start 第二个Long-Button -->
-      <view class="Second-LongButton margtop40" @click="showTimePopup">
+      <view class="width95 " @click="showTimePopup">
         <long-button>
           <template v-slot:icon>
             <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
@@ -50,13 +52,13 @@
       </view>
       <!-- End 第二个Long-Button -->
       <!-- Start hide第三个Long-Button -->
-      <view style="width: 95%;margin-bottom: 45rpx; color: white;">
-        <view style=" margin: 40rpx 0rpx 0rpx 0rpx;">
+      <view class="white width95">
+        <view>
           <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
         </view>
         <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
           <view
-           class="InputBoard flex flex-center bagreinput " >
+           class=" heichixu85 opcity2 boradiu30 flex flex-center bagreinput " >
             <input
               @input="keyInput"
               v-model="verfication"
@@ -69,7 +71,7 @@
           <view 
           class="absolute top0 left0 z-inde10 width-full height-full">
             <view class="width-full height-full flex justify-around alitem-center ">
-              <view class="InputItem bablack flex relative flex-center"
+              <view class="InputItem heichixu110 widchi55 line-heichi110 bablack flex relative flex-center text-center fon50 white opcity10 boradiu12"
               @click.stop="getFocus"
                 v-for= "(item,index) in 4"
                 :key="index"
@@ -85,10 +87,7 @@
       </view>
       <!-- End 第三个Long-Button -->
       <!-- Start 透明层 -->
-      <view class="Four-LongButton  flex flex-center babotton">
-        <view class="First-LongButton-son" >
-          
-        </view>
+      <view class="boradiu50 heichiduan80 width95  flex justify-end alitem-center babotton">
         <view class="margright20 black">
           人脸查询开关
         </view>
@@ -97,26 +96,27 @@
             <view class="iconfont absolute top0 right0 icon-kaiguan white fon32" ></view>
           </view>
         </view>
+        <view class="boradiuoban heichixu110 widchi55 absolute translatex-50 left-half flex flex-center babotton"  @click="useCamera">
+           <view class="widchi45 boradiuoban heichiduan90 bacamer flex flex-center babotton" >
+             <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
+              mode="aspectFit" class="height-full width60"></image>
+           </view>
+        </view>
         <!-- Start 相机按钮 -->
       </view>
       
-      <view class="camera flex flex-center babotton"  @click="useCamera">
-        <view class="camera-son bacamer flex flex-center babotton" >
-          <image src="https://static.qiniuyun.highvenue.cn/image/DanceCamera.png"
-           mode="aspectFit" class="height-full width60"></image>
-        </view>
-      </view>
-    
       <!-- Start底部 -->
-      <view class="bottomSearch flex" >
+      <view class=" width-full flex justify-between margright40" >
         <!-- 用于占位 -->
         <view style="width: 93rpx;" >
          
         </view>
-        <view class="SearchVideo" @click="SearchVideo">
+        <view class="letter-spacing1 widthchi210 heichiduan80 boradiu50 text-center line-heichi80 babotton" @click="SearchVideo">
           <text class="fon28 black fonweight">查找视频</text>
         </view>
-        <view class="my background-cover flex flex-center" @click="navigateMy">
+        <view class=" widchi35 heichi70 background-cover flex flex-center"
+         style="background-image: url(https://static.qiniuyun.highvenue.cn/image/people.png);"
+         @click="navigateMy">
           <view class="black fonweight fon16 margtop40">
             我的
           </view>
@@ -125,7 +125,7 @@
     </view>
     <image
       v-else
-      class="loading-bg"
+      class="absolute left-half heichi210 widthchi210 top-half  translate--50"
       src="https://static.qiniuyun.highvenue.cn/image/hicourt/loading.svg"
     />
     <!-- Start选择场馆弹出层 -->
@@ -230,6 +230,10 @@
       },
       calBaimg(){
        return this.allVenues[0]&&this.allVenues[0].data.thumbnail
+      },
+      calHeight(){
+        console.log("查看设备",this.deviceInfo)
+        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
     },
     // 分享到群聊
@@ -447,89 +451,7 @@
 
 <style lang="scss">
   @import "@/static/style/vantprop";
-  .loading-bg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-  }
-  .container {
-    background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);
-  }
-  .First-LongButton {
-    width: 95%;
-    margin-top: 310rpx;
-  }
-  .courtPicture {
-    height: 390rpx;
-    width: 600rpx;
-    background: linear-gradient(to right, #2de6f8 , #f76fed) ;
-    border-radius: 24rpx;
-  }
-  .Second-LongButton {
-    width: 95%;
-  }
-  .InputBoard{
-    height: 174rpx;
-    opacity: 0.2;
-    border-radius: 30rpx;
-  }
   .InputItem{
-    width: 106rpx;
-    height: 106rpx;
-    line-height: 106rpx;
-    text-align: center;
-    font-size: 50rpx;
-    color: white;
-    opacity: 1;
-    border-radius: 10rpx;
     border: 4rpx solid #FC06ED;
   }
-  .Four-LongButton {
-    width: 95%;
-    height: 78rpx;
-    border-radius: 50rpx;
-    .First-LongButton-son{
-      flex: 1;
-      height: 66rpx;
-      margin: 6rpx 6rpx;
-      line-height: 66rpx;
-      border-radius: 40rpx;
-    }
-  }
-  .camera {
-    width: 105rpx;
-    height: 105rpx;
-    border-radius: 50%;
-    transform: translateY(-86.5%);
-    .camera-son {
-      width: 92rpx;
-      height: 92rpx;
-      border-radius: 50%; 
-    }
-  }
-  .bottomSearch {
-    width: 100%;
-    height: 159rpx;
-    margin-top: -50rpx;
-    justify-content: space-between;
-    .SearchVideo {
-      width: 400rpx;
-      height: 80rpx;
-      background: linear-gradient(to right, #2de6f8 , #f76fed);
-      margin: 14rpx 0rpx 14rpx 26rpx;
-      border-radius: 60rpx;
-      text-align: center;
-      line-height: 80rpx;
-    }
-    .my {
-      margin: 14rpx 26rpx 14rpx 0rpx;
-      width: 70rpx;
-      height: 70rpx;
-      background-image: url(https://static.qiniuyun.highvenue.cn/image/people.png);
-    }
-  }
-    
 </style>

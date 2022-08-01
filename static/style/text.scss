@@ -55,6 +55,9 @@
 .boradiu90{
   border-radius: 90rpx;
 }
+.boradiuoban{
+  border-radius: 50%;
+}
 .boradiuoverall{
   border-radius: 100%;
 }
@@ -67,6 +70,9 @@
 .heichi80{
   height: 80vh;
 }
+.heichi25shi{
+  height: 25vh;
+}
 .height-full{
   height: 100%;
 }
@@ -78,6 +84,12 @@
 }
 .height-70{
   height: 70%;
+}
+.height-30{
+  height: 30%;
+}
+.height-10{
+  height: 10%;
 }
 .height-0{
   height: 0rpx;
@@ -114,6 +126,9 @@
 }
 .heichixu100{
   height: 100rpx;
+}
+.heichixu110{
+  height: 110rpx;
 }
 .heichixu120{
   height: 120rpx;
@@ -157,6 +172,9 @@
 .width90{
   width: 90%;
 }
+.width95{
+  width: 95%;
+}
 .width-full{
   width: 100%;
 }
@@ -190,8 +208,14 @@
 .widchi40{
   width: 80rpx;
 }
+.widchi45{
+  width: 90rpx;
+}
 .widchi50{
   width: 100rpx;
+}
+.widchi55{
+  width: 110rpx;
 }
 .widchi60{
   width: 120rpx;
@@ -241,6 +265,9 @@
 .line-heichi100{
   line-height: 100rpx;
 }
+.line-heichi110{
+  line-height: 110rpx;
+}
 .letter-spacing1{
   letter-spacing: 2rpx;
 }
@@ -261,6 +288,9 @@
 }
 .opcity6{
   opacity: 0.6;
+}
+.opcity2{
+  opacity: 0.2;
 }
 .ellipsis {
   white-space:nowrap;
