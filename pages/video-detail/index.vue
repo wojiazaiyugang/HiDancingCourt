@@ -127,7 +127,7 @@
       };
     },
     onLoad(e) {
-      console.log("查看分享",e,this.allSearchVideos)
+      console.log("ceshi")
       if(e.id){
         console.log("分享")
         this.isShare = true
