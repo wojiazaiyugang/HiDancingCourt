@@ -127,7 +127,6 @@
       };
     },
     onLoad(e) {
-      console.log("查看分享",e,this.allSearchVideos)
       if(e.id){
         console.log("分享")
         this.isShare = true
