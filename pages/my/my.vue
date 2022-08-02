@@ -154,7 +154,7 @@
         // 是否显示获得个人信息页面
         isShow:true,
         // 是否同意隐私协议
-        isAgree:false,
+        isAgree:true,
         // 个人头像
         selfAvatar:"",
         // 个人名字
@@ -311,18 +311,24 @@
       },
       // 打开手机号
       async openAuthority(e){
-        if(e.detail.errMsg == "getPhoneNumber:ok") {
-          // 用户点击同意获取电话
-          if(e.detail.code){
-            let date = new Date()
-            wx.setStorageSync("date",date)
+        console.log("是否同意",this.isAgree)
+        if(this.isAgree){
+          if(e.detail.errMsg == "getPhoneNumber:ok") {
+            // 用户点击同意获取电话
+            if(e.detail.code){
+              let date = new Date()
+              wx.setStorageSync("date",date)
+              this.isShow = false
+              await getPhone(e.detail.code)
+            }
+          }
+          if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
             this.isShow = false
-            await getPhone(e.detail.code)
+            this.$showMsg("为了获取数据信息，请您同意授权！")
           }
         }
-        if(e.detail.errMsg == "getPhoneNumber:fail user deny"){
-          this.isShow = false
-          this.$showMsg("为了获取数据信息，请您同意授权！")
+        else{
+          this.$showMsg("请您同意用户隐私协议！")
         }
       },
     }
