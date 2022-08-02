@@ -120,7 +120,6 @@
       this.getAllDancTypes()
       // document.body.scrollTop = 0;
       //     document.documentElement.scrollTop = 0;
-      console.log("输出查看设备信息",this.deviceInfo,"ceshiasdfasdsa")
     },
 		methods: {
       ...mapMutations("m_video",[
