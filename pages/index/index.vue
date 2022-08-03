@@ -3,8 +3,26 @@
    style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
    :style="{height:calHeight}">
     <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
+      <swiper class="heichi20shi width-full" 
+      style="background-color: #0077AA;"
+      :indicator-dots="true"
+      :autoplay="true"
+      :interval="3000"
+      indicator-active-color="white"
+      :vertical="false">
+        <swiper-item 
+        @tap="navSwiper('share')"
+        class="width-full height-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban1.jpg);">
+          
+        </swiper-item>
+        <swiper-item
+         @tap="navSwiper('login')"
+         class="width-full height-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban2.jpg);">
+          
+        </swiper-item>
+      </swiper>
       <!-- Start 第一个Long-Button -->
-      <view class="width95 margtop30zhi" @click="chooseVenues">
+      <view class="width95 " @click="chooseVenues">
         <long-button>
           <template v-slot:icon >
           <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
@@ -26,7 +44,7 @@
       <!-- End 第一个Long-Button -->
       
       <!-- Start 球馆图片 -->
-      <view class="heichi25shi babotton boradiu24 width80 flex flex-center background-cover " >
+      <view class="heichi20shi babotton boradiu24 width80 flex flex-center background-cover " >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
          :style="{backgroundImage: `url(${currentBacimg?currentBacimg:calBaimg})`}">
           
@@ -254,6 +272,12 @@
       ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
       ...mapMutations("m_user",["setFaceSelect"]),
+      // 首页两个banner图点击跳转
+      navSwiper(data){
+        uni.navigateTo({
+          url: `../swiper-index/index?status=${data}`,
+        })
+      },
       // 修改是否人脸查找
       changeSelectFace(){
         this.faceSearch = !this.faceSearch

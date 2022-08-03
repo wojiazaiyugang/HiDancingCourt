@@ -5,12 +5,19 @@
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
-        "navigationBarBackgroundColor":"#2979FF",
-        "navigationBarTextStyle": "white",
         "navigationStyle":"custom",
         "usingComponents":{
           "van-picker": "/wxcomponents/vant/picker/index"
         },
+        "disableScroll": true
+      }
+    },
+    {
+      "path" : "pages/swiper-index/index",
+      "style" :                                                                                    
+      {
+        "enablePullDownRefresh": false,
+        "navigationStyle":"custom",
         "disableScroll": true
       }
     },
@@ -23,10 +30,36 @@
       }
     },
     {
+      "path" : "pages/coupons/index",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "优惠券",
+        "enablePullDownRefresh": false,
+        "navigationStyle":"default"
+      }
+    },
+    {
+      "path" : "pages/boss-money/index",
+      "style" :                                                                                    
+      {
+        "enablePullDownRefresh": false,
+        "navigationStyle":"custom"
+      }
+    },
+    {
       "path" : "pages/privacy/privacy",
       "style" :                                                                                    
       {
-        "navigationBarTitleText": "用户隐私协议",
+        "navigationBarTitleText": "隐私协议",
+        "enablePullDownRefresh": false,
+        "navigationStyle":"default"
+      }
+    },
+    {
+      "path" : "pages/service-agreement/index",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "服务协议",
         "enablePullDownRefresh": false,
         "navigationStyle":"default"
       }

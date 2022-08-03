@@ -19,3 +19,9 @@ export const getPassword = (venue_id) => {
 export const getIsBoss = () => {
   return request.get(`/bosses/`)
 }
+
+// 用户申请场馆接口
+export const applyBossInfo = (name,contact_details) => {
+  let data = {name, contact_details}
+  return request.post("/apply/",data)
+}

@@ -34,3 +34,9 @@ export const changeUserFace = (data) => {
 export const getPhone = (code) => {
   return request.get(`/users/phone?code=${code}&applet=HiDancing`)
 }
+
+// 用户申请场馆主填写的场馆名称是否满足文字要求，没有敏感信息
+export const applyBoss = (name) => {
+  let data = { name, }
+  return request.post("/users/introduction/",data)
+}

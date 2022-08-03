@@ -10,15 +10,10 @@
       <view v-show="userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" 
       @click="loginUserinfo" >头像信息授权</view>
       <view v-show="!userAuthorization" class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight" >
-      
-        
         <button
         class="btn-login width90 heichixu100 boradiu50 text-center fon36 line-heichi100 babotton fonweight"
         open-type="getPhoneNumber" @getphonenumber="openAuthority"
          >短信通知授权</button>
-        
-        
-        
       </view>
       <view class="margtop50 flex flex-center white fon28" @click="agreePrivacy">
         <view style="border: 2rpx solid white;border-radius: 5rpx;height: 30rpx;width: 30rpx;">
@@ -50,7 +45,7 @@
                 VIP管理员
               </view>
             </view>
-<!--            <view v-show="isMaster" class="white margtop20">
+<!--           <view v-show="isMaster" class="white margtop20">
               时间
             </view> -->
           </view>
@@ -88,13 +83,19 @@
           </view>
         </view>
       </view>
-      <view v-show="isMaster" class=" flex">
-        <view class="heichi50 widchi6 margtop50 boradiu8" style="background-color: #7C6DFB;">
+      <view v-show="isMaster" class="heichi50 flex margtop50" >
+        <view class="height-full widchi6  boradiu8" style="background-color: #7C6DFB;">
           
         </view>
-        <view class="margleft10 white margtop50 fonweight fon36">
+        <view class="margleft10 white fonweight fon36">
           今日密码
         </view>
+      </view>
+      <view v-show="isMaster"
+      @tap="navCoupons"
+      style="border-radius: 50rpx 0rpx 0rpx 50rpx; transform: translateY(-100rpx);"
+      class="absolute right0  white bapruple heichiduan80 line-heichi80 text-center widchi100">
+        优惠券
       </view>
       <view v-show="isMaster" class="heichixu85 boradiu90 relative" 
       style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
@@ -124,8 +125,21 @@
       <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
         *快去分享给学员让他们查看自己的专属C位视频吧~
       </view>
-      <view v-show="!isMaster" class="margtop60 width-full background-cover heichifan190 boradiu16" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_banner.jpg);">
-              
+      <view v-show="!isMaster" class="flex flex-direction alitem-center" >
+         <view
+         @tap="navApply"
+          style="border: 7rpx solid #4F4995;background:rgba(79,73,149,0.3);"
+          class="margtop60 fonweight text-center fon36 heichixu100 pruple widchi150 boradiu50 line-heichi100">
+           限时活动
+         </view>
+         <view class="margtop30 white bapruple fon24 heichi50 line-heichi50 width70 text-center boradiu30">
+           舞蹈工作室免费上线HiDancing小程序
+         </view>
+         <view 
+           @tap="navApply"
+           class="margtop30 heichi240 background-cover width-full" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
+           
+         </view>
       </view>
     </view>
     <uni-popup ref="popupCourt" :safeArea="false" :mask-click="false">
@@ -152,7 +166,7 @@
     data() {
       return {
         // 是否显示获得个人信息页面
-        isShow:true,
+        isShow:false,
         // 是否同意隐私协议
         isAgree:true,
         // 个人头像
@@ -184,11 +198,23 @@
       ...mapState("m_user",["userInfo",]),
     },
     created() {
-      this.calShowPrivacy()
+      // this.calShowPrivacy()
       this.selectBoss()
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
+      // 点击优惠券
+      navCoupons(){
+        uni.navigateTo({
+          url:`../coupons/index`
+        })
+      },
+      // 首页两个banner图点击跳转
+      navApply(){
+        uni.navigateTo({
+          url: `../swiper-index/index?status=login`,
+        })
+      },
       // 重新选择场馆
       async confirmCourt(){
         let {data} = await getPassword(this.currentId)
@@ -230,6 +256,7 @@
               return item.id
             })
             this.currentName = value.data[0].name
+            this.currentId = this.columnsIds[0]
             let {data} = await getPassword(value.data[0].id)
             this.bossInviteCode = String(data.invite_code)
           }
@@ -273,7 +300,7 @@
       // 导航隐私页面
       navPrivacy() {
         uni.navigateTo({
-          url: '../privacy/privacy'
+          url: "../privacy/privacy"
         })
       },
       // 点击登陆获得个人信息页面

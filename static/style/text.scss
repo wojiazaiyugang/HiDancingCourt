@@ -73,6 +73,9 @@
 .heichi25shi{
   height: 25vh;
 }
+.heichi20shi{
+  height: 20vh;
+}
 .height-full{
   height: 100%;
 }
@@ -154,6 +157,9 @@
 .heichi210{
   height: 420rpx;
 }
+.heichi240{
+  height: 480rpx;
+}
 .widthtext{
   width: fit-content;
 }
@@ -163,8 +169,14 @@
 .width-90{
   width: 90vw;
 }
+.width50{
+  width: 50%;
+}
 .width60{
   width: 60%;
+}
+.width70{
+  width: 70%;
 }
 .width80{
   width: 80%;
@@ -262,11 +274,17 @@
 .line-heichi80{
   line-height: 80rpx;
 }
+.line-heichi90{
+  line-height: 90rpx;
+}
 .line-heichi100{
   line-height: 100rpx;
 }
 .line-heichi110{
   line-height: 110rpx;
+}
+.line-heichi170{
+  line-height: 170rpx;
 }
 .letter-spacing1{
   letter-spacing: 2rpx;
