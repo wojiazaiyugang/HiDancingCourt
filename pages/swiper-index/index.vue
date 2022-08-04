@@ -19,7 +19,7 @@
       <view
         @tap="calConnect"
         class="absolute bottom140 right100 black bashare heichiduan90 widchi45 line-heichi90 text-center fonweight fon28 boradiuoverall">
-        电话
+        <text class="iconfont icon-dianhua fon40 black"></text>
       </view>
     </view>
     <view v-show="pageStatus=='login'" class="flex flex-direction alitem-center">

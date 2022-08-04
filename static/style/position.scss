@@ -26,6 +26,12 @@
 .alitem-center{
   align-items: center;
 }
+.alitem-end{
+  align-items: flex-end;
+}
+.alself-center{
+  align-self: center;
+}
 .flex-direction{
   flex-direction: column;
 }
@@ -179,6 +185,9 @@
 .bottom0{
   bottom: 0rpx;
 }
+.bottom30{
+  bottom: 30rpx;
+}
 .bottom50{
   bottom: 50rpx;
 }
@@ -213,7 +222,7 @@
   transform: translateY(-50%);
 }
 .translatey50{
-  transform: translateY(-50%);
+  transform: translateY(50%);
 }
 .translatey100{
   transform: translateY(100%);

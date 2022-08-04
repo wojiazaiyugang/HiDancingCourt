@@ -1,5 +1,5 @@
 <template>
-  <view>
+  <view :class="baColor">
     <view class="width-full" :style="{height:deviceInfo.statusBarHeight +'px'}">
       
     </view>
@@ -17,6 +17,12 @@
 <script>
   import { mapState } from "vuex"
   export default {
+    props:{
+      baColor:{
+        type:String,
+        default:"bg-trans"
+      }
+    },
     data() {
       return {
 
@@ -37,6 +43,6 @@
   }
 </script>
 
-<style lang="scss">
+<style lang="less">
 
 </style>

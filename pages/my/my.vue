@@ -30,14 +30,14 @@
       </view>
     </view>
     <!-- 有信息 -->
-    <view v-if="!isShow" class="paddingx12">
+    <view v-if="!isShow" class="paddingx12 height-full">
      <!-- 头像 -->
       <view class="margtop40 flex flex-center" >
-        <view v-if="userInfo" class="flex relative widthchi300 alitem-center">
-          <image class=" heichixu85 widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
+        <view v-if="userInfo" class="flex relative width-full alitem-center heichixu85">
+          <image class=" height-full widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
 
           </image>
-          <view class="margleft25 "  v-if="userInfo">
+          <view class="margleft25 " v-if="userInfo">
             <view class="flex">
               <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis letter-spacing1">
                 {{(selfName?selfName:userInfo.data.open_data.nickName)}}
@@ -54,7 +54,7 @@
           <view v-show="isMaster"
           @tap="chengeCourt"
            style="margin-left: 4rpx;"
-           class="absolute left0 bottom0 flex widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
+           class="absolute left0 bottom0 translatey50 flex widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
             <view class="ellipsis margleft5">
               {{currentName}}
             </view>
@@ -94,9 +94,9 @@
         </view>
       </view>
       <view v-show="isMaster"
-      @tap="navCoupons"
-      style="border-radius: 50rpx 0rpx 0rpx 50rpx; transform: translateY(-100rpx);"
-      class="absolute right0 flex alitem-center white bapruple heichiduan80 line-heichi80 text-center widchi100">
+        @tap="navCoupons"
+        style="border-radius: 50rpx 0rpx 0rpx 50rpx; transform: translateY(-100rpx);"
+        class="absolute right0 flex alitem-center white bapruple heichiduan80 line-heichi80 text-center widchi100">
         <view class="flex flex-center heichi60 widchi30 bawhite boradiuoverall margright20 margleft10">
           <text class="iconfont icon-youhuiquan fon36 pruple"></text>
         </view>
@@ -104,7 +104,7 @@
           优惠券
         </view>
       </view>
-      <view v-show="isMaster" class="heichixu85 boradiu90 relative" 
+      <view v-show="isMaster" class="height-10 boradiu90 relative" 
       style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
         <view class=" height-full width-full boradiu90 bapruple opcity3">
           
@@ -142,27 +142,31 @@
       </view>
       <view v-show="isMaster" 
         style="border: 4rpx dashed #4F4995;background:rgba(79,73,149,0.3);"
-        class="heichifan120 margtop30 width-full flex flex-direction alitem-center " >
-        <view class="margtop10">
+        class="height-12 margtop30 width-full flex flex-direction alitem-center " >
+        <view class="height-20 margtop10">
           <text class="iconfont icon-jinbi fon36 gray"></text>
         </view>
-        <view class="moneycolor fon50 margtop10">
+        <view class="height-20 moneycolor fon40 ">
           {{bossMoney}}
         </view>
-        <view class="fon24 gray margtop10">
+        <view class="height-20 fon24 gray margtop10">
           我的余额（元）
         </view>
-        <view class="heichi40 flex justify-around width95 alitem-center margtop20 alitem-center"
-          style="border-top: 2rpx solid #7E70F1;"
+        <view class="height-20 flex justify-around width95 alitem-center line-hei20 margtop10"
+          style="border-top: 2rpx solid #7E70F1; "
           >
-          <view class="moneycolor fon24 margtop10">
+          <view 
+            @tap="navConsum('充值记录')"
+            class="moneycolor fon24 margtop10">
             <text class="iconfont icon-weibiaoti1 fon28 margright10"></text>
             充值记录
           </view>
           <view class="height-full widchi2 margtop10 boradiu8 bapruple">
             
           </view>
-          <view class="moneycolor fon24 margtop10">
+          <view
+            @tap="navConsum('消费记录')"
+            class="moneycolor fon24 margtop10">
             <text class="iconfont icon-wj-cznr fon28 margright10"></text>
             消费记录
           </view>
@@ -176,16 +180,16 @@
           余额充值
         </view>
       </view>
-      <view v-show="isMaster" class="heichixu120 flex margtop30 justify-between alitem-center" >
+      <view v-show="isMaster" class="height-8 flex margtop30 justify-between alitem-center" >
         <view 
         @tap="selectType"
-        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40" 
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40" 
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
           <text class="fon28">￥</text>500
         </view>
         <view 
         @tap="selectType"
-        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40 relative "
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative "
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
           <text class="fon28">￥</text>1000
           <view 
@@ -201,7 +205,7 @@
         </view>
         <view 
         @tap="selectType"
-        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40 relative"
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative"
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
           <text class="fon28">￥</text>5000
           <view 
@@ -241,7 +245,7 @@
       <view
         v-show="isMaster"
         @tap="openBoss"
-        class="absolute bottom50 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
+        class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
@@ -495,6 +499,13 @@
           this.$showMsg("请您同意用户隐私协议！")
         }
       },
+      // 导航到账单流水页面
+      navConsum(data){
+        console.log("输出查看",data)
+        uni.navigateTo({
+          url: `../boss-money/index?title=${data}`
+        })
+      },
       // 充值开通
       async openBoss(){
         console.log("充值")
@@ -509,4 +520,7 @@
 
 <style lang="scss">
   @import "@/static/style/vantprop";
+  button::after{
+    display: none;
+  }
 </style>

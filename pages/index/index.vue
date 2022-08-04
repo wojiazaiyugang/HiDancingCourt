@@ -4,7 +4,6 @@
    :style="{height:calHeight}">
     <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
       <swiper class="heichi20shi width-full" 
-      style="background-color: #0077AA;"
       :indicator-dots="true"
       :autoplay="true"
       :interval="3000"

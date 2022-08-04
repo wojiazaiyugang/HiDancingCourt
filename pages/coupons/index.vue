@@ -1,8 +1,38 @@
 <template>
+  <view class="ba-f7"
+    :style="{height:calHeight}"
+    >
+    <coupons></coupons>
+  </view>
 </template>
 
 <script>
+  import coupons from "@/components/coupons.vue"
+  import { mapState, mapMutations } from "vuex"
+  export default {
+    components:{
+      coupons,
+    },
+    data(){
+      return {
+        
+      }
+    },
+    created() {
+      console.log("查看设备信息",this.deviceInfo)
+    },
+    computed:{
+      ...mapState("m_device",["deviceInfo"]),
+      calHeight(){
+        return this.deviceInfo&&this.deviceInfo.safeArea.height + 'px'
+      },
+    },
+    methods:{
+      
+    },
+  }
 </script>
 
-<style>
+<style lang="less">
+  
 </style>

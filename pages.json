@@ -35,7 +35,8 @@
       {
         "navigationBarTitleText": "优惠券",
         "enablePullDownRefresh": false,
-        "navigationStyle":"default"
+        "navigationStyle":"default",
+        "disableScroll": true
       }
     },
     {
