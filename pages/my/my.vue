@@ -185,13 +185,13 @@
         @tap="selectType"
         class="height-full width30 flex flex-center boradiu8 moneycolor fon40" 
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
-          <text class="fon28">￥</text>500
+          <text class="fon28">￥</text>{{dancPrice.level_one/100}}
         </view>
         <view 
         @tap="selectType"
         class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative "
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
-          <text class="fon28">￥</text>1000
+          <text class="fon28">￥</text>{{dancPrice.level_two/100}}
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute top0 left0 fon20 vipback vipcolor heichi30 widchi30 line-heichi30 text-center">
@@ -200,14 +200,14 @@
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
-            送100元
+            送{{dancPrice.level_two_handsel/100}}元
           </view>
         </view>
         <view 
         @tap="selectType"
         class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative"
         style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
-          <text class="fon28">￥</text>5000
+          <text class="fon28">￥</text>{{dancPrice.level_three/100}}
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute top0 left0 vipback fon20 vipcolor heichi30 widchi30 line-heichi30 text-center">
@@ -216,7 +216,7 @@
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
-            送1000元
+            送{{dancPrice.level_three_handsel/100}}元
           </view>
         </view>
       </view>
@@ -284,6 +284,7 @@
   import { mapMutations,mapState } from "vuex"
   import { updateInfo, getPhone } from "@/api/user.js"
   import { getPassword, getIsBoss } from "@/api/venues.js"
+  import { getPrices, getBalance } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
@@ -316,6 +317,8 @@
         columnsIds:[],
         // 场馆主所有的金额
         bossMoney:0,
+        // 舞蹈房充值的价格
+        dancPrice:null,
       };
     },
     components: {
@@ -331,13 +334,14 @@
     created() {
       // this.calShowPrivacy()
       this.selectBoss()
+      this.getCharge()
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
       // 点击优惠券
       navCoupons(){
         uni.navigateTo({
-          url:`../coupons/index`
+          url:`../coupons/index?venue_id=${this.currentId}`
         })
       },
       // 首页两个banner图点击跳转
@@ -350,6 +354,8 @@
       async confirmCourt(){
         let {data} = await getPassword(this.currentId)
         this.bossInviteCode = String(data.invite_code)
+        let value = await getBalance(this.currentId)
+        this.bossMoney = value.data.surplus_amount/100
         this.$refs.popupCourt.close()
       },
       // 滑动条改变时的选择
@@ -390,8 +396,17 @@
             this.currentId = this.columnsIds[0]
             let {data} = await getPassword(value.data[0].id)
             this.bossInviteCode = String(data.invite_code)
+            let tempData = await getBalance(this.currentId)
+            console.log("查看",tempData)
+            this.bossMoney = tempData.data.surplus_amount/100
           }
         })
+      },
+      // 获得充值的价格
+      async getCharge(){
+        let {data} = await getPrices()
+        this.dancPrice = data
+        console.log("价格",data)
       },
       // 拒绝授权之后重新登陆
       reLogin(){
@@ -503,7 +518,7 @@
       navConsum(data){
         console.log("输出查看",data)
         uni.navigateTo({
-          url: `../boss-money/index?title=${data}`
+          url: `../boss-money/index?title=${data}&courtId=${this.currentId}`
         })
       },
       // 充值开通

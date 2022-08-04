@@ -77,6 +77,7 @@
 
 <script>
   import { mapMutations,mapState } from "vuex"
+  import { getRechargeRecords, getSpendRecords, getSpendNumbers } from "@/api/pay.js
   import nvgBar from "@/components/nvgBar.vue"
   export default {
     props:{
@@ -98,7 +99,17 @@
         // 选择的时间显示
         showTime:"",
         // 搜索的账单详细列表
-        timeList:[{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},],
+        timeList:[],
+        // scroll当前拉去得页数
+        page:1,
+        // scroll当前每一页拉取得个数
+        perpage:14,
+        // 查询账单流水得开始时间
+        startTime:"",
+        // 查询账单流水得结束时间
+        endTime:"",
+        // 所查询得场馆id
+        venue_id:0,
       }
     },
     computed:{
@@ -120,9 +131,19 @@
       }
     },
     onLoad(options) {
+      console.log("输出当前时间",this.currentTime)
       this.currentTitle = options.title
+      this.venue_id = options.courtId
+      this.getBillList()
     },
     methods:{
+      // 初始化获得帐单列表
+      async getBillList(){
+        // if(this.currentTitle=="充值记录"){
+        //   let {data} = await getRechargeRecords(this.venue_id,this.page,this.perpage)
+        //   this.timeList = data
+        // }
+      },
       // 点击账单列表进行选择
       selectBill(data){
         // 防止重复点击进行接口拉取

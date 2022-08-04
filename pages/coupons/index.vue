@@ -2,7 +2,7 @@
   <view class="ba-f7"
     :style="{height:calHeight}"
     >
-    <coupons></coupons>
+    <coupons :venueId="currentVenueId"></coupons>
   </view>
 </template>
 
@@ -15,10 +15,12 @@
     },
     data(){
       return {
-        
+        // 当前场馆
+        currentVenueId:0,
       }
     },
-    created() {
+    onLoad(options) {
+      this.currentVenueId = options.venue_id
       console.log("查看设备信息",this.deviceInfo)
     },
     computed:{

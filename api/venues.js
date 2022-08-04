@@ -25,3 +25,9 @@ export const applyBossInfo = (name,contact_details) => {
   let data = {name, contact_details}
   return request.post("/apply/",data)
 }
+
+// 获取优惠券
+export const applyCoupons = (venue_id) => {
+  let data = {venue_id}
+  return request.put("/venues/coupon",data)
+}

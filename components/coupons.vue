@@ -36,23 +36,39 @@
 </template>
 
 <script>
+  import { applyCoupons } from "@/api/venues.js"
   export default {
     props:{
-      
+      venueId:{
+        type:Number,
+        default:0,
+      }
     },
     data(){
       return {
         // 优惠券使用与否的标志
         isUse:false,
+        
       }
     },
     computed:{
       
     },
+    created() {
+      
+    },
     methods:{
       // 使用优惠券
-      useCoupons(){
-        this.isUse = !this.isUse
+      async useCoupons(){
+        await applyCoupons(this.venueId).then(value=>{
+          if(value.code==0){
+            this.isUse = !this.isUse
+            this.$showMsg("您已成功使用新场馆七天体验券，七天之内免费使用舞蹈直拍剪辑服务~",3000,"success")
+          }
+          else{
+            this.$showMsg("使用优惠券失败，请联系工作人员！",3000,"error")
+          }
+        })
         console.log("使用优惠券")
       },
     },
