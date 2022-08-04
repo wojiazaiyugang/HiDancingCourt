@@ -1,5 +1,7 @@
 <template>
-  <view class="heichi100 width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
+  <view 
+    :style="{height:calHeight}"
+    class=" width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
     <!-- 导航栏 -->
     <nvg-bar>
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
@@ -84,7 +86,7 @@
         </view>
       </view>
       <view v-show="isMaster" class="heichi50 flex margtop50" >
-        <view class="height-full widchi6  boradiu8" style="background-color: #7C6DFB;">
+        <view class="height-full widchi6  boradiu8 bapruple">
           
         </view>
         <view class="margleft10 white fonweight fon36">
@@ -94,12 +96,17 @@
       <view v-show="isMaster"
       @tap="navCoupons"
       style="border-radius: 50rpx 0rpx 0rpx 50rpx; transform: translateY(-100rpx);"
-      class="absolute right0  white bapruple heichiduan80 line-heichi80 text-center widchi100">
-        优惠券
+      class="absolute right0 flex alitem-center white bapruple heichiduan80 line-heichi80 text-center widchi100">
+        <view class="flex flex-center heichi60 widchi30 bawhite boradiuoverall margright20 margleft10">
+          <text class="iconfont icon-youhuiquan fon36 pruple"></text>
+        </view>
+        <view>
+          优惠券
+        </view>
       </view>
       <view v-show="isMaster" class="heichixu85 boradiu90 relative" 
       style="border: 4rpx solid #7C6DFB; margin: 40rpx 48rpx 0rpx 48rpx;">
-        <view class=" height-full width-full boradiu90" style="opacity: 0.3; background-color: #7C6DFB;">
+        <view class=" height-full width-full boradiu90 bapruple opcity3">
           
         </view>
         <view class=" height-full width-full absolute left0 top0 boradiu90 flex alitem-center justify-around">
@@ -124,6 +131,118 @@
       </view>
       <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
         *快去分享给学员让他们查看自己的专属C位视频吧~
+      </view>
+      <view v-show="isMaster" class="heichi50 flex margtop30" >
+        <view class="height-full widchi6  boradiu8 bapruple" >
+          
+        </view>
+        <view class="margleft10 white fonweight fon36">
+          我的余额
+        </view>
+      </view>
+      <view v-show="isMaster" 
+        style="border: 4rpx dashed #4F4995;background:rgba(79,73,149,0.3);"
+        class="heichifan120 margtop30 width-full flex flex-direction alitem-center " >
+        <view class="margtop10">
+          <text class="iconfont icon-jinbi fon36 gray"></text>
+        </view>
+        <view class="moneycolor fon50 margtop10">
+          {{bossMoney}}
+        </view>
+        <view class="fon24 gray margtop10">
+          我的余额（元）
+        </view>
+        <view class="heichi40 flex justify-around width95 alitem-center margtop20 alitem-center"
+          style="border-top: 2rpx solid #7E70F1;"
+          >
+          <view class="moneycolor fon24 margtop10">
+            <text class="iconfont icon-weibiaoti1 fon28 margright10"></text>
+            充值记录
+          </view>
+          <view class="height-full widchi2 margtop10 boradiu8 bapruple">
+            
+          </view>
+          <view class="moneycolor fon24 margtop10">
+            <text class="iconfont icon-wj-cznr fon28 margright10"></text>
+            消费记录
+          </view>
+        </view>
+      </view>
+      <view v-show="isMaster" class="heichi50 flex margtop30" >
+        <view class="height-full widchi6  boradiu8 bapruple">
+          
+        </view>
+        <view class="margleft10 white fonweight fon36">
+          余额充值
+        </view>
+      </view>
+      <view v-show="isMaster" class="heichixu120 flex margtop30 justify-between alitem-center" >
+        <view 
+        @tap="selectType"
+        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40" 
+        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+          <text class="fon28">￥</text>500
+        </view>
+        <view 
+        @tap="selectType"
+        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40 relative "
+        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+          <text class="fon28">￥</text>1000
+          <view 
+            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            class="absolute top0 left0 fon20 vipback vipcolor heichi30 widchi30 line-heichi30 text-center">
+            推荐
+          </view>
+          <view 
+            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
+            送100元
+          </view>
+        </view>
+        <view 
+        @tap="selectType"
+        class="height-90 width30 flex flex-center boradiu8 moneycolor fon40 relative"
+        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+          <text class="fon28">￥</text>5000
+          <view 
+            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            class="absolute top0 left0 vipback fon20 vipcolor heichi30 widchi30 line-heichi30 text-center">
+            划算
+          </view>
+          <view 
+            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
+            送1000元
+          </view>
+        </view>
+      </view>
+      <view v-show="isMaster" class="flex justify-center margtop20 flex heichi40 line-heichi40 alitem-center">
+        <view
+         @tap="confirmPrivacy"
+         :class="['heichi30 widchi15 text-center line-heichi30 boradiu8 ',isConfirm?'bapruple':'bawhite']">
+          <text class="iconfont icon-duihao fon28 white"></text>
+        </view>
+        <view 
+          @tap="confirmPrivacy"
+          class="white fon20 margleft5">
+          我已经阅读并同意
+        </view>
+        <view 
+           @tap="navService"
+          class="pruple fon20 margleft5">
+          《舞蹈直拍服务协议》、
+        </view>
+        <view 
+          @tap="navPrivacy"
+          class="pruple fon20 ">
+          《隐私协议》
+        </view>
+      </view>
+      <view
+        v-show="isMaster"
+        @tap="openBoss"
+        class="absolute bottom50 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
+        立即开通
       </view>
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view
@@ -169,6 +288,8 @@
         isShow:false,
         // 是否同意隐私协议
         isAgree:true,
+        // 充值时同意的隐私协议
+        isConfirm:true,
         // 个人头像
         selfAvatar:"",
         // 个人名字
@@ -189,6 +310,8 @@
         currentId:0,
         // 场馆主所有的场馆ID
         columnsIds:[],
+        // 场馆主所有的金额
+        bossMoney:0,
       };
     },
     components: {
@@ -196,6 +319,10 @@
     },
     computed: {
       ...mapState("m_user",["userInfo",]),
+      ...mapState("m_device",["deviceInfo"]),
+      calHeight(){
+        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+      },
     },
     created() {
       // this.calShowPrivacy()
@@ -290,6 +417,10 @@
       agreePrivacy(){
         this.isAgree = !this.isAgree
       },
+      // 付费同意隐私协议
+      confirmPrivacy(){
+        this.isConfirm = !this.isConfirm
+      },
       // 打开设置页面
       settings() {
         wx.openSetting({
@@ -301,6 +432,12 @@
       navPrivacy() {
         uni.navigateTo({
           url: "../privacy/privacy"
+        })
+      },
+      // 导航服务协议
+      navService(){
+        uni.navigateTo({
+          url: "../service-agreement/index"
         })
       },
       // 点击登陆获得个人信息页面
@@ -357,6 +494,14 @@
         else{
           this.$showMsg("请您同意用户隐私协议！")
         }
+      },
+      // 充值开通
+      async openBoss(){
+        console.log("充值")
+      },
+      // 选择充值的类型
+      selectType(){
+        console.log("充值类型")
       },
     }
   }

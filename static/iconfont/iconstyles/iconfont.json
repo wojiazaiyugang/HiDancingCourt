@@ -6,6 +6,48 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "99084",
+      "name": "金钱图标",
+      "font_class": "weibiaoti1",
+      "unicode": "e62e",
+      "unicode_decimal": 58926
+    },
+    {
+      "icon_id": "1166",
+      "name": "金币",
+      "font_class": "jinbi",
+      "unicode": "e601",
+      "unicode_decimal": 58881
+    },
+    {
+      "icon_id": "577385",
+      "name": "优惠券",
+      "font_class": "youhuiquan",
+      "unicode": "e764",
+      "unicode_decimal": 59236
+    },
+    {
+      "icon_id": "630083",
+      "name": "下拉",
+      "font_class": "xiala",
+      "unicode": "e65c",
+      "unicode_decimal": 58972
+    },
+    {
+      "icon_id": "6834934",
+      "name": "文件-查找内容",
+      "font_class": "wj-cznr",
+      "unicode": "e792",
+      "unicode_decimal": 59282
+    },
+    {
+      "icon_id": "11372759",
+      "name": "电话",
+      "font_class": "dianhua",
+      "unicode": "e8c3",
+      "unicode_decimal": 59587
+    },
+    {
       "icon_id": "1727452",
       "name": "218下载、导入",
       "font_class": "xiazaidaoru",
