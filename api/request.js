@@ -1,4 +1,4 @@
-
+import dayjs from "dayjs"
 import qs from "qs"
 import store from "@/store/store.js"
 
@@ -9,7 +9,8 @@ const baseUrl = "https://api.highvenue.cn"
 
 
 const successHandler = (res, resolve) => {
-  store.commit("m_device/setServerTime", res.header["Date"])
+  let time = dayjs(res.header["Date"]).format("YYYY-MM-DD HH:mm:ss")
+  store.commit("m_device/setServerTime",time)
   resolve(res.data)
 }
 const failHandler = (res, reject) => {

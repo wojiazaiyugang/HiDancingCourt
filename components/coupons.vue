@@ -1,6 +1,8 @@
 <template>
-  <view class="heichifan120 marginxy10 bamyava boradiu12 relative flex" >
-    <view class="width30 flex flex-direction flex-center">
+  <view class="heichishi110 marginxy10 bamyava boradiu12 relative flex" >
+    <view class="width30 flex flex-direction flex-center relative"
+      style="border-right: 2rpx dashed white;"
+      >
       <view class="pruple fon50 heichi60 line-heichi60">
         免费
       </view>
@@ -8,6 +10,12 @@
         @tap="useCoupons"
         :class="['margtop20 width70 heichi40 line-heichi40 fon28 white text-center boradiu8',isUse?'bacamerout':'bapruple']" >
         {{isUse?"已使用":"立即使用"}}
+      </view>
+      <view class="absolute top0 right0 heichi20 widchiyuan20 boradiuoverall bawhite translateyx-50">
+        
+      </view>
+      <view class="absolute bottom0 right0 heichi20 widchiyuan20 boradiuoverall bawhite translate-50">
+        
       </view>
     </view>
     <view class="width70 flex flex-direction justify-center " >

@@ -1,5 +1,5 @@
 <template>
-  <view :class="baColor">
+  <view :class="['width-full',baColor]" >
     <view class="width-full" :style="{height:deviceInfo.statusBarHeight +'px'}">
       
     </view>

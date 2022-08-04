@@ -1,7 +1,7 @@
 <template>
   <view 
     :style="{height:calHeight}"
-    class="ba-f7 flex width-full flex-direction alitem-center">
+    class="ba-f7 ">
     <nvg-bar :baColor="bawhite">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
       <template v-slot:text><text class="black">{{currentTitle}}</text></template>
@@ -39,19 +39,38 @@
         </view>
       </view>
     </view>
-    <view 
-      v-show="currentTitle=='充值记录'"
-      class="">
-      chongzhi
-    </view>
-    <view class="flex flex-center heichi60 line-heichi60 width80 margtop20">
-      <view 
-        v-for="(item,index) in billList"
-        :key="index"
-        @tap="selectBill(index)"
-        :class="['width30 text-center',selectIndex==index?'bapruple white boradiu50':'']">
-        {{item}}
+    <view class="flex flex-direction alitem-center">
+      <view class="flex flex-center heichi60 line-heichi60 width80 margtop20 ">
+        <view 
+          v-for="(item,index) in billList"
+          :key="index"
+          @tap="selectBill(index)"
+          :class="['width30 text-center',selectIndex==index?'bapruple white boradiu50':'']">
+          {{item}}
+        </view>
       </view>
+      <view class="width95 heichi60 line-heichi60 flex alitem-center margtop20">
+        <view class="fon32">
+          {{calTime}}
+        </view>
+        <view class="margleft5">
+          <text class="iconfont icon-xiala black fon40"></text>
+        </view>
+      </view>
+      <scroll-view scroll-y="true" class="width-full bawhite margtop10 heichi80">
+        <view 
+        v-for="(item,index) in timeList"
+        :key="item.time"
+        class="flex marginx10 justify-between heichixu100 line-heichi100"
+        style="border-bottom: 1rpx solid #F7F7F7;">
+          <view class="gray">
+            {{item.time}}
+          </view>
+          <view class="fon36">
+            {{item.price}}
+          </view>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -76,14 +95,29 @@
         billList:["日账单","月账单","年账单"],
         // 账单的年月日选择标志,0表示选择日，1表示选择月，2表示选择年
         selectIndex:0,
+        // 选择的时间显示
+        showTime:"",
+        // 搜索的账单详细列表
+        timeList:[{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},{time:"123",price:"123"},],
       }
     },
     computed:{
-      ...mapState("m_device",["deviceInfo"]),
+      ...mapState("m_device",["deviceInfo","currentTime"]),
       // 当前用户手机的高度
       calHeight(){
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
+      // 格式化时间
+      calTime(){
+        this.showTime = this.currentTime
+        if(this.selectIndex==0){
+          return this.showTime.split(" ")[0].split("-")[0]+"年"+this.showTime.split(" ")[0].split("-")[1]+"月"+this.showTime.split(" ")[0].split("-")[2]+"日"
+        }
+        if(this.selectIndex==1){
+          return this.showTime.split(" ")[0].split("-")[0]+"年"+this.showTime.split(" ")[0].split("-")[1]+"月"
+        }
+        return this.showTime.split(" ")[0].split("-")[0]+"年"
+      }
     },
     onLoad(options) {
       this.currentTitle = options.title
@@ -91,12 +125,18 @@
     methods:{
       // 点击账单列表进行选择
       selectBill(data){
+        // 防止重复点击进行接口拉取
+        if(this.selectIndex==data){
+          return false
+        }
         this.selectIndex = data
       },
     },
   }
 </script>
 
-<style lang="less">
-  
+<style lang="scss">
+  ::-webkit-scrollbar{
+    display: none;
+  }
 </style>

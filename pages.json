@@ -44,7 +44,8 @@
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
-        "navigationStyle":"custom"
+        "navigationStyle":"custom",
+        "disableScroll": true
       }
     },
     {
