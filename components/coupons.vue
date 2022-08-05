@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { applyCoupons } from "@/api/venues.js"
+  import { applyCoupons, checkoutCoupons, } from "@/api/venues.js"
   export default {
     props:{
       venueId:{
@@ -54,12 +54,27 @@
     computed:{
       
     },
-    created() {
-      
+    mounted() {
+      this.checkoutTime()
     },
     methods:{
+      // 检查优惠券是否使用过期
+      async checkoutTime(){
+        await checkoutCoupons(this.venueId).then(value=>{
+          if(value.code==0){
+            this.isUse = true
+          }
+          if(value.code==-1){
+            this.isUse = false
+          }
+        })
+      },
       // 使用优惠券
       async useCoupons(){
+        if(this.isUse){
+          this.$showMsg("优惠券已使用，请勿再次使用！",3000,"error")
+          return false
+        }
         await applyCoupons(this.venueId).then(value=>{
           if(value.code==0){
             this.isUse = !this.isUse

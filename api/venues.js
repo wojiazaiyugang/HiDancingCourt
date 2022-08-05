@@ -31,3 +31,8 @@ export const applyCoupons = (venue_id) => {
   let data = {venue_id}
   return request.put("/venues/coupon",data)
 }
+
+// 查看优惠券是否过期
+export const checkoutCoupons = (venue_id) => {
+  return request.get(`/venues/coupon?venue_id=${venue_id}`)
+}

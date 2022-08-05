@@ -49,7 +49,9 @@
           {{item}}
         </view>
       </view>
-      <view class="width95 heichi60 line-heichi60 flex alitem-center margtop20">
+      <view 
+        @tap="filterTime"
+        class="width95 heichi60 line-heichi60 flex alitem-center margtop20">
         <view class="fon32">
           {{calTime}}
         </view>
@@ -57,7 +59,7 @@
           <text class="iconfont icon-xiala black fon40"></text>
         </view>
       </view>
-      <scroll-view scroll-y="true" class="width-full bawhite margtop10 heichi80">
+      <scroll-view v-show="timeList!=0" scroll-y="true" class="width-full bawhite margtop10 heichi80">
         <view 
         v-for="(item,index) in timeList"
         :key="item.time"
@@ -71,13 +73,29 @@
           </view>
         </view>
       </scroll-view>
+      <view v-show="timeList==0" class="fon40 gray margtop50zhi" >
+        暂无{{currentTitle}}
+      </view>
     </view>
+    <uni-popup ref="popupTime" :safeArea="false" :mask-click="false">
+      <van-datetime-picker
+        v-model="currentDate"
+        type="date"
+        cancel-button-text="请选择您的另一家舞蹈房"
+        confirm-button-text="确认"
+        active-class="selectStyle"
+        toolbar-class="changeToolbar"
+        @confirm="confirmTimes"
+        @change="selectTimes"
+        item-height="40"
+      />
+    </uni-popup>
   </view>
 </template>
 
 <script>
   import { mapMutations,mapState } from "vuex"
-  import { getRechargeRecords, getSpendRecords, getSpendNumbers } from "@/api/pay.js
+  import { getRechargeRecords, getSpendRecords, getSpendNumbers } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar.vue"
   export default {
     props:{
@@ -110,6 +128,8 @@
         endTime:"",
         // 所查询得场馆id
         venue_id:0,
+        // s时间选择容器里面的列表时间
+        currentDate: new Date(),
       }
     },
     computed:{
@@ -131,26 +151,62 @@
       }
     },
     onLoad(options) {
-      console.log("输出当前时间",this.currentTime)
-      this.currentTitle = options.title
-      this.venue_id = options.courtId
+      this.inintData(options)
       this.getBillList()
+      console.log("时间",this.$dayjs("2022-02").startOf('month').format('YYYY-MM-DD_HH-mm-ss')) 
+      console.log("时间",this.$dayjs("2022-02").endOf('month').format('YYYY-MM-DD_HH-mm-ss'))
     },
     methods:{
+      // 初始化数据
+      inintData(data){
+        this.currentTitle = data.title
+        this.venue_id = data.courtId
+        this.startTime = this.currentTime.split(" ")[0]+"_"+"00-00-00"      
+        this.endTime = this.currentTime.split(" ")[0]+"_"+"23-59-59" 
+      },
+      // 筛选过滤时间
+      filterTime(){
+        this.$refs.popupTime.open("bottom")
+      },
+      // 确定时间选取
+      confirmTimes(){
+        this.$refs.popupTime.close()
+      },
+      // picker滑动选择时间
+      selectTimes(data){
+        console.log("输出时间",data)
+      },
       // 初始化获得帐单列表
       async getBillList(){
-        // if(this.currentTitle=="充值记录"){
-        //   let {data} = await getRechargeRecords(this.venue_id,this.page,this.perpage)
-        //   this.timeList = data
-        // }
+        if(this.currentTitle=="充值记录"){
+          let {data} = await getRechargeRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
+          this.timeList = data
+        }
       },
       // 点击账单列表进行选择
-      selectBill(data){
+      async selectBill(data){
         // 防止重复点击进行接口拉取
         if(this.selectIndex==data){
           return false
         }
         this.selectIndex = data
+        if(this.selectIndex==0){
+          this.startTime = this.currentTime.split(" ")[0]+"_"+"00-00-00"
+          this.endTime = this.currentTime.split(" ")[0]+"_"+"23-59-59" 
+          this.getBillList()
+        }
+        if(this.selectIndex==1){
+          let tempTime = this.currentTime.split(" ")[0].split("-")[0]+"-"+this.currentTime.split(" ")[0].split("-")[1]
+          this.startTime = this.$dayjs(tempTime).startOf("month").format("YYYY-MM-DD_HH-mm-ss")
+          this.endTime = this.$dayjs(tempTime).endOf("month").format("YYYY-MM-DD_HH-mm-ss")
+          this.getBillList()
+        }
+        if(this.selectIndex==2){
+          let tempYear = this.currentTime.split(" ")[0].split("-")[0]
+          this.startTime = tempYear+"-01-01_00-00-00"
+          this.endTime = tempYear+"-12-31_23-59-59"
+          this.getBillList()
+        }
       },
     },
   }
