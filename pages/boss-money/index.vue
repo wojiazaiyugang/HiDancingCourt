@@ -80,14 +80,14 @@
     <uni-popup ref="popupTime" :safeArea="false" :mask-click="false">
       <van-datetime-picker
         v-model="currentDate"
+        :min-date="minDate"
         type="date"
-        cancel-button-text="请选择您的另一家舞蹈房"
+        cancel-button-text="请选择日期"
         confirm-button-text="确认"
         active-class="selectStyle"
         toolbar-class="changeToolbar"
         @confirm="confirmTimes"
         @change="selectTimes"
-        item-height="40"
       />
     </uni-popup>
   </view>
@@ -128,8 +128,14 @@
         endTime:"",
         // 所查询得场馆id
         venue_id:0,
-        // s时间选择容器里面的列表时间
-        currentDate: new Date(),
+        // 时间选择容器里面的列表时间
+        currentDate: new Date().getTime(),
+        // 滑动时间修改
+        changeDate: new Date().getTime(),
+        // 时间选择器里面的最小时间
+        minDate: new Date(2020, 0, 1).getTime(),
+        // 时间选择器里面的最大时间
+        maxDate:"",
       }
     },
     computed:{
@@ -153,8 +159,7 @@
     onLoad(options) {
       this.inintData(options)
       this.getBillList()
-      console.log("时间",this.$dayjs("2022-02").startOf('month').format('YYYY-MM-DD_HH-mm-ss')) 
-      console.log("时间",this.$dayjs("2022-02").endOf('month').format('YYYY-MM-DD_HH-mm-ss'))
+      console.log("输出时间",this.$dayjs(64740).format("YYYY-MM-DD"))
     },
     methods:{
       // 初始化数据
@@ -175,6 +180,7 @@
       // picker滑动选择时间
       selectTimes(data){
         console.log("输出时间",data)
+        this.changeDate = this.currentDate
       },
       // 初始化获得帐单列表
       async getBillList(){
@@ -213,6 +219,7 @@
 </script>
 
 <style lang="scss">
+  @import "@/static/style/vantprop";
   ::-webkit-scrollbar{
     display: none;
   }

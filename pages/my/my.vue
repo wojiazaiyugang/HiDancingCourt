@@ -47,9 +47,9 @@
                 VIP管理员
               </view>
             </view>
-<!--           <view v-show="isMaster" class="white margtop20">
-              时间
-            </view> -->
+          <view v-show="isMaster&&isTrial" class="gray margtop20 fon24 ">
+              {{calTime}}
+            </view>
           </view>
           <view v-show="isMaster"
           @tap="chengeCourt"
@@ -180,17 +180,19 @@
           余额充值
         </view>
       </view>
-      <view v-show="isMaster" class="height-8 flex margtop30 justify-between alitem-center" >
+      <view v-show="isMaster" class="height-8 flex margtop30 justify-between alitem-center " >
         <view 
-        @tap="selectType"
-        class="height-full width30 flex flex-center boradiu8 moneycolor fon40" 
-        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+        @tap="selectType('one')"
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 bapruple" 
+        :style="{background:userRharge=='one'?'':'rgba(79,73,149,0.3)'}"
+        style="border: 4rpx solid #7E70F1;">
           <text class="fon28">￥</text>{{dancPrice.level_one/100}}
         </view>
         <view 
-        @tap="selectType"
-        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative "
-        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+        @tap="selectType('two')"
+        :style="{background:userRharge=='two'?'':'rgba(79,73,149,0.3)'}"
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative bapruple"
+        style="border: 4rpx solid #7E70F1;">
           <text class="fon28">￥</text>{{dancPrice.level_two/100}}
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
@@ -204,9 +206,10 @@
           </view>
         </view>
         <view 
-        @tap="selectType"
-        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative"
-        style="border: 4rpx solid #4F4995;background:rgba(79,73,149,0.3);">
+        @tap="selectType('three')"
+        :style="{background:userRharge=='three'?'':'rgba(79,73,149,0.3)'}"
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative bapruple"
+        style="border: 4rpx solid #7E70F1;">
           <text class="fon28">￥</text>{{dancPrice.level_three/100}}
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
@@ -283,8 +286,8 @@
 <script>
   import { mapMutations,mapState } from "vuex"
   import { updateInfo, getPhone } from "@/api/user.js"
-  import { getPassword, getIsBoss } from "@/api/venues.js"
-  import { getPrices, getBalance } from "@/api/pay.js"
+  import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js"
+  import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar"
   export default {
     data() {
@@ -319,6 +322,18 @@
         bossMoney:0,
         // 舞蹈房充值的价格
         dancPrice:null,
+        // 试用期的到期时间
+        trialTime:"",
+        // 是否是试用期
+        isTrial:false,
+        // 余额充值显示的等级
+        userRharge:"",
+        // 跳舞小程序充值相关的数据
+        rechargeData:{
+          number:0,
+          // 默认值显示
+          type:"RECHARGE",
+        }
       };
     },
     components: {
@@ -327,9 +342,14 @@
     computed: {
       ...mapState("m_user",["userInfo",]),
       ...mapState("m_device",["deviceInfo"]),
+      // 计算当前手机屏幕的高度
       calHeight(){
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
+      // 计算试用期
+      calTime(){
+        return this.trialTime&&("试用期于"+this.trialTime.split("_")[0].split("-")[0]+"年"+this.trialTime.split("_")[0].split("-")[1]+"月"+this.trialTime.split("_")[0].split("-")[2]+"日到期")
+      }
     },
     created() {
       // this.calShowPrivacy()
@@ -356,6 +376,18 @@
         this.bossInviteCode = String(data.invite_code)
         let value = await getBalance(this.currentId)
         this.bossMoney = value.data.surplus_amount/100
+        // 查看优惠券使用与否
+        await checkoutCoupons(this.currentId).then(tempCoupon=>{
+          if(tempCoupon.code==0){
+            this.isTrial = tempCoupon.data.coupon_status
+            this.trialTime = tempCoupon.data.expire_date
+            console.log("查看种类",typeof(this.isTrial))
+          }
+          if(tempCoupon.code==-1){
+            this.isTrial = false
+            this.$showMsg("尊敬的场馆主，您尚未使用优惠券，请您先使用优惠券！")
+          }
+        })
         this.$refs.popupCourt.close()
       },
       // 滑动条改变时的选择
@@ -394,11 +426,26 @@
             })
             this.currentName = value.data[0].name
             this.currentId = this.columnsIds[0]
+            // 查看舞房密码
             let {data} = await getPassword(value.data[0].id)
             this.bossInviteCode = String(data.invite_code)
+            // 查看老板余额
             let tempData = await getBalance(this.currentId)
             console.log("查看",tempData)
             this.bossMoney = tempData.data.surplus_amount/100
+            // 查看优惠券使用与否
+            await checkoutCoupons(this.currentId).then(tempCoupon=>{
+              if(tempCoupon.code==0){
+                this.isTrial = tempCoupon.data.coupon_status
+                this.trialTime = tempCoupon.data.expire_date
+                console.log("查看种类",typeof(this.isTrial))
+              }
+              if(tempCoupon.code==-1){
+                this.isTrial = false
+                this.$showMsg("尊敬的场馆主，您尚未使用优惠券，请您先使用优惠券！")
+              }
+            })
+            
           }
         })
       },
@@ -524,10 +571,52 @@
       // 充值开通
       async openBoss(){
         console.log("充值")
+        if(!this.rechargeData.number){
+          this.$showMsg("请您选择充值金额！",1500)
+          return false
+        }
+        this.rechargeData.number = 1
+        var dataOrder = await createOrders(this.rechargeData.number)
+        wx.requestPayment(
+          Object.assign({}, dataOrder.data, {
+            success: async (res) => {
+              var timer = setInterval(()=>{
+                isPayDone(dataOrder.data.nonceStr)
+                .then(async res => {
+                  if(res.code==0){
+                    clearInterval(timer)
+                    this.$showMsg("付款成功",1500,"none")
+                    await postRecords(this.currentId,this.rechargeData.number).then(async ()=>{
+                      let value = await getBalance(this.currentId)
+                      this.bossMoney = value.data.surplus_amount/100
+                    })
+                    postOrder(dataOrder.data.nonceStr,this.currentId)
+                  }
+                })
+              },1000)
+            },
+            fail: () => {
+              this.$showMsg("付款失败",1500,"none")
+            },
+          })
+        );
       },
       // 选择充值的类型
-      selectType(){
-        console.log("充值类型")
+      selectType(data){
+        // 防止多次点击
+        if(this.userRharge==data){
+          return false
+        }
+        this.userRharge = data
+        if(data="one"){
+          this.rechargeData.number = this.dancPrice.level_one
+        }
+        if(data=="two"){
+          this.rechargeData.number = this.dancPrice.level_two
+        }
+        if(data=="three"){
+          this.rechargeData.number = this.dancPrice.level_three
+        }
       },
     }
   }

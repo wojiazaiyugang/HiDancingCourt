@@ -12,7 +12,7 @@ export const getSites = (venue_id) => {
 
 // 根据场馆id获取场馆密码
 export const getPassword = (venue_id) => {
-  return request.get(`/venues/invite?venue_id=${venue_id}`)
+  return request.get(`/venues/invite/?venue_id=${venue_id}`)
 }
 
 // 查看目前用户拥有的场馆，也就是是否是场馆老板
@@ -29,10 +29,10 @@ export const applyBossInfo = (name,contact_details) => {
 // 获取优惠券
 export const applyCoupons = (venue_id) => {
   let data = {venue_id}
-  return request.put("/venues/coupon",data)
+  return request.put("/venues/coupon/",data)
 }
 
 // 查看优惠券是否过期
 export const checkoutCoupons = (venue_id) => {
-  return request.get(`/venues/coupon?venue_id=${venue_id}`)
+  return request.get(`/venues/coupon/?venue_id=${venue_id}`)
 }

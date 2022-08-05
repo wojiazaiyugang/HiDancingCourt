@@ -26,7 +26,8 @@
       "style":{
         "usingComponents":{
           "van-picker": "/wxcomponents/vant/picker/index"
-        }
+        },
+        "disableScroll": true
       }
     },
     {
