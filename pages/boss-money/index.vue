@@ -17,10 +17,7 @@
           </view>
           <view class=" alself-center flex alitem-end">
             <view class="fon40">
-              价格
-            </view>
-            <view class="fon24">
-              元
+              {{spendData.totalPrice/100}}<text class="fon24">元</text>
             </view>
           </view>
         </view>
@@ -30,10 +27,7 @@
           </view>
           <view class="fon40 alself-center flex alitem-end">
             <view class="fon40">
-              数量
-            </view>
-            <view class="fon24">
-              个
+              {{spendData.totalNumber}}<text class="fon24">个</text>
             </view>
           </view>
         </view>
@@ -53,13 +47,15 @@
         @tap="filterTime"
         class="width95 heichi60 line-heichi60 flex alitem-center margtop20">
         <view class="fon32">
-          {{calTime}}
+          {{showTime}}
         </view>
         <view class="margleft5">
           <text class="iconfont icon-xiala black fon40"></text>
         </view>
       </view>
-      <scroll-view v-show="timeList!=0" scroll-y="true" class="width-full bawhite margtop10 heichi80">
+      <scroll-view v-show="timeList!=0" 
+      @scrolltolower="scroolBottom"
+      scroll-y="true" class="width-full bawhite margtop10 heichi80">
         <view 
         v-for="(item,index) in timeList"
         :key="item.time"
@@ -78,24 +74,35 @@
       </view>
     </view>
     <uni-popup ref="popupTime" :safeArea="false" :mask-click="false">
-      <van-datetime-picker
+     <van-datetime-picker
         v-model="currentDate"
         :min-date="minDate"
-        type="date"
+        :type="timeType"
         cancel-button-text="请选择日期"
         confirm-button-text="确认"
         active-class="selectStyle"
         toolbar-class="changeToolbar"
+        @input="onPicInput"
         @confirm="confirmTimes"
-        @change="selectTimes"
       />
+    </uni-popup>
+    <uni-popup ref="popupYear" :safeArea="false" :mask-click="false">
+      <van-picker 
+       show-toolbar
+       cancel-button-text="请选择日期"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       toolbar-class="changeToolbar"
+       @confirm="confirmYear"
+       @change="selectYears"
+       :columns="columnsYears" item-height="40"/>
     </uni-popup>
   </view>
 </template>
 
 <script>
   import { mapMutations,mapState } from "vuex"
-  import { getRechargeRecords, getSpendRecords, getSpendNumbers } from "@/api/pay.js"
+  import { getRechargeRecords, getSpendRecords, getSpendNumbers,  } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar.vue"
   export default {
     props:{
@@ -130,12 +137,19 @@
         venue_id:0,
         // 时间选择容器里面的列表时间
         currentDate: new Date().getTime(),
-        // 滑动时间修改
-        changeDate: new Date().getTime(),
         // 时间选择器里面的最小时间
-        minDate: new Date(2020, 0, 1).getTime(),
-        // 时间选择器里面的最大时间
-        maxDate:"",
+        minDate: new Date(2022, 0, 1).getTime(),
+        // 消费数据
+        spendData:{
+          totalPrice:0,
+          totalNumber:0,
+        },
+        // 年月的时间选择,date表示天数的选择，year-month表示月份的选择
+        timeType:"date",
+        // 年份的选择
+        columnsYears:[],
+        // 数据是否加载完毕的标志
+        loadingDone:false,
       }
     },
     computed:{
@@ -144,49 +158,94 @@
       calHeight(){
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
-      // 格式化时间
-      calTime(){
-        this.showTime = this.currentTime
-        if(this.selectIndex==0){
-          return this.showTime.split(" ")[0].split("-")[0]+"年"+this.showTime.split(" ")[0].split("-")[1]+"月"+this.showTime.split(" ")[0].split("-")[2]+"日"
-        }
-        if(this.selectIndex==1){
-          return this.showTime.split(" ")[0].split("-")[0]+"年"+this.showTime.split(" ")[0].split("-")[1]+"月"
-        }
-        return this.showTime.split(" ")[0].split("-")[0]+"年"
-      }
     },
     onLoad(options) {
       this.inintData(options)
       this.getBillList()
-      console.log("输出时间",this.$dayjs(64740).format("YYYY-MM-DD"))
     },
     methods:{
+      // 年份的滑动时间选取
+      selectYears(data){
+        console.log("年份时间",data)
+        this.showTime = data.detail.value
+        this.startTime = data.detail.value + "-01-01_00-00-00"
+        this.endTime = data.detail.value + "-12-31_23-59-59"
+      },
+      // 年份的时间确定
+      confirmYear(){
+        this.$refs.popupYear.close()
+        this.page = 1
+        this.timeList = []
+        this.getBillList()
+      },
+      // 滑动选取时间
+      onPicInput(e) {
+        this.currentDate = e.detail
+        if(this.selectIndex==0){
+          this.startTime = this.$dayjs(e.detail).format("YYYY-MM-DD") + "_00-00-00"
+          this.endTime = this.$dayjs(e.detail).format("YYYY-MM-DD") + "_23-59-59"
+          this.showTime = this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[0]+"年"+this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[1]+"月"+this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[2]+"日"
+        }
+        if(this.selectIndex==1){
+          let tempTime = this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[0] + "-" + this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[1]
+          this.startTime = this.$dayjs(tempTime).startOf("month").format("YYYY-MM-DD_HH-mm-ss")
+          this.endTime = this.$dayjs(tempTime).endOf("month").format("YYYY-MM-DD_HH-mm-ss")
+          this.showTime = this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[0]+"年"+this.$dayjs(e.detail).format("YYYY-MM-DD").split("-")[1]+"月"
+        }
+      },
       // 初始化数据
-      inintData(data){
+      async inintData(data){
+        var tempDate = new Date()
         this.currentTitle = data.title
         this.venue_id = data.courtId
         this.startTime = this.currentTime.split(" ")[0]+"_"+"00-00-00"      
         this.endTime = this.currentTime.split(" ")[0]+"_"+"23-59-59" 
+        // 当前年份到2022年所有的年份时间
+        var tempYear = tempDate.getFullYear()
+        var duration = tempYear - 2020
+        for(let i=0;i<=duration;i++){
+          this.columnsYears.push(tempYear--)
+        }
+        this.showTime = this.currentTime.split(" ")[0].split("-")[0]+"年"+this.currentTime.split(" ")[0].split("-")[1]+"月"+this.currentTime.split(" ")[0].split("-")[2]+"日"
+        if(this.currentTitle=="消费记录"){
+          let {data} = await getSpendNumbers(this.venue_id)
+          this.spendData.totalPrice = data.total_expenses_amount
+          this.spendData.totalNumber = data.total_use_count
+        }
       },
       // 筛选过滤时间
       filterTime(){
+        if(this.selectIndex==2){
+          this.$refs.popupYear.open("bottom")
+          return false
+        }
         this.$refs.popupTime.open("bottom")
       },
       // 确定时间选取
       confirmTimes(){
         this.$refs.popupTime.close()
+        this.page = 1
+        this.timeList = []
+        this.getBillList()
       },
       // picker滑动选择时间
-      selectTimes(data){
-        console.log("输出时间",data)
-        this.changeDate = this.currentDate
-      },
       // 初始化获得帐单列表
       async getBillList(){
         if(this.currentTitle=="充值记录"){
           let {data} = await getRechargeRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
           this.timeList = data
+          if(data.length<this.perpage){
+            this.loadingDone = true
+            this.$showMsg("数据已经拉取完毕！",2000)
+          }
+        }
+        if(this.currentTitle=="消费记录"){
+          let {data} = await getSpendRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
+          this.timeList = [...this.timeList,data]
+          if(data.length<this.perpage){
+            this.loadingDone = true
+            this.$showMsg("数据已经拉取完毕！",2000)
+          }
         }
       },
       // 点击账单列表进行选择
@@ -197,23 +256,47 @@
         }
         this.selectIndex = data
         if(this.selectIndex==0){
+          this.$refs.popupYear.close()
+          this.timeType = "date"
           this.startTime = this.currentTime.split(" ")[0]+"_"+"00-00-00"
           this.endTime = this.currentTime.split(" ")[0]+"_"+"23-59-59" 
+          this.showTime = this.currentTime.split(" ")[0].split("-")[0]+"年"+this.currentTime.split(" ")[0].split("-")[1]+"月"+this.currentTime.split(" ")[0].split("-")[2]+"日"
+          this.page = 1
+          this.timeList = []
           this.getBillList()
         }
         if(this.selectIndex==1){
+          this.$refs.popupYear.close()
+          this.timeType = "year-month"
           let tempTime = this.currentTime.split(" ")[0].split("-")[0]+"-"+this.currentTime.split(" ")[0].split("-")[1]
+          console.log("zhuanhuan时间",tempTime)
           this.startTime = this.$dayjs(tempTime).startOf("month").format("YYYY-MM-DD_HH-mm-ss")
           this.endTime = this.$dayjs(tempTime).endOf("month").format("YYYY-MM-DD_HH-mm-ss")
+          this.showTime = this.currentTime.split(" ")[0].split("-")[0]+"年"+this.currentTime.split(" ")[0].split("-")[1]+"月"
+          this.page = 1
+          this.timeList = []
           this.getBillList()
         }
         if(this.selectIndex==2){
+          this.$refs.popupTime.close()
           let tempYear = this.currentTime.split(" ")[0].split("-")[0]
           this.startTime = tempYear+"-01-01_00-00-00"
           this.endTime = tempYear+"-12-31_23-59-59"
+          this.showTime = this.currentTime.split(" ")[0].split("-")[0]+"年"
+          this.page = 1
+          this.timeList = []
           this.getBillList()
         }
       },
+      // 账单列表过多向下滑动触发
+      scroolBottom(){
+        if(this.loadingDone){
+          this.$showMsg("数据已经拉取完毕！",2000)
+          return false
+        }
+        this.page++
+        this.getBillList()
+      }
     },
   }
 </script>

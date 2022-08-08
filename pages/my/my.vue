@@ -352,7 +352,7 @@
       }
     },
     created() {
-      // this.calShowPrivacy()
+      this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
