@@ -42,9 +42,10 @@
               <view class="white fonweight heichi50 line-heichi50 widchi85 ellipsis letter-spacing1">
                 {{(selfName?selfName:userInfo.data.open_data.nickName)}}
               </view>
-              <view v-show="isMaster" class="margleft10 fon24 widchi85 heichi50 line-heichi50 vipcolor vipback text-center"
+              <view v-show="isMaster"
+              :class="['margleft10 fonweight fon24 widchi85 heichi50 line-heichi50  text-center',isTrial?'white bapruple':'vipcolor viptext']"
               style="border-radius: 0rpx 30rpx 30rpx 30rpx;">
-                VIP管理员
+                {{isTrial?"试用期":"VIP管理员"}}
               </view>
             </view>
           <view v-show="isMaster&&isTrial" class="gray margtop20 fon24 ">
@@ -53,8 +54,8 @@
           </view>
           <view v-show="isMaster"
           @tap="chengeCourt"
-           style="margin-left: 4rpx;"
-           class="absolute left0 bottom0 translatey50 flex widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
+           style="margin-left:4rpx;"
+           class="absolute left0 bottom-4  flex widchi85 text-center fon24 boradiu12 letter-spacing1 vipcolor vipback line-heichi60 heichi60" >
             <view class="ellipsis margleft5">
               {{currentName}}
             </view>
@@ -85,11 +86,11 @@
           </view>
         </view>
       </view>
-      <view v-show="isMaster" class="heichi50 flex margtop50" >
-        <view class="height-full widchi6  boradiu8 bapruple">
+      <view v-show="isMaster" class="heichi50 flex margtop50 alitem-center" >
+        <view class="heichi36 widchi6  boradiu8 bapruple">
           
         </view>
-        <view class="margleft10 white fonweight fon36">
+        <view class="margleft10 white fonweight fon32 line-heichi40 heichi40">
           今日密码
         </view>
       </view>
@@ -97,7 +98,7 @@
         @tap="navCoupons"
         style="border-radius: 50rpx 0rpx 0rpx 50rpx; transform: translateY(-100rpx);"
         class="absolute right0 flex alitem-center white bapruple heichiduan80 line-heichi80 text-center widchi100">
-        <view class="flex flex-center heichi60 widchi30 bawhite boradiuoverall margright20 margleft10">
+        <view class="flex flex-center heichi60 widchi30 bawhite boradiuoverall margright20 margleft5">
           <text class="iconfont icon-youhuiquan fon36 pruple"></text>
         </view>
         <view>
@@ -110,7 +111,7 @@
           
         </view>
         <view class=" height-full width-full absolute left0 top0 boradiu90 flex alitem-center justify-around">
-          <view class="heichixu100 widchi50 fonweight fon40 boradiuoverall line-heichi100 text-center vipcolor vipback" 
+          <view class="heichixu100 widchi50 fonweight fon40 boradiuoverall line-heichi100 text-center vipcolor viptext" 
           v-for="(item,index) in bossInviteCode"
           :key="index">
             {{item}}
@@ -132,21 +133,21 @@
       <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
         *快去分享给学员让他们查看自己的专属C位视频吧~
       </view>
-      <view v-show="isMaster" class="heichi50 flex margtop30" >
-        <view class="height-full widchi6  boradiu8 bapruple" >
+      <view v-show="isMaster" class="heichi50 flex margtop30 alitem-center" >
+        <view class="heichi36 widchi6  boradiu8 bapruple">
           
         </view>
-        <view class="margleft10 white fonweight fon36">
+        <view class="margleft10 white fonweight fon32 line-heichi40 heichi40">
           我的余额
         </view>
       </view>
       <view v-show="isMaster" 
-        style="border: 4rpx dashed #4F4995;background:rgba(79,73,149,0.3);"
-        class="height-12 margtop30 width-full flex flex-direction alitem-center " >
+        style="border: 4rpx dashed #7e70f1;background:rgba(79,73,149,0.3);"
+        class="height-12 margtop30 width-full flex flex-direction alitem-center boradiu8" >
         <view class="height-20 margtop10">
           <text class="iconfont icon-jinbi fon36 gray"></text>
         </view>
-        <view class="height-20 moneycolor fon40 ">
+        <view class="height-20 moneycolor fon40 fonweight">
           {{bossMoney}}
         </view>
         <view class="height-20 fon24 gray margtop10">
@@ -172,18 +173,18 @@
           </view>
         </view>
       </view>
-      <view v-show="isMaster" class="heichi50 flex margtop30" >
-        <view class="height-full widchi6  boradiu8 bapruple">
+      <view v-show="isMaster" class="heichi50 flex margtop30 alitem-center" >
+        <view class="heichi36 widchi6  boradiu8 bapruple">
           
         </view>
-        <view class="margleft10 white fonweight fon36">
+        <view class="margleft10 white fonweight fon32 line-heichi40 heichi40">
           余额充值
         </view>
       </view>
       <view v-show="isMaster" class="height-8 flex margtop30 justify-between alitem-center " >
         <view 
         @tap="selectType('one')"
-        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 bapruple" 
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 bapruple fonweight" 
         :style="{background:userRharge=='one'?'':'rgba(79,73,149,0.3)'}"
         style="border: 4rpx solid #7E70F1;">
           <text class="fon28">￥</text>{{dancPrice.level_one/100}}
@@ -193,14 +194,14 @@
         :style="{background:userRharge=='two'?'':'rgba(79,73,149,0.3)'}"
         class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative bapruple"
         style="border: 4rpx solid #7E70F1;">
-          <text class="fon28">￥</text>{{dancPrice.level_two/100}}
+          <text class="fon28 fonweight">￥</text><text class="fonweight">{{dancPrice.level_two/100}}</text> 
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute top0 left0 fon20 vipback vipcolor heichi30 widchi30 line-heichi30 text-center">
             推荐
           </view>
           <view 
-            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            style="border-radius: 8rpx 0rpx 0rpx 0rpx;"
             class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
             送{{dancPrice.level_two_handsel/100}}元
           </view>
@@ -208,16 +209,16 @@
         <view 
         @tap="selectType('three')"
         :style="{background:userRharge=='three'?'':'rgba(79,73,149,0.3)'}"
-        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative bapruple"
+        class="height-full width30 flex flex-center boradiu8 moneycolor fon40 relative bapruple "
         style="border: 4rpx solid #7E70F1;">
-          <text class="fon28">￥</text>{{dancPrice.level_three/100}}
+          <text class="fon28 fonweight">￥</text><text class="fonweight">{{dancPrice.level_three/100}}</text> 
           <view 
             style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
             class="absolute top0 left0 vipback fon20 vipcolor heichi30 widchi30 line-heichi30 text-center">
             划算
           </view>
           <view 
-            style="border-radius: 8rpx 0rpx 8rpx 0rpx;"
+            style="border-radius: 8rpx 0rpx 0rpx 0rpx;"
             class="absolute bottom0 right0 heichi30 widchi50 fon20 line-heichi30 text-center white bapruple">
             送{{dancPrice.level_three_handsel/100}}元
           </view>
@@ -251,6 +252,11 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
+<!--      <view 
+        @tap="chooseUpload"
+        class="white">
+        测试上传视频
+      </view> -->
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view
          @tap="navApply"
@@ -289,15 +295,16 @@
   import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js"
   import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar"
+  import Uploader from "miniprogram-file-uploader"
   export default {
     data() {
       return {
         // 是否显示获得个人信息页面
         isShow:false,
-        // 是否同意隐私协议
-        isAgree:true,
+        // 是否同意登录的隐私协议
+        isAgree:false,
         // 充值时同意的隐私协议
-        isConfirm:true,
+        isConfirm:false,
         // 个人头像
         selfAvatar:"",
         // 个人名字
@@ -358,6 +365,38 @@
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
+      // 点击上传视频
+      chooseUpload(){
+        if(Uploader.isSupport()){
+          uni.chooseVideo({
+            sourceType:["album"],
+            compressed:false,
+            success:(res)=>{
+              console.log("成功打开相册")
+              const uploader = new Uploader({
+                tempFilePath:res.tempFilePath,
+                totalSize:res.size,
+                uploadUrl:"",
+                mergeUrl:"",
+                verbose:true,
+              })
+              uploader.on("success",(res)=>{
+                console.log("成功")
+              })
+              uploader.on("fail",(error)=>{
+                console.log("shibai")
+              })
+              uploader.upload()
+            },
+            fail:(error)=>{
+              this.$showMsg("相册打开失败，请重新选择！",2000,"error")
+            }
+          })
+        }
+        else{
+          this.$showMsg("暂不支持视频的上传，请联系客服进行处理。",2000)
+        }
+      },
       // 点击优惠券
       navCoupons(){
         uni.navigateTo({
@@ -570,36 +609,39 @@
       },
       // 充值开通
       async openBoss(){
-        console.log("充值")
-        if(!this.rechargeData.number){
-          this.$showMsg("请您选择充值金额！",1500)
-          return false
+        if(this.isConfirm){
+          if(!this.rechargeData.number){
+            this.$showMsg("请您选择充值金额！",1500)
+            return false
+          }
+          var dataOrder = await createOrders(this.rechargeData.number)
+          wx.requestPayment(
+            Object.assign({}, dataOrder.data, {
+              success: async (res) => {
+                var timer = setInterval(()=>{
+                  isPayDone(dataOrder.data.nonceStr)
+                  .then(async res => {
+                    if(res.code==0){
+                      clearInterval(timer)
+                      this.$showMsg("付款成功",1500,"none")
+                      await postRecords(this.currentId,this.rechargeData.number).then(async ()=>{
+                        let value = await getBalance(this.currentId)
+                        this.bossMoney = value.data.surplus_amount/100
+                      })
+                      postOrder(dataOrder.data.nonceStr,this.currentId)
+                    }
+                  })
+                },1000)
+              },
+              fail: () => {
+                this.$showMsg("付款失败",1500,"none")
+              },
+            })
+          );
         }
-        this.rechargeData.number = 1
-        var dataOrder = await createOrders(this.rechargeData.number)
-        wx.requestPayment(
-          Object.assign({}, dataOrder.data, {
-            success: async (res) => {
-              var timer = setInterval(()=>{
-                isPayDone(dataOrder.data.nonceStr)
-                .then(async res => {
-                  if(res.code==0){
-                    clearInterval(timer)
-                    this.$showMsg("付款成功",1500,"none")
-                    await postRecords(this.currentId,this.rechargeData.number).then(async ()=>{
-                      let value = await getBalance(this.currentId)
-                      this.bossMoney = value.data.surplus_amount/100
-                    })
-                    postOrder(dataOrder.data.nonceStr,this.currentId)
-                  }
-                })
-              },1000)
-            },
-            fail: () => {
-              this.$showMsg("付款失败",1500,"none")
-            },
-          })
-        );
+        else{
+          this.$showMsg("请您先同意服务协议才能充值使用哦~",2000)
+        }
       },
       // 选择充值的类型
       selectType(data){

@@ -47,6 +47,7 @@
         class="width80 heichixu85 text-center line-heichi170 boradiu90 fon32 white" >
         <input
           @input="keyInputNumber"
+          type="number"
           class="width-full height-full"
           placeholder="请输入您的手机号!"
         />
@@ -113,7 +114,7 @@
         // 点击进来的是转介绍页面还是申请称为场馆主页面,取值为share与login
         pageStatus:"",
         // 是否同意隐私协议等问题
-        isAgree:true,
+        isAgree:false,
         // 输入的舞蹈房名称
         danceRoom:"",
         // 输入的手机号
@@ -157,7 +158,9 @@
             
           },
           fail: (sss) => {
-            this.$showMsg("拨打失败！",2000,"error")
+            uni.navigateBack({
+              delta:1,
+            })
           }
         })
       },
@@ -170,6 +173,11 @@
               await applyBossInfo(this.danceRoom,this.cellPhone).then(value=>{
                 if(value.code==0){
                   this.$showMsg("您已成功申请，我们将会在一个工作日内和您取得联系，请您留意手机来电~",2000,"success")
+                  setTimeout(()=>{
+                    uni.navigateBack({
+                      delta: 1
+                    })
+                  },2000)
                 }
                 else{
                   console.log("cuowu")

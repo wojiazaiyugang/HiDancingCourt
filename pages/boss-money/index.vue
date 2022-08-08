@@ -53,23 +53,23 @@
           <text class="iconfont icon-xiala black fon40"></text>
         </view>
       </view>
-      <scroll-view v-show="timeList!=0" 
+      <scroll-view v-if="timeList!=0" 
       @scrolltolower="scroolBottom"
       scroll-y="true" class="width-full bawhite margtop10 heichi80">
         <view 
         v-for="(item,index) in timeList"
-        :key="item.time"
-        class="flex marginx10 justify-between heichixu100 line-heichi100"
+        :key="index"
+        class="flex marginx10 justify-between heichixu100 line-heichi100 "
         style="border-bottom: 1rpx solid #F7F7F7;">
-          <view class="gray">
-            {{item.time}}
+          <view class="gray fon28">
+            {{item.time.split("_")[0].split("-")[0]+"年"+item.time.split("_")[0].split("-")[1]+"月"+item.time.split("_")[0].split("-")[2]+"日"+" "+item.time.split("_")[1].replace(/-/g,":")}}
           </view>
           <view class="fon36">
-            {{item.price}}
+            {{-item.price/100}}
           </view>
         </view>
       </scroll-view>
-      <view v-show="timeList==0" class="fon40 gray margtop50zhi" >
+      <view v-else class="fon40 gray margtop50zhi" >
         暂无{{currentTitle}}
       </view>
     </view>
@@ -231,20 +231,22 @@
       // picker滑动选择时间
       // 初始化获得帐单列表
       async getBillList(){
+        this.$showLoading()
         if(this.currentTitle=="充值记录"){
           let {data} = await getRechargeRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
-          this.timeList = data
+          this.timeList = [...this.timeList,...data]
+          console.log("chakan",this.timeList)
           if(data.length<this.perpage){
             this.loadingDone = true
-            this.$showMsg("数据已经拉取完毕！",2000)
+            this.$hideLoading()
           }
         }
         if(this.currentTitle=="消费记录"){
           let {data} = await getSpendRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
-          this.timeList = [...this.timeList,data]
+          this.timeList = [...this.timeList,...data]
           if(data.length<this.perpage){
             this.loadingDone = true
-            this.$showMsg("数据已经拉取完毕！",2000)
+            this.$hideLoading()
           }
         }
       },

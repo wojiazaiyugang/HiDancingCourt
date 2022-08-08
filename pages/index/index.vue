@@ -3,7 +3,7 @@
    style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
    :style="{height:calHeight}">
     <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
-      <swiper class="heichi20shi width-full" 
+      <swiper class="heichi22shi width-full" 
       :indicator-dots="true"
       :autoplay="true"
       :interval="3000"

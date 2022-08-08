@@ -5,6 +5,7 @@
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
+        "navigationBarTitleText": "舞蹈直拍",
         "navigationStyle":"custom",
         "usingComponents":{
           "van-picker": "/wxcomponents/vant/picker/index"
