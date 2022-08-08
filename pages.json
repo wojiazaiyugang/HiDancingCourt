@@ -79,6 +79,7 @@
       "style" :                                                                                    
       {
         "navigationStyle":"custom",
+        "navigationBarTitleText": "视频详情",
         "disableScroll": true
       }
     },
