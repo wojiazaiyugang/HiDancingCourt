@@ -36,3 +36,13 @@ export const applyCoupons = (venue_id) => {
 export const checkoutCoupons = (venue_id) => {
   return request.get(`/venues/coupon/?venue_id=${venue_id}`)
 }
+
+// 用户查询上次是否浏览过场馆
+export const checkoutLastSearch = () => {
+  return request.get("/venues/last/browse/")
+}
+
+// 用户post后端是哪个场馆
+export const postLastSearch = (venue_id) => {
+  return request.post(`/venues/last/browse/?venue_id=${venue_id}`)
+}

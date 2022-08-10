@@ -191,6 +191,7 @@
 <script>
   import { mapMutations,mapState,mapActions } from "vuex"
   import { verifyCode } from "@/api/search.js"
+  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js"
   import LongButton from "@/components/longButton"
   import Vue from "vue"
 	export default {
@@ -225,10 +226,13 @@
         videoSearch:true,
         // 授权的种类
         permissionType:"",
+        // 上次搜索的场馆名字
+        lastSearchName:"",
 			}
 		},
     created() {
       this.getTimeData()
+      console.log("1")
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
@@ -287,7 +291,9 @@
         this.focusStatus = !this.focusStatus
       },
       // 打开选择场馆
-      chooseVenues() {
+      async chooseVenues() {
+        let {data} = await checkoutLastSearch()
+        console.log("查看上次搜索",data)
         // 定位没有完成
         if(this.locationInfo.latitude){
           this.columnsHouses = this.allVenues.filter(item=>{
@@ -295,9 +301,30 @@
               return item
             }
           })
-          this.columnsHouses = this.columnsHouses.map(item=>{
-            return item.name
-          })
+          // 若上次搜索为空，也就是从没有搜索过场馆
+          if(!data.last_venue){
+            this.columnsHouses = this.columnsHouses.map(item=>{
+              return item.name
+            })
+          }
+          // 上次搜索不为空
+          else{
+            this.columnsHouses.map(item=>{
+              if(item.id==data.last_venue){
+                this.lastSearchName = item.name
+              }
+            })
+            this.columnsHouses = this.columnsHouses.filter(item=>{
+              if(item.id!=data.last_venue){
+                return item
+              }
+            })
+            this.columnsHouses = this.columnsHouses.map(item=>{
+              return item.name
+            })
+            this.columnsHouses.unshift(this.lastSearchName)
+            console.log("输出",this.columnsHouses)
+          }
           this.$refs.popupVenues.open("bottom")
         }
         else{
@@ -338,8 +365,8 @@
           var tempDay = date.getDate()
           var tempMonth = date.getMonth() +  1
           var tempYear = date.getFullYear()
-          tempMonth = tempMonth > 10 ? tempMonth : `0${tempMonth}`
-          tempDay = tempDay > 10 ? tempDay : `0${tempDay}`
+          tempMonth = tempMonth >= 10 ? tempMonth : `0${tempMonth}`
+          tempDay = tempDay >= 10 ? tempDay : `0${tempDay}`
           var calDate = tempMonth+"-"+tempDay
           var calDateYear = tempYear+"-"+tempMonth+"-"+tempDay
           this.columnsDays.push(calDate)
@@ -427,6 +454,7 @@
                   url: "../search-report/index",
                 })
               }
+              await postLastSearch(selectId)
             }
           })
         }
@@ -445,12 +473,15 @@
       confirmProp() {
         // 二次授权
         var that = this 
+        console.log("1")
          wx.openSetting({
           success (res) {
             that.$refs.permissionsPopup.close()
+            console.log("2")
             wx.getSetting({
               success: async response => {
                 if (response.authSetting["scope.userLocation"]) {
+                  console.log("3")
                   that.getLocation().finally(()=>{
                     that.getVenues()
                   })

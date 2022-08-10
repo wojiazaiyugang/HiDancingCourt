@@ -8,6 +8,7 @@
           this.getVenues()
           this.getDeviceInfo()
           this.getFaceInfo()
+          console.log("11")
         })
       })
 		},

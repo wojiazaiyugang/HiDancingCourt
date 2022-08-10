@@ -252,7 +252,7 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
-<!--      <view 
+<!--   <view 
         @tap="chooseUpload"
         class="white">
         测试上传视频
@@ -376,8 +376,8 @@
               const uploader = new Uploader({
                 tempFilePath:res.tempFilePath,
                 totalSize:res.size,
-                uploadUrl:"",
-                mergeUrl:"",
+                uploadUrl:"https://api.highvenue.cn/upload/",
+                mergeUrl:"https://api.highvenue.cn/upload/merge/",
                 verbose:true,
               })
               uploader.on("success",(res)=>{

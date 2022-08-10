@@ -22,8 +22,8 @@
     
     
     
-    <text wx:if="{{ isToday && index == 0 }}" style="display: inline-block;height: 40rpx;line-height: 40rpx;text-align: center; width: 60rpx;border-radius: 20rpx 0rpx 20rpx 0rpx; position: absolute; font-size: 18rpx;margin-left: 20rpx; color: white;background-color: #7E70F1;">今天</text>
-    <!-- <text wx:if="{{ isRecently && index == 0 }}"  style="display: inline-block;height: 40rpx;line-height: 40rpx;text-align: center; width: 40rpx;border-radius: 20rpx 0rpx 20rpx 0rpx; position: absolute; font-size: 18rpx;margin-left: 20rpx; color: white;background-color: #7E70F1;">近</text> -->
+    <text wx:if="{{ isToday && index == 0 }}" style="display: inline-block;height: 40rpx;letter-spacing: 2rpx; line-height: 40rpx;text-align: center; width: 60rpx;border-radius: 20rpx 0rpx 20rpx 0rpx; position: absolute; font-size: 18rpx;margin-left: 20rpx; color: white;background-color: #7E70F1;">今天</text>
+    <text wx:if="{{ isRecently && index == 0 }}"  style="display: inline-block;letter-spacing: 2rpx; height: 40rpx;line-height: 40rpx;text-align: center; width: 100rpx;border-radius: 20rpx 0rpx 20rpx 0rpx; position: absolute; font-size: 18rpx;margin-left: 20rpx; color: white;background-color: #7E70F1;">上次浏览</text>
     </view>
   </view>
 </view>

@@ -2,7 +2,7 @@ import request from "./request.js"
 
 // 各个场馆得验证码
 export const verifyCode = (data) =>{
-  return request.post(`/venues/invite`,data)
+  return request.post(`/venues/invite/`,data)
 }
 
 // 人脸查找所有视频
