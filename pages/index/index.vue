@@ -323,7 +323,6 @@
               return item.name
             })
             this.columnsHouses.unshift(this.lastSearchName)
-            console.log("输出",this.columnsHouses)
           }
           this.$refs.popupVenues.open("bottom")
         }

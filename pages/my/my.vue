@@ -252,11 +252,11 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
-<!--   <view 
-        @tap="chooseUpload"
+ <view 
+        @tap="uploadQiniu"
         class="white">
         测试上传视频
-      </view> -->
+      </view>
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view
          @tap="navApply"
@@ -293,9 +293,11 @@
   import { mapMutations,mapState } from "vuex"
   import { updateInfo, getPhone } from "@/api/user.js"
   import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js"
+  import { getQiNiuToken } from "@/api/video.js"
   import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js"
   import nvgBar from "@/components/nvgBar"
   import Uploader from "miniprogram-file-uploader"
+  import qiniuUploader from "@/plugins/qiniuUploader.js"
   export default {
     data() {
       return {
@@ -340,7 +342,9 @@
           number:0,
           // 默认值显示
           type:"RECHARGE",
-        }
+        },
+        // 视频上传成功的个数
+        successUpload:0,
       };
     },
     components: {
@@ -359,18 +363,78 @@
       }
     },
     created() {
-      this.calShowPrivacy()
+      // this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
-      // 点击上传视频
+      // 单个循环上传视频
+      async uploadOneByOne(arrayData,count,length){
+        await getQiNiuToken(this.currentId,arrayData[count].tempFilePath).then(async value=>{
+          console.log("输出token",value.data.token)
+          this.$showLoading(`正在上传第${count+1}个视频`,"none")
+          await qiniuUploader.upload(arrayData[count].tempFilePath,res=>{
+              this.successUpload++
+              console.log("上传成功",res)
+              count++
+              if(count==length){
+                // this.$hideLoading()
+                this.$showMsg(`视频上传成功${this.successUpload}个，失败${length-this.successUpload}个！`,4000,"success")
+              }
+              else{
+                // 递归
+                this.uploadOneByOne(arrayData,count,length)
+              }
+            },error=>{
+              console.log("上传失败",error)
+              this.$showMsg(`第${count+1}个视频上传失败`,1000,"error")
+              count++
+              if(count==length){
+                this.$hideLoading()
+                this.$showMsg(`视频上传成功${this.successUpload}个，失败${length-this.successUpload}个！`,4000,"success")
+              }
+              else{
+                // 递归
+                this.uploadOneByOne(arrayData,count,length)
+              }
+            },{
+              region: "ECN",
+              key:value.data.key,
+              uptoken: value.data.token,
+            },
+          )
+        })
+      },
+      // 上传七牛云打开相册
+      async uploadQiniu(){
+        console.log("查看七牛云",qiniuUploader)
+        var that = this
+        if(Uploader.isSupport()){
+          uni.chooseMedia({
+            sourceType:["album"],
+            mediaType:["video"],
+            success:async (res)=>{
+              console.log("成功打开相册",res.tempFiles)
+              var tempNumber = 0
+              var length = res.tempFiles.length;
+              that.uploadOneByOne(res.tempFiles,tempNumber,length)
+            },
+            fail:(error)=>{
+              this.$showMsg("相册打开失败，请重新选择！",2000,"error")
+            }
+          })
+        }
+        else{
+          this.$showMsg("暂不支持视频的上传，请联系客服进行处理。",2000)
+        }
+      },
+      // 点击上传视频本地
       chooseUpload(){
         if(Uploader.isSupport()){
-          uni.chooseVideo({
+          uni.chooseMedia({
             sourceType:["album"],
-            compressed:false,
+            mediaType:["video"],
             success:(res)=>{
               console.log("成功打开相册")
               const uploader = new Uploader({

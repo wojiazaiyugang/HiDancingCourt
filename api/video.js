@@ -10,3 +10,9 @@ export const addDownload = (video_id) => {
 export const getVideo = (video_id) => {
   return request.get(`/videos/?id=${video_id}`)
 }
+
+// 七牛云上传获取token
+export const getQiNiuToken = (venue_id,filename) => {
+  let data = {venue_id,filename}
+  return request.get("/qiniu/",data)
+}
