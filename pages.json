@@ -5,8 +5,9 @@
       "style" :                                                                                    
       {
         "enablePullDownRefresh": false,
-        "navigationBarTitleText": "舞蹈直拍",
         "navigationStyle":"custom",
+        // 用于在windowPC客户端微信显示
+        "navigationBarTitleText": "舞蹈直拍",
         "usingComponents":{
           "van-picker": "/wxcomponents/vant/picker/index"
         },
@@ -19,6 +20,8 @@
       {
         "enablePullDownRefresh": false,
         "navigationStyle":"custom",
+        // 用于在windowPC客户端微信显示
+        "navigationBarTitleText": "联系我们",
         "disableScroll": true
       }
     },
@@ -28,7 +31,9 @@
         "usingComponents":{
           "van-picker": "/wxcomponents/vant/picker/index"
         },
-        "disableScroll": true
+        "disableScroll": true,
+        "navigationBarTitleText": "个人中心",
+        "navigationStyle":"custom"
       }
     },
     {
@@ -47,6 +52,7 @@
       {
         "enablePullDownRefresh": false,
         "navigationStyle":"custom",
+        "navigationBarTitleText": "消费记录",
         "disableScroll": true,
         "usingComponents":{
           "van-datetime-picker": "/wxcomponents/vant/datetime-picker/index",
@@ -73,7 +79,12 @@
       }
     },
     {
-      "path" : "pages/camera/camera"
+      "path" : "pages/camera/camera",
+      "style" :
+      {
+        "navigationStyle":"custom",
+        "navigationBarTitleText": "拍照查询"
+      }
     },
     {
       "path" : "pages/video-detail/index",
@@ -90,6 +101,7 @@
       {
         "enablePullDownRefresh": false,
         "navigationStyle":"custom",
+        "navigationBarTitleText": "剪辑视频",
         "disableScroll": true
       }
     },
@@ -106,10 +118,8 @@
     }],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8",
-    "navigationStyle":"custom",
 		"app-plus": {
 			"background": "#1bf46b"
 		}

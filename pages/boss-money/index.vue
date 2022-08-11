@@ -2,7 +2,7 @@
   <view 
     :style="{height:calHeight}"
     class="ba-f7 ">
-    <nvg-bar :baColor="bawhite">
+    <nvg-bar v-show="deviceInfo.platform!='windows'" :baColor="bawhite">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
       <template v-slot:text><text class="black">{{currentTitle}}</text></template>
     </nvg-bar>

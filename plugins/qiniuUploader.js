@@ -84,7 +84,6 @@
         }
         var url = uploadURLFromRegionCode(config.qiniuRegion);
         var fileName = filePath.split('//')[1];
-        console.log("查看上传文件名称",fileName,options)
         // 自定义上传key（即自定义上传文件名）。通过修改qiniuUploader.upload方法传入的options参数，可以进行自定义文件名称。如果options非空，则使用options中的key作为fileName
         if (options && options.key) {
             fileName = options.key;
@@ -114,7 +113,6 @@
                     dataObject.fileURL = fileURL;
                     // imageURL字段和fileURL字段重复，但本sdk不做删除，因为在最初版本使用的是imageURL。直接删除可能导致原有用户升级至新版sdk后出现异常。
                     dataObject.imageURL = fileURL;
-                    console.log(dataObject);
                     if (success) {
                         success(dataObject);
                     }

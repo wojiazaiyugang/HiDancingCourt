@@ -18,7 +18,7 @@
        >
       </video>
       <!-- 状态栏占位 -->
-      <view class="absolute width-full" style="top: 0rpx;left: 0rpx;">
+      <view v-show="deviceInfo.platform!='windows'" class="absolute width-full" style="top: 0rpx;left: 0rpx;">
         <view class="width-full" :style="{height:deviceInfo.statusBarHeight +'px'}">
           
         </view>

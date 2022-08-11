@@ -3,7 +3,7 @@
     :style="{height:calHeight}"
     class=" width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBGi1.jpg);">
     <!-- 导航栏 -->
-    <nvg-bar>
+   <nvg-bar v-show="deviceInfo.platform!='windows'">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
       <template v-slot:text><text class="white">个人中心</text></template>
     </nvg-bar>
@@ -32,7 +32,7 @@
     <!-- 有信息 -->
     <view v-if="!isShow" class="paddingx12 height-full">
      <!-- 头像 -->
-      <view class="margtop40 flex flex-center" >
+      <view class=" flex flex-center paddinf-top20" >
         <view v-if="userInfo" class="flex relative width-full alitem-center heichixu85">
           <image class=" height-full widchi85 boradiu90 background-cover flex flex-center" style="border: 4rpx solid #7C6DFB;" :src="selfAvatar?selfAvatar:userInfo.data.open_data.avatarUrl">
 
@@ -252,11 +252,11 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
- <view 
+<!--      <view 
         @tap="uploadQiniu"
         class="white">
         测试上传视频
-      </view>
+      </view> -->
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view
          @tap="navApply"
@@ -343,8 +343,8 @@
           // 默认值显示
           type:"RECHARGE",
         },
-        // 视频上传成功的个数
-        successUpload:0,
+        // 视频失败的数组列表
+        failList:[],
       };
     },
     components: {
@@ -363,7 +363,7 @@
       }
     },
     created() {
-      // this.calShowPrivacy()
+      this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
@@ -371,28 +371,32 @@
       ...mapMutations("m_user",["setUserInfo"]),
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
+        console.log("开始执行")
         await getQiNiuToken(this.currentId,arrayData[count].tempFilePath).then(async value=>{
-          console.log("输出token",value.data.token)
+          console.log("上传视频的key",value.data.key)
           this.$showLoading(`正在上传第${count+1}个视频`,"none")
           await qiniuUploader.upload(arrayData[count].tempFilePath,res=>{
-              this.successUpload++
-              console.log("上传成功",res)
               count++
               if(count==length){
-                // this.$hideLoading()
-                this.$showMsg(`视频上传成功${this.successUpload}个，失败${length-this.successUpload}个！`,4000,"success")
+                console.log("失败数组",this.failList)
+                this.$hideLoading()
+                if(this.failList.length){
+                  this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
+                }
+                else{
+                  this.$showMsg(`所有视频已全部上传成功！`,4000,"success")
+                }
               }
               else{
                 // 递归
                 this.uploadOneByOne(arrayData,count,length)
               }
             },error=>{
-              console.log("上传失败",error)
-              this.$showMsg(`第${count+1}个视频上传失败`,1000,"error")
+              this.failList.push(count+1)
               count++
               if(count==length){
                 this.$hideLoading()
-                this.$showMsg(`视频上传成功${this.successUpload}个，失败${length-this.successUpload}个！`,4000,"success")
+                this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
               }
               else{
                 // 递归
@@ -408,20 +412,23 @@
       },
       // 上传七牛云打开相册
       async uploadQiniu(){
-        console.log("查看七牛云",qiniuUploader)
         var that = this
         if(Uploader.isSupport()){
           uni.chooseMedia({
+            count:9,
             sourceType:["album"],
             mediaType:["video"],
             success:async (res)=>{
-              console.log("成功打开相册",res.tempFiles)
               var tempNumber = 0
               var length = res.tempFiles.length;
+              that.failList = []
+              res.tempFiles.map((item,index)=>{
+                console.log("所有视频的key",item.tempFilePath,index)
+              })
               that.uploadOneByOne(res.tempFiles,tempNumber,length)
             },
             fail:(error)=>{
-              this.$showMsg("相册打开失败，请重新选择！",2000,"error")
+              this.$showMsg("请您选择所要上传的视频！",2000,"error")
             }
           })
         }
@@ -436,7 +443,6 @@
             sourceType:["album"],
             mediaType:["video"],
             success:(res)=>{
-              console.log("成功打开相册")
               const uploader = new Uploader({
                 tempFilePath:res.tempFilePath,
                 totalSize:res.size,
@@ -445,10 +451,8 @@
                 verbose:true,
               })
               uploader.on("success",(res)=>{
-                console.log("成功")
               })
               uploader.on("fail",(error)=>{
-                console.log("shibai")
               })
               uploader.upload()
             },
@@ -484,7 +488,6 @@
           if(tempCoupon.code==0){
             this.isTrial = tempCoupon.data.coupon_status
             this.trialTime = tempCoupon.data.expire_date
-            console.log("查看种类",typeof(this.isTrial))
           }
           if(tempCoupon.code==-1){
             this.isTrial = false
@@ -510,7 +513,6 @@
           success (res) {
             wx.getClipboardData({
               success (res) {
-                console.log(res.data) // data
               }
             })
           }
@@ -534,14 +536,12 @@
             this.bossInviteCode = String(data.invite_code)
             // 查看老板余额
             let tempData = await getBalance(this.currentId)
-            console.log("查看",tempData)
             this.bossMoney = tempData.data.surplus_amount/100
             // 查看优惠券使用与否
             await checkoutCoupons(this.currentId).then(tempCoupon=>{
               if(tempCoupon.code==0){
                 this.isTrial = tempCoupon.data.coupon_status
                 this.trialTime = tempCoupon.data.expire_date
-                console.log("查看种类",typeof(this.isTrial))
               }
               if(tempCoupon.code==-1){
                 this.isTrial = false
@@ -556,7 +556,6 @@
       async getCharge(){
         let {data} = await getPrices()
         this.dancPrice = data
-        console.log("价格",data)
       },
       // 拒绝授权之后重新登陆
       reLogin(){
@@ -644,7 +643,6 @@
       },
       // 打开手机号
       async openAuthority(e){
-        console.log("是否同意",this.isAgree)
         if(this.isAgree){
           if(e.detail.errMsg == "getPhoneNumber:ok") {
             // 用户点击同意获取电话
@@ -666,7 +664,6 @@
       },
       // 导航到账单流水页面
       navConsum(data){
-        console.log("输出查看",data)
         uni.navigateTo({
           url: `../boss-money/index?title=${data}&courtId=${this.currentId}`
         })

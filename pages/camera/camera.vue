@@ -1,7 +1,7 @@
 <template>
   <view class=" width-full heichi100 flex flex-direction justify-start bacamerPhto alitem-center" >
     <!-- 导航栏 -->
-    <nvg-bar>
+    <nvg-bar v-show="deviceInfo.platform!='windows'">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
       <template v-slot:text><text class="white">拍照查询</text></template>
     </nvg-bar>
@@ -64,6 +64,7 @@
     },
     computed:{
       ...mapState("m_camera",["userFaceInfo"]),
+      ...mapState("m_device",["deviceInfo"]),
     },
     created() {
       this.valiateFace()

@@ -1,6 +1,6 @@
 <template>
 	<view class="width-shi heichi100 ba-f7 bawhite overflow-hidden">
-    <nvg-bar>
+    <nvg-bar v-show="deviceInfo.platform!='windows'">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
       <template v-slot:text><text class="black ">剪辑视频</text></template>
     </nvg-bar>
@@ -69,7 +69,8 @@
     computed: {
       ...mapState("m_video",["searchData","siteId","selectSite","currentAllVideos"]),
       ...mapState("m_user",["faceSelect"]),
-      ...mapState("m_venues",["siteInfos",])
+      ...mapState("m_venues",["siteInfos",]),
+      ...mapState("m_device",["deviceInfo"]),
     },
     onLoad(e) {
       this.recordName = e.name

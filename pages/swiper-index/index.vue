@@ -3,7 +3,7 @@
     class="heichi100 background-cover"
     :style="{backgroundImage:`url(${calBackImg})`}"
   >
-    <nvg-bar>
+    <nvg-bar v-show="deviceInfo.platform!='windows'">
       <template v-slot:icon><text class="iconfont icon-fanhui fon32 white"></text></template>
     </nvg-bar>
     <view v-show="pageStatus=='share'">
@@ -85,6 +85,7 @@
 </template>
 
 <script>
+  import { mapState } from "vuex"
   import { applyBossInfo } from "@/api/venues.js"
   import nvgBar from "@/components/nvgBar"
   export default {
@@ -93,6 +94,7 @@
       nvgBar,
     },
     computed:{
+      ...mapState("m_device",["deviceInfo"]),
       calBackImg(){
         if(this.pageStatus=="share"){
           return this.shareBackImg
