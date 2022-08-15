@@ -2,8 +2,8 @@
   <view 
     @touchstart="selectPre"
     @touchend="selectNext"
-    class="width-full background-cover" :style="{height:calHeight}" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
-    <view :style="{height:calVideoHeight}" class="width-full relative">
+    class="width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
+    <view :style="{height:calVideoHeight}" class=" width-full relative">
       <video
        :class="['width-full',isTotal?'absolute top-half left-half translate--50 heichi210':'height-full'] "
        id="myVideo"
@@ -14,6 +14,7 @@
        objectFit="cover"
        :show-fullscreen-btn="false"
        :show-play-btn="false"
+       :show-bottom-progress="true"
        autoplay="true"
        >
       </video>
@@ -127,7 +128,7 @@
       };
     },
     onLoad(e) {
-      console.log("ceshi")
+      console.log("ceshi设备信息",this.deviceInfo)
       if(e.id){
         console.log("分享")
         this.isShare = true
@@ -151,10 +152,10 @@
       ...mapState("m_user",["userInfo","faceSelect"]),
       ...mapState("m_video",["currentAllVideos"]),
       calHeight(){
-        return 2*(this.deviceInfo.safeArea.bottom-this.deviceInfo.statusBarHeight) +"rpx"
+        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
       calVideoHeight(){
-        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+        return this.deviceInfo&&this.deviceInfo.screenHeight-50 + 'px'
       },
     },
     // 分享到群聊

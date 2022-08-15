@@ -26,6 +26,7 @@ export default {
   },
   actions: {
     async getVenues({commit,state}){
+      uni.showLoading({title:"加载中！",icon:"none"})
       let {data} = await getVenues()
       let location = device.state.locationInfo
       let list = await Promise.all(data.map(item=>{
@@ -39,25 +40,25 @@ export default {
       }))
       list.sort((pre,cur)=>pre.unDistance-cur.unDistance)
       var tempCourt = null
-      let value = await checkoutLastSearch()
-      console.log("查看上次搜索",value.data)
-      // 若上次搜索为空，也就是从没有搜索过场馆
-      if(value.data.last_venue){
-        list.map(item=>{
-          if(item.id==value.data.last_venue){
-            tempCourt = item
-          }
-        })
-        list = list.filter(item=>{
-          if(item.id!=value.data.last_venue){
-            return item
-          }
-        })
-        list.unshift(tempCourt)
-        console.log("输出",list)
-      }
-      commit("setLoginComplete",true)
-      commit("setAllVenues",list)
+      await checkoutLastSearch().then(value=>{
+        // 若上次搜索为空，也就是从没有搜索过场馆
+        if(value.data.last_venue){
+          list.map(item=>{
+            if(item.id==value.data.last_venue){
+              tempCourt = item
+            }
+          })
+          list = list.filter(item=>{
+            if(item.id!=value.data.last_venue){
+              return item
+            }
+          })
+          list.unshift(tempCourt)
+        }
+        commit("setLoginComplete",true)
+        commit("setAllVenues",list)
+        uni.hideLoading()
+      })
     },
   }
 }

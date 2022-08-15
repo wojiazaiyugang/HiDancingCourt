@@ -1,6 +1,6 @@
 <template>
 	<view class="width-shi heichi100 ba-f7 bawhite overflow-hidden">
-    <view class="heichixu80 marginy20">
+<!--    <view class="heichixu80 marginy20">
       <view style="white-space: nowrap" class="marginx10">
         <scroll-view scroll-x="true" :show-scrollbar="false" class="heichi60 width-full" style=" margin-bottom: 40rpx;">
          <view v-for="(item,index) in techDancTypes"
@@ -23,10 +23,10 @@
           </view>
         </scroll-view>
       </view>
-    </view>
+    </view> -->
     <scroll-view 
       scroll-y="true" 
-      class="height-80 overflow-hidden"
+      class="height-90 overflow-hidden"
       :show-scrollbar="false"
       @scrolltolower="scroolBottom(false)"
       @scrolltoupper="scroolTop(false)"

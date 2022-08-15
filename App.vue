@@ -8,7 +8,6 @@
           this.getVenues()
           this.getDeviceInfo()
           this.getFaceInfo()
-          console.log("11")
         })
       })
 		},
@@ -51,7 +50,6 @@
       async getDeviceInfo(){
         await uni.getSystemInfo({
           success:async(res)=> {
-            console.log("输出设备西南西",res)
             // 得到胶囊位置信息
             let menuInfo = await uni.getMenuButtonBoundingClientRect()
             this.setDeviceInfo(Object.assign({}, res, {menuInfo}))

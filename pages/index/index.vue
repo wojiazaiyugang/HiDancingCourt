@@ -140,11 +140,6 @@
         </view>
       </view>
     </view>
-    <image
-      v-else
-      class="absolute left-half heichi210 widthchi210 top-half  translate--50"
-      src="https://static.qiniuyun.highvenue.cn/image/hicourt/loading.svg"
-    />
     <!-- Start选择场馆弹出层 -->
     <uni-popup ref="popupVenues" :safeArea="false">
       <van-picker 
@@ -232,7 +227,6 @@
 		},
     created() {
       this.getTimeData()
-      console.log("1")
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
@@ -426,7 +420,7 @@
             if(value.code==-1){
               this.$hideLoading()
               this.videoSearch = true
-              this.$showMsg("密码输入错误，请您重新输入！",2000,"none")
+              this.$showMsg("输入密码错误，联系舞房老师获取密码哦～",2000,"none")
             }
             else{
               if(this.faceSearch){
