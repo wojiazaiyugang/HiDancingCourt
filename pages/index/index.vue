@@ -72,6 +72,7 @@
       <view class="white width95">
         <view>
           <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
+          <text class="white fon20 margleft10">(请向舞房前台或老师咨询密码)</text>
         </view>
         <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
           <view

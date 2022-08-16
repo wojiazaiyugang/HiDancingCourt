@@ -259,12 +259,18 @@
       </view> -->
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view 
-           class="margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
+           class=" margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
            
          </view>
-         <view class="relative margtop30 background-cover width80 heichi290"
+         <view
+          class="relative margtop30 background-cover width80 heichi290"
           style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_shuoming.png);"
-         >
+         >  
+          <view 
+            @tap="navApply('share')"
+            class="absolute width-full heichishi100 top100" >
+            
+          </view>
            <view
             @tap="navApply('share')"
             style="background-color: #f76fed;"
@@ -278,6 +284,11 @@
             class="absolute right20 bottom20 heichi60 fon28 widchi85 line-heichi60 text-center boradiu50 white">
              <text>舞房申请</text>
              <text class="iconfont icon-zhuanfa white fon28 white margleft5"></text>
+           </view>
+           <view
+            @tap="navApply('login')"
+            class="absolute width-full heichishi100 bottom50">
+             
            </view>
          </view>
       </view>
