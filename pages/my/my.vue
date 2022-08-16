@@ -258,19 +258,27 @@
         测试上传视频
       </view> -->
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
-         <view
-         @tap="navApply"
-          style="border: 7rpx solid #4F4995;background:rgba(79,73,149,0.3);"
-          class="margtop60 fonweight text-center fon36 heichixu100 pruple widchi150 boradiu50 line-heichi100">
-           限时活动
-         </view>
-         <view class="margtop30 white bapruple fon24 heichi50 line-heichi50 width70 text-center boradiu30">
-           舞蹈工作室免费上线HiDancing小程序
-         </view>
          <view 
-           @tap="navApply"
-           class="margtop30 heichi240 background-cover width-full" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
+           class="margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
            
+         </view>
+         <view class="relative margtop30 background-cover width80 heichi290"
+          style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_shuoming.png);"
+         >
+           <view
+            @tap="navApply('share')"
+            style="background-color: #f76fed;"
+            class="absolute right20 bottom220 heichi60 fon28 widchi85 line-heichi60 text-center boradiu50 white">
+             <text>转介绍</text>
+             <text class="iconfont icon-zhuanfa white fon28 white margleft5"></text>
+           </view>
+           <view
+            @tap="navApply('login')"
+            style="background-color: #A1DDF7;"
+            class="absolute right20 bottom20 heichi60 fon28 widchi85 line-heichi60 text-center boradiu50 white">
+             <text>舞房申请</text>
+             <text class="iconfont icon-zhuanfa white fon28 white margleft5"></text>
+           </view>
          </view>
       </view>
     </view>
@@ -363,7 +371,7 @@
       }
     },
     created() {
-      // this.calShowPrivacy()
+      this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
@@ -472,9 +480,9 @@
         })
       },
       // 首页两个banner图点击跳转
-      navApply(){
+      navApply(data){
         uni.navigateTo({
-          url: `../swiper-index/index?status=login`,
+          url: `../swiper-index/index?status=${data}`,
         })
       },
       // 重新选择场馆

@@ -2,7 +2,8 @@
   <view 
     @touchstart="selectPre"
     @touchend="selectNext"
-    class="width-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
+    class="width-full background-cover" 
+    style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_beijing2.jpg);">
     <view :style="{height:calVideoHeight}" class=" width-full relative">
       <video
        :class="['width-full',isTotal?'absolute top-half left-half translate--50 heichi210':'height-full'] "
@@ -18,19 +19,15 @@
        autoplay="true"
        >
       </video>
-      <!-- 状态栏占位 -->
-      <view v-show="deviceInfo.platform!='windows'" class="absolute width-full" style="top: 0rpx;left: 0rpx;">
-        <view class="width-full" :style="{height:deviceInfo.statusBarHeight +'px'}">
+      <view v-if="tipInfo" 
+        class="absolute top0"
+        :style="{left:deviceInfo.menuInfo.left+'px'}"
+        >
+        <view class="heichixu80 widchi50 translatex-50 background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_tishi.png);">
           
         </view>
-        <view class="width-full flex flex-center" :style="{height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px'}">
-          <view class="iconfont icon-fanhui absolute fon28 white widchi60" :style="{lineHeight: ((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',height:((deviceInfo.menuInfo.top-deviceInfo.statusBarHeight)*2 + deviceInfo.menuInfo.height) +'px',left:(deviceInfo.screenWidth - deviceInfo.menuInfo.right)+'px'}" 
-          @click="goBack">
-            
-          </view>
-          <view style="color: white;">
-            视频详情
-          </view>
+        <view class="widchi120 text-center translatex-50 white">
+          点击”...“可以将视频分享至朋友圈~
         </view>
       </view>
       <view
@@ -125,6 +122,8 @@
         isAll:false,
         // 开始滑动的位置
         sliderPosition:0,
+        // 视频播放的提示信息
+        tipInfo:true,
       };
     },
     onLoad(e) {
@@ -155,7 +154,7 @@
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
       calVideoHeight(){
-        return this.deviceInfo&&this.deviceInfo.screenHeight-50 + 'px'
+        return this.deviceInfo&&this.deviceInfo.screenHeight-90 + 'px'
       },
     },
     // 分享到群聊
@@ -196,10 +195,18 @@
       async selectNext(value){
         if(value.changedTouches[0].pageY>this.sliderPosition&&(value.changedTouches[0].pageY-this.sliderPosition)>=20){
           console.log("上touch")
+          this.tipInfo = true
+          setTimeout(()=>{
+            this.tipInfo = false
+          },2000)
           this.preVideo()
         }
         if(value.changedTouches[0].pageY<this.sliderPosition&&(this.sliderPosition-value.changedTouches[0].pageY)>=20){
           console.log("下touch")
+          this.tipInfo = true
+          setTimeout(()=>{
+            this.tipInfo = false
+          },2000)
           this.nextVideo()
         }
         console.log("xiahua")
@@ -250,6 +257,9 @@
           "user_name": this.userInfo.data.open_data.nickName,
           "user_id": this.userInfo.data.id
         })
+        setTimeout(()=>{
+          this.tipInfo = false
+        },2000)
       },
       // 返回上一页
       goBack(){

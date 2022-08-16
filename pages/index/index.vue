@@ -223,6 +223,10 @@
         permissionType:"",
         // 上次搜索的场馆名字
         lastSearchName:"",
+        // 暂时的场馆
+        tempCourt:"",
+        // 暂时的图片
+        tempImg:"",
 			}
 		},
     created() {
@@ -328,6 +332,8 @@
       // 选择舞房点击确认
       confirmHouse(){
         this.$refs.popupVenues.close()
+        this.currentHourses = this.tempCourt?this.tempCourt:this.columnsHouses[0]
+        this.currentBacimg = this.tempImg?this.tempImg:this.allVenues[0].data.thumbnail
       },
       // 滑动选择舞房
       selectHouse(data){
@@ -335,8 +341,8 @@
           this.verfication = []
           this.currentIndex = -1
         }
-        this.currentHourses = this.columnsHouses[data.detail.index]
-        this.currentBacimg = this.allVenues[data.detail.index].data.thumbnail
+        this.tempCourt = this.columnsHouses[data.detail.index]
+        this.tempImg = this.allVenues[data.detail.index].data.thumbnail
       },
       // 点击选择时段
       showTimePopup() {

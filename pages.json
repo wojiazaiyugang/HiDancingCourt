@@ -90,8 +90,9 @@
       "path" : "pages/video-detail/index",
       "style" :                                                                                    
       {
-        "navigationStyle":"custom",
         "navigationBarTitleText": "视频详情",
+        "navigationBarBackgroundColor": "#000000",
+        "navigationBarTextStyle": "white",
         "disableScroll": true
       }
     },
