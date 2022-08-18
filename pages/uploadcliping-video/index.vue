@@ -76,10 +76,12 @@
         textList:["等待剪辑","正在剪辑","剪辑完成"],
         // 当前视频的种类,0表示等待剪辑，1表示正在剪辑，2表示剪辑完成
         currentType:0,
+        // 当前场馆的id
+        currentId:0,
       }
     },
-    created() {
-      console.log("查看设备",this.deviceInfo)
+    onLoad(options) {
+      this.currentId = options.venue_id
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
@@ -92,7 +94,7 @@
       // 若用户没有待上传的则是打开相册进行选取视频，若用户已有待上传的则用户将待上传的上传到七牛云
       openOrUpload(){
         uni.navigateTo({
-          url:"../upload-video/index"
+          url:`../upload-video/index?venue_id=${this.currentId}`
         })
       },
       // 切换视频的种类

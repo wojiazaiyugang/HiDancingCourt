@@ -395,7 +395,7 @@
       // 导航到视频剪辑页面
       navUploadVideos(){
         uni.navigateTo({
-          url:"../uploadcliping-video/index"
+          url:`../uploadcliping-video/index?venue_id=${this.currentId}`
         })
       },
       // 点击优惠券

@@ -74,16 +74,18 @@
         uploadAarray:[],
         // 是否是继续上传视频
         continueUpload:false,
+        // 当前场馆的id
+        courtId:0,
       }
     },
-    created() {
-      console.log("查看设备",this.deviceInfo)
+    onLoad(options) {
+      this.courtId = options.venue_id
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
       // 返回当前用户设备的高度
       calHeight(){
-        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px';
       },
     },
     methods:{
@@ -92,7 +94,7 @@
         console.log("查看",data)
         this.uploadAarray = this.uploadAarray.filter(item=>{
           if(data!=item){
-            return item
+            return item;
           }
         })
       },
@@ -107,7 +109,7 @@
           this.uploadQiniu()
         }
         else{
-          // this.uploadOneByOne()
+          this.uploadOneByOne(this.uploadAarray,0,this.uploadAarray.length)
         }
       },
       // 上传七牛云打开相册
@@ -145,11 +147,11 @@
       },
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
-        console.log("开始执行")
-        await getQiNiuToken(this.currentId,arrayData[count].tempFilePath).then(async value=>{
+        console.log("开始执行",arrayData,count,length)
+        await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
           console.log("上传视频的key",value.data.key)
           this.$showLoading(`正在上传第${count+1}个视频`,"none")
-          await qiniuUploader.upload(arrayData[count].tempFilePath,res=>{
+          await qiniuUploader.upload(arrayData[count],res=>{
               count++
               if(count==length){
                 console.log("失败数组",this.failList)
