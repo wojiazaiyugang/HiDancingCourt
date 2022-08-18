@@ -21,7 +21,6 @@
     },
     onLoad(options) {
       this.currentVenueId = options.venue_id
-      console.log("查看设备信息",this.deviceInfo)
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),

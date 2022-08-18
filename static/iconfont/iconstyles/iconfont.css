@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3530538 */
-  src: url('@/static/iconfont/iconstyles/iconfont.woff2?t=1659578282416') format('woff2'),
-       url('@/static/iconfont/iconstyles/iconfont.woff?t=1659578282416') format('woff'),
-       url('@/static/iconfont/iconstyles/iconfont.ttf?t=1659578282416') format('truetype');
+  src: url('@/static/iconfont/iconstyles/iconfont.woff2?t=1660726683059') format('woff2'),
+       url('@/static/iconfont/iconstyles/iconfont.woff?t=1660726683059') format('woff'),
+       url('@/static/iconfont/iconstyles/iconfont.ttf?t=1660726683059') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zengjiatianjiajiahao:before {
+  content: "\e62a";
+}
+
+.icon-cha:before {
+  content: "\e68b";
+}
+
+.icon-shangchuan:before {
+  content: "\e665";
+}
+
+.icon-shipin:before {
+  content: "\e644";
+}
+
+.icon-zanting:before {
+  content: "\e61e";
+}
+
+.icon-MP:before {
+  content: "\e61b";
 }
 
 .icon-weibiaoti1:before {

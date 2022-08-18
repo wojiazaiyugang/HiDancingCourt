@@ -1,5 +1,6 @@
 {
 	"pages": [
+    // 首页
     {
       "path" : "pages/index/index",
       "style" :                                                                                    
@@ -14,6 +15,7 @@
         "disableScroll": true
       }
     },
+    // 首页顶部滑动条
     {
       "path" : "pages/swiper-index/index",
       "style" :                                                                                    
@@ -25,6 +27,7 @@
         "disableScroll": true
       }
     },
+    // 我的页面
     {
       "path" : "pages/my/my",
       "style":{
@@ -36,6 +39,7 @@
         "navigationStyle":"custom"
       }
     },
+    // 优惠券页面
     {
       "path" : "pages/coupons/index",
       "style" :                                                                                    
@@ -46,6 +50,7 @@
         "disableScroll": true
       }
     },
+    // 场馆主的账单流水页面
     {
       "path" : "pages/boss-money/index",
       "style" :                                                                                    
@@ -60,6 +65,7 @@
         }
       }
     },
+    // 个人隐私页面
     {
       "path" : "pages/privacy/privacy",
       "style" :                                                                                    
@@ -69,6 +75,7 @@
         "navigationStyle":"default"
       }
     },
+    // 服务协议页面
     {
       "path" : "pages/service-agreement/index",
       "style" :                                                                                    
@@ -78,6 +85,7 @@
         "navigationStyle":"default"
       }
     },
+    // 相机页面
     {
       "path" : "pages/camera/camera",
       "style" :
@@ -86,6 +94,7 @@
         "navigationBarTitleText": "拍照查询"
       }
     },
+    // 视频播放详情页面
     {
       "path" : "pages/video-detail/index",
       "style" :                                                                                    
@@ -96,6 +105,7 @@
         "disableScroll": true
       }
     },
+    // 后端处理后小程序拉取剪辑出来的小视频页面
     {
       "path" : "pages/clip-video/index",
       "style" :                                                                                    
@@ -106,6 +116,7 @@
         "disableScroll": true
       }
     },
+    // 战报搜索页面
     {
       "path" : "pages/search-report/index",
       "style" :                                                                                    
@@ -116,7 +127,32 @@
         "navigationStyle":"default",
         "disableScroll": true
       }
-    }],
+    },
+    // 上传视频页面
+    {
+      "path" : "pages/upload-video/index",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "上传视频",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor":"#fff",
+        "navigationStyle":"default",
+        "disableScroll": true
+      }
+    },
+    // 剪辑状态页面
+    {
+      "path" : "pages/uploadcliping-video/index",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "视频管理",
+        "enablePullDownRefresh": false,
+        "navigationBarBackgroundColor":"#fff",
+        "navigationStyle":"default",
+        "disableScroll": true
+      }
+    }
+  ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarBackgroundColor": "#F8F8F8",

@@ -252,11 +252,18 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
-<!--      <view 
-        @tap="uploadQiniu"
-        class="white">
-        测试上传视频
-      </view> -->
+      <view
+        @tap="navUploadVideos"
+        class="absolute bottom30 right20 white heichiduan90 widchi45">
+        <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi70"
+          style="border: 8rpx solid #7E70F1;"
+          >
+          <text class="iconfont icon-shipin pruple fon40"></text>
+        </view>
+        <view class="absolute bottom0 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
+          视频管理
+        </view>
+      </view>
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view 
            class=" margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
@@ -309,14 +316,11 @@
 </template>
 
 <script>
-  import { mapMutations,mapState } from "vuex"
-  import { updateInfo, getPhone } from "@/api/user.js"
-  import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js"
-  import { getQiNiuToken } from "@/api/video.js"
-  import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js"
-  import nvgBar from "@/components/nvgBar"
-  import Uploader from "miniprogram-file-uploader"
-  import qiniuUploader from "@/plugins/qiniuUploader.js"
+  import { mapMutations,mapState } from "vuex";
+  import { updateInfo, getPhone } from "@/api/user.js";
+  import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js";
+  import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js";
+  import nvgBar from "@/components/nvgBar";
   export default {
     data() {
       return {
@@ -382,107 +386,17 @@
       }
     },
     created() {
-      this.calShowPrivacy()
+      // this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
-      // 单个循环上传视频
-      async uploadOneByOne(arrayData,count,length){
-        console.log("开始执行")
-        await getQiNiuToken(this.currentId,arrayData[count].tempFilePath).then(async value=>{
-          console.log("上传视频的key",value.data.key)
-          this.$showLoading(`正在上传第${count+1}个视频`,"none")
-          await qiniuUploader.upload(arrayData[count].tempFilePath,res=>{
-              count++
-              if(count==length){
-                console.log("失败数组",this.failList)
-                this.$hideLoading()
-                if(this.failList.length){
-                  this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
-                }
-                else{
-                  this.$showMsg(`所有视频已全部上传成功！`,4000,"success")
-                }
-              }
-              else{
-                // 递归
-                this.uploadOneByOne(arrayData,count,length)
-              }
-            },error=>{
-              this.failList.push(count+1)
-              count++
-              if(count==length){
-                this.$hideLoading()
-                this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
-              }
-              else{
-                // 递归
-                this.uploadOneByOne(arrayData,count,length)
-              }
-            },{
-              region: "ECN",
-              key:value.data.key,
-              uptoken: value.data.token,
-            },
-          )
+      // 导航到视频剪辑页面
+      navUploadVideos(){
+        uni.navigateTo({
+          url:"../uploadcliping-video/index"
         })
-      },
-      // 上传七牛云打开相册
-      async uploadQiniu(){
-        var that = this
-        if(Uploader.isSupport()){
-          uni.chooseMedia({
-            count:9,
-            sourceType:["album"],
-            mediaType:["video"],
-            success:async (res)=>{
-              var tempNumber = 0
-              var length = res.tempFiles.length;
-              that.failList = []
-              res.tempFiles.map((item,index)=>{
-                console.log("所有视频的key",item.tempFilePath,index)
-              })
-              that.uploadOneByOne(res.tempFiles,tempNumber,length)
-            },
-            fail:(error)=>{
-              this.$showMsg("请您选择所要上传的视频！",2000,"error")
-            }
-          })
-        }
-        else{
-          this.$showMsg("暂不支持视频的上传，请联系客服进行处理。",2000)
-        }
-      },
-      // 点击上传视频本地
-      chooseUpload(){
-        if(Uploader.isSupport()){
-          uni.chooseMedia({
-            sourceType:["album"],
-            mediaType:["video"],
-            success:(res)=>{
-              const uploader = new Uploader({
-                tempFilePath:res.tempFilePath,
-                totalSize:res.size,
-                uploadUrl:"https://api.highvenue.cn/upload/",
-                mergeUrl:"https://api.highvenue.cn/upload/merge/",
-                verbose:true,
-              })
-              uploader.on("success",(res)=>{
-              })
-              uploader.on("fail",(error)=>{
-              })
-              uploader.upload()
-            },
-            fail:(error)=>{
-              this.$showMsg("相册打开失败，请重新选择！",2000,"error")
-            }
-          })
-        }
-        else{
-          this.$showMsg("暂不支持视频的上传，请联系客服进行处理。",2000)
-        }
       },
       // 点击优惠券
       navCoupons(){

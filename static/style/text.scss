@@ -217,6 +217,9 @@
 .width-90{
   width: 90vw;
 }
+.width20{
+  width: 20%;
+}
 .width25{
   width: 25%;
 }
@@ -340,6 +343,9 @@
 .line-heichi60{
   line-height: 60rpx;
 }
+.line-heichi70{
+  line-height: 70rpx;
+}
 .line-heichi80{
   line-height: 80rpx;
 }
@@ -352,8 +358,14 @@
 .line-heichi110{
   line-height: 110rpx;
 }
+.line-heichi120{
+  line-height: 120rpx;
+}
 .line-heichi170{
   line-height: 170rpx;
+}
+.line-heichi200{
+  line-height: 200rpx;
 }
 .letter-spacing1{
   letter-spacing: 2rpx;
@@ -369,6 +381,9 @@
 }
 .text-center{
   text-align: center;
+}
+.text-end{
+  text-align: end;
 }
 .opcity10{
   opacity: 1;
