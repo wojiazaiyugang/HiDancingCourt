@@ -3,7 +3,7 @@
     <view class="widchi110 heichifan150 relative" style="margin: 20rpx 8rpx 0rpx 8rpx;">
       <view 
       class="width-full boradiu24 height-full background-cover"
-      :style="{backgroundImage:`url(${video.human_src})`}"
+      :style="{backgroundImage:video.human_src?`url(${video.human_src})`:`url(${video.download_src}?vframe/png/offset/3/w/1280/h/720)`}"
       @click="clickVideo"
       >
         <view class="flex flex-direction flex-center absolute left0 bottom0 width-full heichi50 fon20 white z-inde10 "

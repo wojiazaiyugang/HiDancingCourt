@@ -252,7 +252,7 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
-      <view
+<!--      <view
         @tap="navUploadVideos"
         class="absolute bottom30 right20 white heichiduan90 widchi45">
         <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi70"
@@ -263,7 +263,7 @@
         <view class="absolute bottom0 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
           视频管理
         </view>
-      </view>
+      </view> -->
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view 
            class=" margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
@@ -386,7 +386,7 @@
       }
     },
     created() {
-      // this.calShowPrivacy()
+      this.calShowPrivacy()
       this.selectBoss()
       this.getCharge()
     },
