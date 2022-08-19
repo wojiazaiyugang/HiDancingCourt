@@ -218,9 +218,9 @@
         await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
           console.log("上传视频的key",value.data.key)
           // this.$showLoading(`正在上传第${count+1}个视频`,"none")
-          this.currentVideo = count+1;
           await qiniuUploader.upload(arrayData[count],res=>{
               count++
+              this.currentVideo = count;
               if(count==length){
                 console.log("失败数组",this.failList)
                 // 不论成功或者失败视频都上传完成
