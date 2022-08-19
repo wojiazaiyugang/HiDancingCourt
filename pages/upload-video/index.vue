@@ -2,6 +2,10 @@
   <view class="ba-f7"
     :style="{height:calHeight}"
     >
+    <nvg-bar v-show="deviceInfo.platform!='windows'">
+       <template v-slot:icon><text class="iconfont icon-fanhui fon32 black"></text></template>
+       <template v-slot:text><text class="black">上传视频</text></template>
+     </nvg-bar>
     <view v-if="uploadAarray.length==0"
       class="width-full height-full"
       >
@@ -50,6 +54,51 @@
         <text>开始上传</text>
       </view>
     </view>
+
+    <view 
+      v-if="uploadStatus"
+      class="absolute top0 left0 bablack opcity6 width-full height-full z-inde1">
+        
+    </view>
+    <view 
+      v-if="uploadStatus"
+      class=" fon40 absolute top-half left-half flex flex-direction alitem-center width80 height-40 translate--50 opcity10 z-inde10">
+      <view class="relative heichifan200 widthchi200 flex alitem-center" >
+        <view class="absolute top-half left-half translate--50 width-full height-full fon24 boradiuoverall text-center line-heichi80"
+         style="color: red;-webkit-mask: radial-gradient(transparent 180rpx, white 180rpx); ">
+          <view class="width50 height-full"
+          style="float: right;"
+          :style="{background:`linear-gradient(#7E70F1 ${currentVideo/videoAllNumber*100*2+'%'}, white ${currentVideo/videoAllNumber*100*2+'%'});`}"
+          >
+            
+          </view>
+          <view class="width50 height-full"
+          style="float: left;"
+          :style="{background:`linear-gradient(white ${(200-currentVideo/videoAllNumber*100*2)+'%'}, #7E70F1 ${(200-currentVideo/videoAllNumber*100*2)+'%'});`}"
+          >
+            
+          </view>
+        </view>
+        <view class="absolute top-half left-half translate--50 fon24 fon100 white">
+          {{(currentVideo/videoAllNumber*100).toFixed(0)+"%"}}
+        </view>
+      </view>
+      <view class="white fon28 margtop20">
+        正在上传
+      </view>
+      <view class="white margtop10 fon28">
+        {{currentVideo+"/"+videoAllNumber}}
+      </view>
+      <view class="white fon24 margtop10">
+        视频上传完成前请不要退出小程序或关闭微信哦
+      </view>
+      <view 
+        @tap="confirmComplte"
+        v-show="uploadAll"
+        class="pruple bawhite text-center heichi60 widchi100 line-heichi60 fon28 boradiu30 margtop50">
+        确定
+      </view>
+    </view>
   </view>
 </template>
 
@@ -59,10 +108,12 @@
   import { getQiNiuToken } from "@/api/video.js";
   import clipCom from "@/components/clipCom.vue";
   import uploadCom from "@/components/uploadCom.vue";
+  import nvgBar from "@/components/nvgBar";
   export default {
     components:{
       clipCom,
       uploadCom,
+      nvgBar,
     },
     data(){
       return {
@@ -76,6 +127,14 @@
         continueUpload:false,
         // 当前场馆的id
         courtId:0,
+        // 视频是否正在上传
+        uploadStatus:false,
+        // 所选视频是否上传完成
+        uploadAll:false,
+        // 所选的待上传的视频总数
+        videoAllNumber:0,
+        // 正在上传第几个视频
+        currentVideo:0,
       }
     },
     onLoad(options) {
@@ -89,6 +148,11 @@
       },
     },
     methods:{
+      // 确认视频已经上传完成
+      confirmComplte(){
+        this.uploadAll = false
+        this.uploadStatus = false
+      },
       // 删除所选择的视频
       deleteUpload(data){
         console.log("查看",data)
@@ -109,8 +173,10 @@
           this.uploadQiniu()
         }
         else{
+          this.uploadStatus = true;
           this.uploadOneByOne(this.uploadAarray,0,this.uploadAarray.length)
         }
+        // this.uploadStatus = true;
       },
       // 上传七牛云打开相册
       async uploadQiniu(){
@@ -131,14 +197,15 @@
                 return item.tempFilePath;
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
-              console.log("suoyou",that.uploadAarray)
+              console.log("suoyou",that.uploadAarray);
+              that.videoAllNumber = that.uploadAarray.length;
               return false;
             }
             that.uploadAarray = res.tempFiles.map((item,index)=>{
               console.log("所有视频的key",item.tempFilePath,index)
               return item.tempFilePath
             })
-            // that.uploadOneByOne(res.tempFiles,tempNumber,length)
+            that.videoAllNumber = that.uploadAarray.length;
           },
           fail:(error)=>{
             this.$showMsg("请您选择所要上传的视频！",2000,"error")
@@ -150,17 +217,28 @@
         console.log("开始执行",arrayData,count,length)
         await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
           console.log("上传视频的key",value.data.key)
-          this.$showLoading(`正在上传第${count+1}个视频`,"none")
+          // this.$showLoading(`正在上传第${count+1}个视频`,"none")
+          this.currentVideo = count+1;
           await qiniuUploader.upload(arrayData[count],res=>{
               count++
               if(count==length){
                 console.log("失败数组",this.failList)
+                // 不论成功或者失败视频都上传完成
+                this.uploadAll = true
                 this.$hideLoading()
                 if(this.failList.length){
-                  this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
+                  // 失败的数组重新赋值给上传数组重新上传
+                  let tempArray = []
+                   this.failList.map(item=>{
+                     tempArray = this.uploadAarray[item]
+                   })
+                  this.uploadAarray = [...tempArray]
+                  // this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
                 }
                 else{
-                  this.$showMsg(`所有视频已全部上传成功！`,4000,"success")
+                  // 上传成功的视频删除不再重新上传
+                  this.uploadAarray = [];
+                  // this.$showMsg(`所有视频已全部上传成功！`,4000,"success");
                 }
               }
               else{
