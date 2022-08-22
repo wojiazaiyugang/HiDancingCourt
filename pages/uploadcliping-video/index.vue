@@ -25,6 +25,7 @@
     <scroll-view
       class="width-full height-full "
       :scroll-y="true"
+      @scroll="calTop"
       @scrolltolower="toEnd"
       @touchstart="startSlider"
       @touchend="endSlider"
@@ -108,6 +109,10 @@
         loadingDone:false,
         // 正在剪辑的视频剪辑状态
         clipingNumber:[],
+        // 下滑定时器
+        timer:null,
+        // 滑动条距离顶部的距离
+        sliderTop:0,
       }
     },
     onLoad(options) {
@@ -128,16 +133,22 @@
       },
       // 滑动底部加载数据
       toEnd(){
-        if(this.videoList.length>=this.per_page){
-          if(this.loadingDone){
-            this.$showMsg("数据已加载完成！",2000,"none")
-            return false
-          }
-          else{
-            this.page++
-            this.selectTypeVideos()
-          }
+        var that = this;
+        if(that.timer){
+          clearTimeout(that.timer)
         }
+        that.timer = setTimeout(()=>{
+          if(that.videoList.length>=that.per_page){
+            if(that.loadingDone){
+              that.$showMsg("数据已加载完成！",2000,"none")
+              return false
+            }
+            else{
+              that.page++
+              that.selectTypeVideos()
+            }
+          }
+        },200)
       },
       // 根据条件查询视频
       async selectTypeVideos(){
@@ -198,13 +209,17 @@
         this.loadingDone = false;
         this.selectTypeVideos();
       },
+      calTop(data){
+        console.log("聚集顶部的距离",data)
+        this.sliderTop = data.detail.scrollTop
+      },
       // 用户开始接触屏幕
       startSlider(data){
         this.startPosition = data.changedTouches[0].pageY
       },
       // 用户滑动结束判断上滑还是下滑
       endSlider(e){
-        if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
+        if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
           console.log("上touch")
           this.sliderStatus = true
           this.videoList = [];
