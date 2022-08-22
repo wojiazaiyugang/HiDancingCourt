@@ -54,10 +54,11 @@ export default {
             }
           })
           list.unshift(tempCourt)
+          console.log("排序完成",list)
+          commit("setLoginComplete",true)
+          commit("setAllVenues",list)
+          uni.hideLoading()
         }
-        commit("setLoginComplete",true)
-        commit("setAllVenues",list)
-        uni.hideLoading()
       })
     },
   }

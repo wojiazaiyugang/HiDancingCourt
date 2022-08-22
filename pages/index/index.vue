@@ -224,10 +224,6 @@
         permissionType:"",
         // 上次搜索的场馆名字
         lastSearchName:"",
-        // 暂时的场馆
-        tempCourt:"",
-        // 暂时的图片
-        tempImg:"",
 			}
 		},
     created() {
@@ -291,37 +287,18 @@
       },
       // 打开选择场馆
       async chooseVenues() {
-        let {data} = await checkoutLastSearch()
-        console.log("查看上次搜索",data)
-        // 定位没有完成
         if(this.locationInfo.latitude){
-          this.columnsHouses = this.allVenues.filter(item=>{
-            if(item.data.supprt_find){
-              return item
-            }
-          })
-          // 若上次搜索为空，也就是从没有搜索过场馆
-          if(!data.last_venue){
-            this.columnsHouses = this.columnsHouses.map(item=>{
-              return item.name
-            })
-          }
-          // 上次搜索不为空
-          else{
-            this.columnsHouses.map(item=>{
-              if(item.id==data.last_venue){
-                this.lastSearchName = item.name
-              }
-            })
-            this.columnsHouses = this.columnsHouses.filter(item=>{
-              if(item.id!=data.last_venue){
+          // 项目运行执行一次
+          if(this.columnsHouses.length==0){
+            this.columnsHouses = this.allVenues.filter(item=>{
+              if(item.data.supprt_find){
                 return item
               }
             })
+            // 若上次搜索为空，也就是从没有搜索过场馆
             this.columnsHouses = this.columnsHouses.map(item=>{
               return item.name
             })
-            this.columnsHouses.unshift(this.lastSearchName)
           }
           this.$refs.popupVenues.open("bottom")
         }
@@ -333,8 +310,6 @@
       // 选择舞房点击确认
       confirmHouse(){
         this.$refs.popupVenues.close()
-        this.currentHourses = this.tempCourt?this.tempCourt:this.columnsHouses[0]
-        this.currentBacimg = this.tempImg?this.tempImg:this.allVenues[0].data.thumbnail
       },
       // 滑动选择舞房
       selectHouse(data){
@@ -342,8 +317,14 @@
           this.verfication = []
           this.currentIndex = -1
         }
-        this.tempCourt = this.columnsHouses[data.detail.index]
-        this.tempImg = this.allVenues[data.detail.index].data.thumbnail
+        // 选择的场馆名字
+        this.currentHourses = this.columnsHouses[data.detail.index]
+        // 选择的场馆图片
+        this.allVenues.map(item=>{
+          if(item.name==this.currentHourses){
+            this.currentBacimg = item.data.thumbnail
+          }
+        })
       },
       // 点击选择时段
       showTimePopup() {
@@ -398,6 +379,34 @@
           }
         })
       },
+      // 搜索之后重新排序场馆列表
+      sortList(value){
+        this.columnsHouses = this.allVenues.filter(item=>{
+          if(item.data.supprt_find){
+            return item
+          }
+        })
+        this.columnsHouses.map(item=>{
+          if(item.id==value){
+            this.lastSearchName = item.name
+          }
+        })
+        this.columnsHouses = this.columnsHouses.filter(item=>{
+          if(item.id!=value){
+            return item
+          }
+        })
+        this.columnsHouses = this.columnsHouses.map(item=>{
+          return item.name
+        })
+        this.columnsHouses.unshift(this.lastSearchName)
+        this.allVenues.map(item=>{
+          if(item.name==this.lastSearchName){
+            this.currentBacimg = item.data.thumbnail
+          }
+        })
+        console.log("查看名字",this.columnsHouses)
+      },
       // 查找视频
       async SearchVideo() {
         if(this.videoSearch){
@@ -434,6 +443,7 @@
                 if(this.userFaceInfo){
                   this.$hideLoading()
                   this.videoSearch = true
+                  this.sortList(selectId)
                   this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                   uni.navigateTo({
                     url: "../search-report/index",
@@ -449,6 +459,7 @@
               else{
                 this.$hideLoading()
                 this.videoSearch = true
+                this.sortList(selectId)
                 this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                 uni.navigateTo({
                   url: "../search-report/index",
@@ -473,15 +484,12 @@
       confirmProp() {
         // 二次授权
         var that = this 
-        console.log("1")
          wx.openSetting({
           success (res) {
             that.$refs.permissionsPopup.close()
-            console.log("2")
             wx.getSetting({
               success: async response => {
                 if (response.authSetting["scope.userLocation"]) {
-                  console.log("3")
                   that.getLocation().finally(()=>{
                     that.getVenues()
                   })
