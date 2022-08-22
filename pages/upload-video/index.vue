@@ -68,26 +68,27 @@
          style="color: red;-webkit-mask: radial-gradient(transparent 180rpx, white 180rpx); ">
           <view class="width50 height-full"
           style="float: right;"
-          :style="{background:`linear-gradient(#7E70F1 ${currentVideo/videoAllNumber*100*2+'%'}, white ${currentVideo/videoAllNumber*100*2+'%'});`}"
+          :style="{background:`linear-gradient(#7E70F1 ${((currentVideo-1)/videoAllNumber+currentProcess/videoAllNumber/100)*2*100+'%'}, white ${((currentVideo-1)/videoAllNumber+currentProcess/videoAllNumber/100)*2*100+'%'});`}"
           >
             
           </view>
           <view class="width50 height-full"
           style="float: left;"
-          :style="{background:`linear-gradient(white ${(200-currentVideo/videoAllNumber*100*2)+'%'}, #7E70F1 ${(200-currentVideo/videoAllNumber*100*2)+'%'});`}"
+          :style="{background:`linear-gradient(white ${(200-((currentVideo-1)/videoAllNumber+currentProcess/videoAllNumber/100)*2*100)+'%'}, #7E70F1 ${(200-((currentVideo-1)/videoAllNumber+currentProcess/videoAllNumber/100)*2*100)+'%'});`}"
           >
             
           </view>
         </view>
         <view class="absolute top-half left-half translate--50 fon24 fon100 white">
-          {{(currentVideo/videoAllNumber*100).toFixed(0)+"%"}}
+          {{(uploadAll?100:(currentProcess/videoAllNumber+(currentVideo-1)/videoAllNumber*100).toFixed(0))+"%"}}
         </view>
       </view>
       <view class="white fon28 margtop20">
-        正在上传
+        <text >正在上传</text>
+        <text class="margleft10">{{currentVideo+"/"+videoAllNumber}}</text>
       </view>
       <view class="white margtop10 fon28">
-        {{currentVideo+"/"+videoAllNumber}}
+        {{"已上传"+(oploadByte/1024/1024).toFixed(2)+"M，"+"共"+(totalByte/1024/1024).toFixed(2)+"M"}}
       </view>
       <view class="white fon24 margtop10">
         视频上传完成前请不要退出小程序或关闭微信哦
@@ -135,6 +136,12 @@
         videoAllNumber:0,
         // 正在上传第几个视频
         currentVideo:0,
+        // 当前视频上传的进度
+        currentProcess:0,
+        // 当前视频上传了多少字节
+        oploadByte:0,
+        // 当前视频总共有多少字节
+        totalByte:0,
       }
     },
     onLoad(options) {
@@ -173,7 +180,12 @@
           this.uploadQiniu()
         }
         else{
+          // 视频正在上传
           this.uploadStatus = true;
+          // 点击开始上传，当前视频就是0
+          this.currentVideo = 0;
+          // 所有视频重新上传
+          this.uploadAll = false;
           this.uploadOneByOne(this.uploadAarray,0,this.uploadAarray.length)
         }
         // this.uploadStatus = true;
@@ -215,16 +227,18 @@
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
         console.log("开始执行",arrayData,count,length)
+        // 上传完一个进度归为0
+        this.currentProcess = 0;
+        this.currentVideo = count+1;
         await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
           console.log("上传视频的key",value.data.key)
           // this.$showLoading(`正在上传第${count+1}个视频`,"none")
           await qiniuUploader.upload(arrayData[count],res=>{
               count++
-              this.currentVideo = count;
               if(count==length){
                 console.log("失败数组",this.failList)
                 // 不论成功或者失败视频都上传完成
-                this.uploadAll = true
+                this.uploadAll = true;
                 this.$hideLoading()
                 if(this.failList.length){
                   // 失败的数组重新赋值给上传数组重新上传
@@ -238,7 +252,6 @@
                 else{
                   // 上传成功的视频删除不再重新上传
                   this.uploadAarray = [];
-                  // this.$showMsg(`所有视频已全部上传成功！`,4000,"success");
                 }
               }
               else{
@@ -247,7 +260,7 @@
               }
             },error=>{
               this.failList.push(count+1)
-              count++
+              count++;
               if(count==length){
                 this.$hideLoading()
                 this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
@@ -256,11 +269,21 @@
                 // 递归
                 this.uploadOneByOne(arrayData,count,length)
               }
-            },{
+            },
+            {
               region: "ECN",
               key:value.data.key,
               uptoken: value.data.token,
             },
+            progress=>{
+              console.log("查看进度",progress);
+              // 当前视频上传的进度
+              this.currentProcess = progress.progress;
+              // 当前视频已经上传的大小
+              this.oploadByte = progress.totalBytesSent;
+              // 当前视频需要上传的总大小
+              this.totalByte = progress.totalBytesExpectedToSend;
+            }
           )
         })
       },
