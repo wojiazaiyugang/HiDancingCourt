@@ -49,18 +49,12 @@
           </view>
         </view>
       </view>
-      
-      
-      
       <view v-if="!isShare" class="absolute background-cover widchi30 heichiduan73 left-half bottom50 translate--50"
         style="background-image: url(https://static.qiniuyun.highvenue.cn/image/video_.png);"
         >
         
       </view>
-      
-      
     </view>
-    
     <view v-show="!isShare" 
       class="absolute right20 bottom200  widchi50 heichifan150 flex flex-direction justify-between alitem-center">
       <view class="widchi50 bawhite bg-father heichixu100 boradiu20 flex justify-center alitem-center">
@@ -77,10 +71,6 @@
          <view class="iconfont icon-xiazaidaoru white fon60 opcity10" ></view>
       </view>
     </view>
-    
-    
-    
-    
     <uni-popup ref="cameraPermiss" type="dialog">
     	<uni-popup-dialog type="info" mode="base" content="您已拒绝该项授权，如需开启，请点击确认进入设置页面重新授权" :duration="2000" :before-close="true" @close="closeCamera" @confirm="confirmCamera"></uni-popup-dialog>
     </uni-popup>
@@ -127,7 +117,6 @@
       };
     },
     onLoad(e) {
-      console.log("ceshi设备信息",this.deviceInfo)
       if(e.id){
         console.log("分享")
         this.isShare = true
@@ -136,6 +125,7 @@
         return false
       }
       this.playingVideo(e.all)
+      console.log("输出用户信息",this.userInfo)
     },
     computed: {
       ...mapState("m_video",[
@@ -159,12 +149,12 @@
     },
     // 分享到群聊
     onShareAppMessage(res) {
-      wx.reportEvent("watch_video", {
-        "dancingroom_name": this.playVideo.venue_name,
+      wx.reportEvent("share_video", {
+        "user_id": this.userInfo.data.id,
+        "user_name": this.userInfo.data.open_data.nickName?this.userInfo.data.open_data.nickName:"未获得名字",
         "dancingroom_id": this.playVideo.venue_id,
-        "video_id":this.playVideo.id,
-        "user_name": this.userInfo.data.open_data.nickName,
-        "user_id": this.userInfo.data.id
+        "dancingroom_name": this.playVideo.venue_name,
+        "video_id": this.playVideo.id,
       })
       return {
         title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
@@ -173,12 +163,11 @@
     },
     // 分享朋友圈
     onShareTimeline(){
-      wx.reportEvent("watch_video", {
-        "dancingroom_name": this.playVideo.venue_name,
+      wx.reportEvent("share_friends_circle", {
+        "video_id": this.playVideo.id,
+        "user_id": this.userInfo.data.id,
         "dancingroom_id": this.playVideo.venue_id,
-        "video_id":this.playVideo.id,
-        "user_name": this.userInfo.data.open_data.nickName,
-        "user_id": this.userInfo.data.id
+        "dancingroom_name": this.playVideo.venue_name
       })
       return {
         title: `快来欣赏我在${this.playVideo.venue_name}的精彩视频吧~`,
@@ -254,7 +243,7 @@
           "dancingroom_name": this.playVideo.venue_name,
           "dancingroom_id": this.playVideo.venue_id,
           "video_id":this.playVideo.id,
-          "user_name": this.userInfo.data.open_data.nickName,
+          "user_name": this.userInfo.data.open_data.nickName?this.userInfo.data.open_data.nickName:"未获得名字",
           "user_id": this.userInfo.data.id
         })
         setTimeout(()=>{
@@ -298,7 +287,7 @@
           "dancingroom_name": this.playVideo.venue_name,
           "dancingroom_id": this.playVideo.venue_id,
           "video_id":this.playVideo.id,
-          "user_name": this.userInfo.data.open_data.nickName,
+          "user_name": this.userInfo.data.open_data.nickName?this.userInfo.data.open_data.nickName:"未获得名字",
           "user_id": this.userInfo.data.id
         })
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
@@ -342,7 +331,7 @@
           "dancingroom_name": this.playVideo.venue_name,
           "dancingroom_id": this.playVideo.venue_id,
           "video_id":this.playVideo.id,
-          "user_name": this.userInfo.data.open_data.nickName,
+          "user_name": this.userInfo.data.open_data.nickName?this.userInfo.data.open_data.nickName:"未获得名字",
           "user_id": this.userInfo.data.id
         })
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
@@ -409,7 +398,7 @@
         });
         wx.reportEvent("down_video", {
           "user_id": this.userInfo.data.id,
-          "user_name": this.userInfo.data.open_data.nickName,
+          "user_name": this.userInfo.data.open_data.nickName?this.userInfo.data.open_data.nickName:"未获得名字",
           "dancingroom_id": this.playVideo.venue_id,
           "dancingroom_name": this.playVideo.venue_name,
           "video_id":this.playVideo.id,

@@ -128,6 +128,7 @@
     methods:{
       // 初始化数据
       initData(data){
+        this.$showMsg("下拉刷新各类剪辑状态！",3000,"none")
         this.currentId = data.venue_id
         this.selectTypeVideos()
       },

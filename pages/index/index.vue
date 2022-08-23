@@ -129,7 +129,8 @@
         <view style="width: 93rpx;" >
          
         </view>
-        <view class="letter-spacing1 widthchi210 heichiduan80 boradiu50 text-center line-heichi80 babotton" @click="SearchVideo">
+        <view class="letter-spacing1 widthchi210 heichiduan80 boradiu50 text-center line-heichi80 babotton" 
+        @click="SearchVideo">
           <text class="fon28 black fonweight">查找视频</text>
         </view>
         <view class=" widchi35 heichi70 background-cover flex flex-center"
@@ -233,6 +234,7 @@
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
       ...mapState("m_device",["locationInfo","deviceInfo"]),
       ...mapState("m_camera",["userFaceInfo"]),
+      ...mapState("m_user",["userInfo",]),
       calName(){
         var tempCourt = this.allVenues.filter(item=>{
           if(item.data.supprt_find){
@@ -439,8 +441,18 @@
               this.$showMsg("输入密码错误，联系舞房老师获取密码哦～",2000,"none")
             }
             else{
+              wx.reportEvent("enter_home", {
+                "user_id": this.userInfo.data.id,
+                "dancingroom_id": selectId,
+                "dancingroom_name": this.currentHourses?this.currentHourses:this.allVenues[0].name
+              })
               if(this.faceSearch){
                 if(this.userFaceInfo){
+                  wx.reportEvent("enter_room_face", {
+                    "user_id": this.userInfo.data.id,
+                    "dancingroom_id": selectId,
+                    "dancingroom_name": this.currentHourses?this.currentHourses:this.allVenues[0].name
+                  })
                   this.$hideLoading()
                   this.videoSearch = true
                   this.sortList(selectId)
