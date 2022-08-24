@@ -255,13 +255,13 @@
       <view
         @tap="navUploadVideos"
         v-show="isMaster"
-        class="absolute bottom30 right20 white heichiduan90 widchi45">
-        <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi70"
+        class="absolute bottom30 right20 white heichixu100 widchi50">
+        <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi80"
           style="border: 8rpx solid #7E70F1;"
           >
-          <text class="iconfont icon-shipin pruple fon40"></text>
+          <text class="iconfont icon-shipin2 pruple fon50"></text>
         </view>
-        <view class="absolute bottom0 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
+        <view class="absolute bottom-4 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
           视频管理
         </view>
       </view>

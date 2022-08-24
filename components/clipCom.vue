@@ -19,7 +19,7 @@
           {{clipType}}
         </view>
         <view class="absolute top0 right0 height-full widchi40 fon24 boradiuoverall text-center line-heichi80"
-         style="color: red;-webkit-mask: radial-gradient(transparent 15px, white 15px); ">
+         style="color: #f17070;-webkit-mask: radial-gradient(transparent 15px, white 15px); ">
           <view class="width50 height-full"
           style="float: right;"
           :style="{background:calImgRight}"
@@ -33,7 +33,7 @@
             
           </view>
         </view>
-        <view class="absolute top0 right0 height-full widchi40 text-center line-heichi80 fon24 " style=" color: red;">
+        <view class="absolute top0 right0 height-full widchi40 text-center line-heichi80 fon20 " style=" color: #f17070;">
           {{calNumber}}
         </view>
       </view>
@@ -80,22 +80,22 @@
       // 计算剪辑的圆圈图左半边
       calImgRight(){
         if(this.clipType=="剪辑完成"){
-          return `linear-gradient(red 100%, #7E70F1 100%);`;
+          return `linear-gradient(#f17070 100%, #7E70F1 100%);`;
         }
         if(this.clipType=="正在剪辑"){
-          return `linear-gradient(red ${this.cliptext*100*2+'%'}, #7E70F1 ${this.cliptext*100*2+'%'});`;
+          return `linear-gradient(#f17070 ${this.cliptext*100*2+'%'}, #7E70F1 ${this.cliptext*100*2+'%'});`;
         }
-        return `linear-gradient(#7E70F1 100%, red 100%);`;
+        return `linear-gradient(#7E70F1 100%, #f17070 100%);`;
       },
       // 计算剪辑的圆圈图右半边
       calImgLeft(){
         if(this.clipType=="剪辑完成"){
-          return `linear-gradient(#7E70F1 0%, red 0%);`;
+          return `linear-gradient(#7E70F1 0%, #f17070 0%);`;
         }
         if(this.clipType=="正在剪辑"){
-          return `linear-gradient(#7E70F1 ${(200-this.cliptext*100*2)+'%'}, red ${(200-this.cliptext*100*2)+'%'})`;
+          return `linear-gradient(#7E70F1 ${(200-this.cliptext*100*2)+'%'}, #f17070 ${(200-this.cliptext*100*2)+'%'})`;
         }
-        return `linear-gradient(red 0%, #7E70F1 0%);`;
+        return `linear-gradient(#f17070 0%, #7E70F1 0%);`;
       },
     },
     methods:{

@@ -31,11 +31,23 @@
           :key="index">
           <uploadCom 
           @deleteVideo="deleteUpload"
+          @changeVideoStatus="showVideos"
           :videoName="item">
             
           </uploadCom>
         </view>
       </view>
+      <video class="margleftchi50 translatex-50 "
+        v-show="playVideo"
+        :src="currentSrc" 
+        controls
+        loop
+        objectFit="cover"
+        :show-fullscreen-btn="false"
+        :show-play-btn="false"
+        :show-bottom-progress="true"
+        autoplay="true">
+      </video>
       <view v-show="uploadAarray.length!=0"
         @tap="uploadAlways"
         class="margleftchi50 translatex-50 boradiu16 bapruple heichiduan80 line-heichi80 widchi150 text-center white">
@@ -136,15 +148,15 @@
         oploadByte:0,
         // 当前视频总共有多少字节
         totalByte:0,
+        // 是否播放视频
+        playVideo:false,
+        // 当前播放视频的临时地址
+        currentSrc:"",
       }
     },
     onLoad(options) {
       this.courtId = options.venue_id
-    },
-    onShow() {
-      if(this.uploadAarray.length!=0){
-        this.$showMsg("为保证视频正确快速地上传，请您中途不要退出！",2000,"error");
-      }
+      this.$showMsg("所上传视频可以点击播放按钮进行查看哦~",3000,"none");
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
@@ -154,6 +166,11 @@
       },
     },
     methods:{
+      // 子组件控制页面播放哪个视频 
+      showVideos(data){
+        this.playVideo = data.playStatus;
+        this.currentSrc = data.name;
+      },
       // 删除所选择的视频
       deleteUpload(data){
         this.uploadAarray = this.uploadAarray.filter(item=>{
@@ -231,11 +248,11 @@
                 this.uploadAll = true;
                 if(this.failList.length){
                   // 失败的数组重新赋值给上传数组重新上传
-                  let tempArray = []
+                  let tempArray = [];
                    this.failList.map(item=>{
-                     tempArray.push(this.uploadAarray[item])
+                     tempArray.push(this.uploadAarray[item]);
                    })
-                  this.uploadAarray = [...tempArray]
+                  this.uploadAarray = [...tempArray];
                 }
                 else{
                   // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录

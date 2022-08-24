@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3530538 */
-  src: url('@/static/iconfont/iconstyles/iconfont.woff2?t=1660726683059') format('woff2'),
-       url('@/static/iconfont/iconstyles/iconfont.woff?t=1660726683059') format('woff'),
-       url('@/static/iconfont/iconstyles/iconfont.ttf?t=1660726683059') format('truetype');
+  src: url('@/static/iconfont/iconstyles/iconfont.woff2?t=1661336216960') format('woff2'),
+       url('@/static/iconfont/iconstyles/iconfont.woff?t=1661336216960') format('woff'),
+       url('@/static/iconfont/iconstyles/iconfont.ttf?t=1661336216960') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,10 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shipin2:before {
+  content: "\e622";
 }
 
 .icon-zengjiatianjiajiahao:before {
