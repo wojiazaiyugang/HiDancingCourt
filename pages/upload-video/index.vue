@@ -93,12 +93,6 @@
       <view class="white fon24 margtop10">
         视频上传完成前请不要退出小程序或关闭微信哦
       </view>
-      <view 
-        @tap="confirmComplte"
-        v-show="uploadAll"
-        class="pruple bawhite text-center heichi60 widchi100 line-heichi60 fon28 boradiu30 margtop50">
-        确定
-      </view>
     </view>
   </view>
 </template>
@@ -147,6 +141,11 @@
     onLoad(options) {
       this.courtId = options.venue_id
     },
+    onShow() {
+      if(this.uploadAarray.length!=0){
+        this.$showMsg("为保证视频正确快速地上传，请您中途不要退出！",2000,"error");
+      }
+    },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
       // 返回当前用户设备的高度
@@ -155,14 +154,8 @@
       },
     },
     methods:{
-      // 确认视频已经上传完成
-      confirmComplte(){
-        this.uploadAll = false
-        this.uploadStatus = false
-      },
       // 删除所选择的视频
       deleteUpload(data){
-        console.log("查看",data)
         this.uploadAarray = this.uploadAarray.filter(item=>{
           if(data!=item){
             return item;
@@ -178,6 +171,8 @@
       openOrUpload(){
         if(this.uploadAarray.length==0){
           this.uploadQiniu()
+          this.uploadAll = false
+          this.uploadStatus = false
         }
         else{
           // 视频正在上传
@@ -198,60 +193,56 @@
           sourceType:["album"],
           mediaType:["video"],
           success:async (res)=>{
-            console.log("输出res",res)
-            var tempNumber = 0
+            var tempNumber = 0;
             var length = res.tempFiles.length;
-            that.failList = []
+            that.failList = [];
+            // 继续上传
             if(that.continueUpload){
               that.continueUpload = false;
               let tempList = res.tempFiles.map((item,index)=>{
-                console.log("所有视频的key",item.tempFilePath,index);
                 return item.tempFilePath;
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
-              console.log("suoyou",that.uploadAarray);
               that.videoAllNumber = that.uploadAarray.length;
               return false;
             }
+            // 一次性选择完事
             that.uploadAarray = res.tempFiles.map((item,index)=>{
-              console.log("所有视频的key",item.tempFilePath,index)
-              return item.tempFilePath
+              return item.tempFilePath;
             })
             that.videoAllNumber = that.uploadAarray.length;
           },
           fail:(error)=>{
-            this.$showMsg("请您选择所要上传的视频！",2000,"error")
+            this.$showMsg("请您选择所要上传的视频！",2000,"error");
           }
         })
       },
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
-        console.log("开始执行",arrayData,count,length)
         // 上传完一个进度归为0
         this.currentProcess = 0;
         this.currentVideo = count+1;
         await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
-          console.log("上传视频的key",value.data.key)
-          // this.$showLoading(`正在上传第${count+1}个视频`,"none")
-          await qiniuUploader.upload(arrayData[count],res=>{
+          await qiniuUploader.upload(arrayData[count],
+            res=>{
               count++
               if(count==length){
-                console.log("失败数组",this.failList)
                 // 不论成功或者失败视频都上传完成
                 this.uploadAll = true;
-                this.$hideLoading()
                 if(this.failList.length){
                   // 失败的数组重新赋值给上传数组重新上传
                   let tempArray = []
                    this.failList.map(item=>{
-                     tempArray = this.uploadAarray[item]
+                     tempArray.push(this.uploadAarray[item])
                    })
                   this.uploadAarray = [...tempArray]
-                  // this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
                 }
                 else{
-                  // 上传成功的视频删除不再重新上传
+                  // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录
                   this.uploadAarray = [];
+                  uni.navigateBack({
+                    delta:1,
+                  })
                 }
               }
               else{
@@ -259,11 +250,17 @@
                 this.uploadOneByOne(arrayData,count,length)
               }
             },error=>{
-              this.failList.push(count+1)
               count++;
+              this.failList.push(count);
               if(count==length){
-                this.$hideLoading()
-                this.$showMsg(`视频上传成功${length-this.failList.length}个，第${this.failList.toString()}个视频上传失败！`,4000,"success")
+                // 不论成功或者失败视频都上传完成
+                this.uploadAll = true;
+                // 失败的数组重新赋值给上传数组重新上传
+                let tempArray = []
+                 this.failList.map(item=>{
+                   tempArray.push(this.uploadAarray[item])
+                 })
+                this.uploadAarray = [...tempArray]
               }
               else{
                 // 递归

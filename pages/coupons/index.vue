@@ -1,5 +1,5 @@
 <template>
-  <view class="ba-f7"
+  <view 
     :style="{height:calHeight}"
     >
     <coupons :venueId="currentVenueId"></coupons>

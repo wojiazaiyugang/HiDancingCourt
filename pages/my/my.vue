@@ -307,7 +307,6 @@
        cancel-button-text="请选择您的另一家舞蹈房"
        confirm-button-text="确认"
        active-class="selectStyle"
-       :isRecently="true"
        toolbar-class="changeToolbar"
        @confirm="confirmCourt"
        @change="selectCourt"

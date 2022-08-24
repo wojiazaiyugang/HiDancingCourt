@@ -97,7 +97,7 @@
         startPosition:0,
         // 滑动拉取接口
         sliderStatus:false,
-        // 查询所要剪辑的状态,默认是查询待剪辑的，WAIT_CLIP待剪辑，CLIPING正在剪辑，CLIP_FINIFSHED剪辑完成，CLIP_FAIL剪辑失败
+        // 查询所要剪辑的状态,默认是查询待剪辑的，WAIT_CLIP待剪辑，CLIPING正在剪辑，CLIP_FINISHED剪辑完成，CLIP_FAIL剪辑失败
         selectStatus:"WAIT_CLIP",
         // 当前显示的视频数量及状态
         videoList:[],
@@ -116,7 +116,16 @@
       }
     },
     onLoad(options) {
-      this.initData(options)
+      this.currentId = options.venue_id
+    },
+    onShow() {
+      this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
+      this.currentType = 0;
+      this.videoList = [];
+      this.clipingNumber = [];
+      this.page = 1;
+      this.loadingDone = false;
+      this.selectTypeVideos();
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
@@ -126,12 +135,6 @@
       },
     },
     methods:{
-      // 初始化数据
-      initData(data){
-        this.$showMsg("下拉刷新各类剪辑状态！",3000,"none")
-        this.currentId = data.venue_id
-        this.selectTypeVideos()
-      },
       // 滑动底部加载数据
       toEnd(){
         var that = this;
@@ -153,24 +156,34 @@
       },
       // 根据条件查询视频
       async selectTypeVideos(){
-        this.$showLoading("数据加载中!","none");
         if(this.currentType!=1){
-          let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page);
+          let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId);
           this.$hideLoading();
           this.sliderStatus = false;
           this.videoList = [...this.videoList,...data];
-          console.log("查看数值",this.videoList);
           this.loadingDone = data.length<this.per_page;
         }
         else{
-          await getClipingVideos(this.selectStatus,this.page,this.per_page).then(async value=>{
-            this.$hideLoading();
+          await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId).then(async value=>{
             this.videoList = [...this.videoList,...value.data];
             if(value.data.length!=0){
               this.clipingNumber = await Promise.all(value.data.map(async item=>{
                 // 一个视频需要处理10分钟算，剪辑占90%，上传占10%
                 let {data} = await getClipingStatus(item.id);
-                let number = (data.current_index+data.current_upload_index)/(data.total_num+data.total_upload_num);
+                let curClip = data.current_index||0;
+                let totalClip = data.total_num||0;
+                let curUpload = data.current_upload_index||0;
+                let totalUpload = data.total_upload_num||0;
+                // 视频正在预处理，所有数值都为0；
+                if(!curClip&&!totalClip&&!curUpload&&!totalUpload){
+                  return 0;
+                }
+                // 正在剪辑，没有上传，上传的数值为null
+                if(!curUpload&&!totalUpload){
+                  let number = curClip/totalClip*0.9;
+                  return number;
+                }
+                let number = curClip/totalClip*0.9+curUpload/totalUpload*0.1;
                 return number;
               }))
               console.log("查看正在剪辑的数值",this.clipingNumber)
@@ -202,7 +215,7 @@
         }
         // 处于剪辑完成
         if(this.currentType==2){
-          this.selectStatus = "CLIP_FINIFSHED";
+          this.selectStatus = "CLIP_FINISHED";
         }
         this.videoList = [];
         this.clipingNumber = [];
@@ -242,7 +255,7 @@
     content: "";
     display: block;
     width: 50rpx;
-    margin-left: 25rpx;
+    margin-left: 30rpx;
     margin-top: 5rpx;
     border-bottom: 4rpx solid #7E70F1;
   }

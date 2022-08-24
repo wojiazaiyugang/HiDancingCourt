@@ -18,9 +18,9 @@ export const getQiNiuToken = (venue_id,filename) => {
 }
 
 // 根据上传视频的状态获取视频
-export const getClipingVideos = (status,page,perpage) => {
+export const getClipingVideos = (status,page,perpage,venue_id) => {
   let per_page = perpage?perpage:10
-  let data = {status,page,per_page}
+  let data = {status,page,per_page,venue_id}
   return request.get(`/records/clip/status/`,data)
 }
 
