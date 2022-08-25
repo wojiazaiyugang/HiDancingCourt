@@ -118,14 +118,12 @@
     },
     onLoad(e) {
       if(e.id){
-        console.log("分享")
         this.isShare = true
         this.shareId = e.id
         this.getVideoDetail()
         return false
       }
       this.playingVideo(e.all)
-      console.log("输出用户信息",this.userInfo)
     },
     computed: {
       ...mapState("m_video",[

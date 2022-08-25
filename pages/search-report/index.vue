@@ -118,8 +118,6 @@
     created() {
       this.getRooms()
       this.getAllDancTypes()
-      // document.body.scrollTop = 0;
-      //     document.documentElement.scrollTop = 0;
     },
 		methods: {
       ...mapMutations("m_video",[
