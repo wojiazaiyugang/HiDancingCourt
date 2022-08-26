@@ -23,10 +23,10 @@
       </view>
     </view>
     <view 
-      v-show="currentType==0"
+      v-show="currentType==0&&videoList.length!=0"
       class="width-full gray fon24 heichi50 line-heichi50 text-center">
       <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
-      <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频正在剪辑~</text>
+      <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
     </view>
     <scroll-view
       class="width-full height-full "
@@ -98,7 +98,7 @@
         
       </view>
     </scroll-view>
-    <view class="bawhite width-full heichixu85 absolute bottom0 flex justify-center alitem-center">
+    <view class="bawhite width-full heichixu70 absolute bottom0 flex justify-center alitem-center">
       <view
         @tap="openOrUpload"
         class="line-heichi80 heichiduan80  text-center boradiu50 white bapruple width60 ">
@@ -339,14 +339,16 @@
       },
       // 用户滑动结束判断上滑还是下滑
       endSlider(e){
-        if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
-          console.log("上touch")
-          this.sliderStatus = true
-          this.videoList = [];
-          this.clipingNumber = [];
-          this.page = 1;
-          this.loadingDone = false;
-          this.selectTypeVideos();
+        if(this.currentType==1){
+          if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
+            console.log("上touch")
+            this.sliderStatus = true
+            this.videoList = [];
+            this.clipingNumber = [];
+            this.page = 1;
+            this.loadingDone = false;
+            this.selectTypeVideos();
+          }
         }
       },
     },

@@ -2,8 +2,9 @@
   <view class=" background-cover "
    style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
    :style="{height:calHeight}">
-    <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
-      <swiper class="heichi22shi width-full" 
+    <view v-if="loginComplete" 
+      class=" height-full  width-full flex alitem-center flex-direction fon24 ">
+      <swiper class="heichi18shi width-full" 
       :indicator-dots="true"
       :autoplay="true"
       :interval="3000"
@@ -21,7 +22,8 @@
         </swiper-item>
       </swiper>
       <!-- Start 第一个Long-Button -->
-      <view class="width95 " @click="chooseVenues">
+      <view class="width95 "
+        @click="chooseVenues">
         <long-button>
           <template v-slot:icon >
           <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
@@ -43,7 +45,7 @@
       <!-- End 第一个Long-Button -->
       
       <!-- Start 球馆图片 -->
-      <view class="heichi20shi babotton boradiu24 width80 flex flex-center background-cover " >
+      <view class="heichi22shi babotton boradiu24 width80 flex flex-center background-cover margtop60" >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
          :style="{backgroundImage: `url(${currentBacimg?currentBacimg:calBaimg})`}">
           
@@ -52,7 +54,7 @@
       <!-- End 球馆图片 -->
       
       <!-- Start 第二个Long-Button -->
-      <view class="width95 " @click="showTimePopup">
+      <view class="width95 margtop60" @click="showTimePopup">
         <long-button>
           <template v-slot:icon>
             <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
@@ -69,7 +71,7 @@
       </view>
       <!-- End 第二个Long-Button -->
       <!-- Start hide第三个Long-Button -->
-      <view class="white width95">
+      <view class="white width95 margtop60">
         <view>
           <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
           <text class="white fon20 margleft10">(请向舞房前台或老师咨询密码)</text>
@@ -105,7 +107,7 @@
       </view>
       <!-- End 第三个Long-Button -->
       <!-- Start 透明层 -->
-      <view class="boradiu50 heichiduan80 width95  flex justify-end alitem-center babotton">
+      <view class="boradiu50 heichiduan80 width95 margtop60 flex justify-end alitem-center babotton">
         <view class="margright20 black">
           人脸查询开关
         </view>
@@ -124,7 +126,7 @@
       </view>
       
       <!-- Start底部 -->
-      <view class=" width-full flex justify-between margright40" >
+      <view class=" width-full flex justify-between margright40  absolute bottom30" >
         <!-- 用于占位 -->
         <view style="width: 93rpx;" >
          

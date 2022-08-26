@@ -246,11 +246,8 @@
                 return item.tempFilePath;
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
-              that.uploadAarray = that.uploadAarray.map(item=>{
-                return item.split("/").slice(-1)[0];
-              })
               that.videoAllNumber = that.uploadAarray.length;
-              console.log("查看视频列表继续",that.uploadAarray)
+              console.log("查看视频列表继续",that.uploadAarray);
               return false;
             }
             // 一次性选择完事
@@ -271,7 +268,7 @@
         // 上传完一个进度归为0
         this.currentProcess = 0;
         this.currentVideo = count+1;
-        await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
+        await getQiNiuToken(this.courtId,arrayData[count].split("/").slice(-1)[0]).then(async value=>{
           await qiniuUploader.upload(arrayData[count],
             async res=>{
               count++
@@ -287,12 +284,19 @@
                   let newArr = this.uploadAarray.filter((item) => {
                     return !tempArray.includes(item)
                   });
-                  await postKeyUpload(newArr,this.uploadAarray);
+                  newArr = newArr.map(item=>{
+                    return item.split("/").slice(-1)[0];
+                  })
+                  await postKeyUpload(this.currentName,newArr);
                   this.uploadAarray = [...tempArray];
                 }
                 else{
                   // 全部成功之后向后端发指令
-                  await postKeyUpload(this.currentName,this.uploadAarray)
+                  let newArr = this.uploadAarray;
+                  newArr = newArr.map(item=>{
+                    return item.split("/").slice(-1)[0];
+                  })
+                  await postKeyUpload(this.currentName,newArr)
                   // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录
                   this.uploadAarray = [];
                   uni.navigateBack({
@@ -318,7 +322,10 @@
                 let newArr = this.uploadAarray.filter((item) => {
                   return !tempArray.includes(item)
                 });
-                await postKeyUpload(newArr,this.uploadAarray);
+                newArr = newArr.map(item=>{
+                  return item.split("/").slice(-1)[0];
+                })
+                await postKeyUpload(this.currentName,newArr);
                 this.uploadAarray = [...tempArray]
               }
               else{
