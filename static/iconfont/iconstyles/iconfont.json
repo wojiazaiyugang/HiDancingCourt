@@ -6,6 +6,27 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16093541",
+      "name": "下拉3",
+      "font_class": "xiala3",
+      "unicode": "e694",
+      "unicode_decimal": 59028
+    },
+    {
+      "icon_id": "16093544",
+      "name": "下拉1",
+      "font_class": "xiala1",
+      "unicode": "e695",
+      "unicode_decimal": 59029
+    },
+    {
+      "icon_id": "6776386",
+      "name": "声音_实体",
+      "font_class": "shengyin_shiti",
+      "unicode": "eca5",
+      "unicode_decimal": 60581
+    },
+    {
       "icon_id": "11641881",
       "name": "视频",
       "font_class": "shipin2",

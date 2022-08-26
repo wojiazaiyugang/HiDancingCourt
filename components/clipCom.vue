@@ -7,18 +7,22 @@
         </view>
         <view>
           <view class="fon28 widthchi200 ellipsis" >
-            {{itemData.record_name}}
+            {{calShow?itemData.record_name:itemName}}
           </view>
-          <view class="fon24 margtop10 widthchi200 ellipsis">
+          <view v-if="calShow"
+            class="fon24 margtop10 widthchi200 ellipsis">
             {{itemData.end_time.split("_")[0]+" "+itemData.end_time.split("_")[1].replace(":","-")}}
           </view>
         </view>
       </view>
-      <view class="flex alitem-center heichiduan80 widchi110 relative">
+      <view
+        class="flex alitem-center heichiduan80 widchi110 relative">
         <view class=" line-heichi80 fon28">
           {{clipType}}
         </view>
-        <view class="absolute top0 right0 height-full widchi40 fon24 boradiuoverall text-center line-heichi80"
+        <view
+         v-if="calShow"
+         class="absolute top0 right0 height-full widchi40 fon24 boradiuoverall text-center line-heichi80"
          style="color: #f17070;-webkit-mask: radial-gradient(transparent 15px, white 15px); ">
           <view class="width50 height-full"
           style="float: right;"
@@ -33,7 +37,9 @@
             
           </view>
         </view>
-        <view class="absolute top0 right0 height-full widchi40 text-center line-heichi80 fon20 " style=" color: #f17070;">
+        <view
+         v-if="calShow"
+         class="absolute top0 right0 height-full widchi40 text-center line-heichi80 fon20 " style=" color: #f17070;">
           {{calNumber}}
         </view>
       </view>
@@ -55,6 +61,11 @@
         type:Object,
         default:null,
       },
+      // 等待剪辑名字
+      itemName:{
+        type:String,
+        default:"",
+      },
       // 正在剪辑哪一个视频的进度数据
       cliptext:{
         type:Number,
@@ -66,7 +77,17 @@
         
       }
     },
+    created() {
+      console.log("asdksaf",this.clipType)
+    },
     computed:{
+      // 计算是否显示进度条
+      calShow(){
+        if(this.clipType=="等待剪辑"){
+          return false;
+        }
+        return true;
+      },
       // 计算剪辑的进度数值
       calNumber(){
         if(this.clipType=="剪辑完成"){

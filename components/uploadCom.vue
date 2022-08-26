@@ -9,7 +9,7 @@
         </view>
         <view class="boradiu16 bapruple heichiduan80 line-heichi80 flex widchi100 paddingx12 white fon28">
           <view class="width90 ellipsis">
-            {{videoName.split("//")[1]}}
+            {{videoName}}
           </view>
             /mp4
         </view>

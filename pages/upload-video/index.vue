@@ -106,6 +106,15 @@
         视频上传完成前请不要退出小程序或关闭微信哦
       </view>
     </view>
+    <!-- 确认上传的场馆提示信息 -->
+    <uni-popup ref="roomConfirm" type="dialog">
+       <uni-popup-dialog type="info" mode="base" 
+       :content="`您当前正在向  ${currentName}  上传视频，点击确认后开始上传！`" 
+       :before-close="true" 
+       @close="cancelSelect" 
+       @confirm="confirmSelect">
+       </uni-popup-dialog>
+    </uni-popup>
   </view>
 </template>
 
@@ -113,6 +122,7 @@
   import { mapState, mapMutations } from "vuex";
   import qiniuUploader from "@/plugins/qiniuUploader.js";
   import { getQiNiuToken } from "@/api/video.js";
+  import { postKeyUpload } from "@/api/venues.js";
   import clipCom from "@/components/clipCom.vue";
   import uploadCom from "@/components/uploadCom.vue";
   import nvgBar from "@/components/nvgBar";
@@ -152,20 +162,43 @@
         playVideo:false,
         // 当前播放视频的临时地址
         currentSrc:"",
+        // 当前场馆的名字
+        currentName:"",
       }
     },
     onLoad(options) {
-      this.courtId = options.venue_id
+      this.courtId = options.venue_id;
+      this.allVenues.map(item=>{
+        if(this.courtId==item.id){
+          this.currentName = item.name;
+        }
+      })
       this.$showMsg("所上传视频可以点击播放按钮进行查看哦~",3000,"none");
     },
     computed:{
       ...mapState("m_device",["deviceInfo"]),
+      ...mapState("m_venues",["allVenues"]),
       // 返回当前用户设备的高度
       calHeight(){
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px';
       },
     },
     methods:{
+      // 取消上传视频
+      cancelSelect(){
+        this.$refs.roomConfirm.close();
+      },
+      // 确认视频上传
+      confirmSelect(){
+        this.$refs.roomConfirm.close();
+        // 视频正在上传
+        this.uploadStatus = true;
+        // 点击开始上传，当前视频就是0
+        this.currentVideo = 0;
+        // 所有视频重新上传
+        this.uploadAll = false;
+        this.uploadOneByOne(this.uploadAarray,0,this.uploadAarray.length);
+      },
       // 子组件控制页面播放哪个视频 
       showVideos(data){
         this.playVideo = data.playStatus;
@@ -187,20 +220,13 @@
       // 若用户没有待上传的则是打开相册进行选取视频，若用户已有待上传的则用户将待上传的上传到七牛云
       openOrUpload(){
         if(this.uploadAarray.length==0){
-          this.uploadQiniu()
-          this.uploadAll = false
-          this.uploadStatus = false
+          this.uploadQiniu();
+          this.uploadAll = false;
+          this.uploadStatus = false;
         }
         else{
-          // 视频正在上传
-          this.uploadStatus = true;
-          // 点击开始上传，当前视频就是0
-          this.currentVideo = 0;
-          // 所有视频重新上传
-          this.uploadAll = false;
-          this.uploadOneByOne(this.uploadAarray,0,this.uploadAarray.length)
+          this.$refs.roomConfirm.open("center");
         }
-        // this.uploadStatus = true;
       },
       // 上传七牛云打开相册
       async uploadQiniu(){
@@ -220,13 +246,18 @@
                 return item.tempFilePath;
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
+              that.uploadAarray = that.uploadAarray.map(item=>{
+                return item.split("/").slice(-1)[0];
+              })
               that.videoAllNumber = that.uploadAarray.length;
+              console.log("查看视频列表继续",that.uploadAarray)
               return false;
             }
             // 一次性选择完事
             that.uploadAarray = res.tempFiles.map((item,index)=>{
               return item.tempFilePath;
             })
+            console.log("查看视频列表",that.uploadAarray)
             that.videoAllNumber = that.uploadAarray.length;
           },
           fail:(error)=>{
@@ -236,12 +267,13 @@
       },
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
+        console.log("输出",arrayData)
         // 上传完一个进度归为0
         this.currentProcess = 0;
         this.currentVideo = count+1;
         await getQiNiuToken(this.courtId,arrayData[count]).then(async value=>{
           await qiniuUploader.upload(arrayData[count],
-            res=>{
+            async res=>{
               count++
               if(count==length){
                 // 不论成功或者失败视频都上传完成
@@ -250,11 +282,17 @@
                   // 失败的数组重新赋值给上传数组重新上传
                   let tempArray = [];
                    this.failList.map(item=>{
-                     tempArray.push(this.uploadAarray[item]);
-                   })
+                    tempArray.push(this.uploadAarray[item]);
+                  })
+                  let newArr = this.uploadAarray.filter((item) => {
+                    return !tempArray.includes(item)
+                  });
+                  await postKeyUpload(newArr,this.uploadAarray);
                   this.uploadAarray = [...tempArray];
                 }
                 else{
+                  // 全部成功之后向后端发指令
+                  await postKeyUpload(this.currentName,this.uploadAarray)
                   // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录
                   this.uploadAarray = [];
                   uni.navigateBack({
@@ -266,7 +304,7 @@
                 // 递归
                 this.uploadOneByOne(arrayData,count,length)
               }
-            },error=>{
+            },async error=>{
               count++;
               this.failList.push(count);
               if(count==length){
@@ -275,8 +313,12 @@
                 // 失败的数组重新赋值给上传数组重新上传
                 let tempArray = []
                  this.failList.map(item=>{
-                   tempArray.push(this.uploadAarray[item])
-                 })
+                  tempArray.push(this.uploadAarray[item])
+                })
+                let newArr = this.uploadAarray.filter((item) => {
+                  return !tempArray.includes(item)
+                });
+                await postKeyUpload(newArr,this.uploadAarray);
                 this.uploadAarray = [...tempArray]
               }
               else{
@@ -290,7 +332,6 @@
               uptoken: value.data.token,
             },
             progress=>{
-              console.log("查看进度",progress);
               // 当前视频上传的进度
               this.currentProcess = progress.progress;
               // 当前视频已经上传的大小
@@ -306,6 +347,7 @@
 </script>
 
 <style lang="scss">
+  @import "@/static/style/vantprop";
   ::-webkit-scrollBar{
     display: none;
   }
