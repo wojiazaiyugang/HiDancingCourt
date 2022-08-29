@@ -188,11 +188,11 @@
 </template>
 
 <script>
-  import { mapMutations,mapState,mapActions } from "vuex"
-  import { verifyCode } from "@/api/search.js"
-  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js"
-  import LongButton from "@/components/longButton"
-  import Vue from "vue"
+  import { mapMutations,mapState,mapActions } from "vuex";
+  import { verifyCode } from "@/api/search.js";
+  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js";
+  import LongButton from "@/components/longButton";
+  import Vue from "vue";
 	export default {
     components:{
       LongButton,

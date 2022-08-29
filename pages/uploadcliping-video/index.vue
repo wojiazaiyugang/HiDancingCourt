@@ -148,7 +148,7 @@
         per_page:12,
         // 数据是否加载完事
         loadingDone:false,
-        // 正在剪辑的视频剪辑状态
+        // 正在剪辑的视频剪辑状态，显示百分比用的
         clipingNumber:[],
         // 下滑定时器
         timer:null,
@@ -164,15 +164,18 @@
         startTime:"",
         // 剪辑完成的结束时间
         endTime:"",
-        
+        // 是否下拉显示加载中
+        sliderUp:false,
       }
     },
     onLoad(options) {
       this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
+      // 获得当前的场馆id
       this.currentId = options.venue_id;
       this.calTimeList();
     },
     onShow() {
+      // 上传完视频或者刚进页面显示待剪辑
       this.currentType = 0;
       this.clipingNumber = [];
       this.page = 1;
@@ -188,7 +191,7 @@
       },
     },
     methods:{
-      // 点击剪辑完成时间选择剪辑完成列表
+      // 点击剪辑完成时间选择各个剪辑时间段的完成列表
       async selectTimeList(dataValue){
         // 自己点击自己收起来
         if(this.currentClipType == dataValue){
@@ -196,23 +199,22 @@
           return false;
         }
         this.page = 1;
+        this.videoList = [];
         this.loadingDone = false;
         this.currentClipType = dataValue;
         this.endTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_23-59-59");
         this.startTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_00-00-00");
         let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
-        this.sliderStatus = false;
         this.videoList = [...this.videoList,...data];
         this.loadingDone = data.length<this.per_page;
       },
-      // 计算剪辑完成的时间列表
+      // 计算剪辑完成的时间列表，显示最近七天的
       calTimeList(){
         this.startTime = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_00-00-00");
         this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
         for(var i=0;i<=7;i++){
           this.timeList.push(this.$dayjs(this.currentTime).subtract(i,"day").format("YYYY-MM-DD"));
         }
-        console.log("时间列表",this.timeList);
       },
       // 计算当前待剪辑视频总数
       async getTotalNumber(){
@@ -222,7 +224,6 @@
       // 计算当前待剪辑视频名字
       async getTotalNames(){
         let {data} = await getAwaitClipingName(this.currentId);
-        this.videoList = [];
         this.videoList = data.video_names;
       },
       // 滑动底部加载数据,待剪辑不必下滑，没有分页
@@ -250,7 +251,6 @@
       async selectTypeVideos(){
         // 待剪辑
         if(this.currentType==0){
-          this.sliderStatus = false;
           this.getTotalNumber();
           this.getTotalNames();
           return false;
@@ -260,11 +260,16 @@
           let end = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
           let start = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_HH-mm-ss");
           await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end).then(async value=>{
-            this.videoList = [];
-            this.clipingNumber = [];
+            // 只有下拉刷新才会在请求完成之后拉取数据
+            if(this.sliderUp){
+              this.videoList = [];
+              this.clipingNumber = [];
+              this.sliderUp = false;
+            }
             this.videoList = [...this.videoList,...value.data];
+            this.loadingDone = value.data.length<this.per_page;
             if(value.data.length!=0){
-              this.clipingNumber = await Promise.all(value.data.map(async item=>{
+              let numberArr = await Promise.all(value.data.map(async item=>{
                 // 一个视频需要处理10分钟算，剪辑占90%，上传占10%
                 let {data} = await getClipingStatus(item.id);
                 let curClip = data.current_index||0;
@@ -283,7 +288,7 @@
                 let number = curClip/totalClip*0.9+curUpload/totalUpload*0.1;
                 return number;
               }))
-              console.log("查看正在剪辑的数值",this.clipingNumber)
+              this.clipingNumber = [...this.clipingNumber,...numberArr]
             }
             this.sliderStatus = false;
           })
@@ -293,7 +298,6 @@
         if(this.currentType==2){
           let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
           this.$hideLoading();
-          this.sliderStatus = false;
           this.videoList = [...this.videoList,...data];
           this.loadingDone = data.length<this.per_page;
         }
@@ -306,10 +310,14 @@
       },
       // 切换视频的种类
       async changeType(data){
+        // 只要切换剪辑的状态种类，下滑刷新的标志隐藏
+        this.sliderStatus = false;
         // 例如处在等待剪辑，再次点击等待剪辑不响应事件
         if(data==this.currentType){
           return false
         }
+        this.videoList = [];
+        this.clipingNumber = [];
         this.currentType = data;
         this.page = 1;
         this.loadingDone = false;
@@ -334,21 +342,21 @@
       },
       // 计算滑动条到顶部的距离
       calTop(data){
-        console.log("聚集顶部的距离",data)
-        this.sliderTop = data.detail.scrollTop
+        this.sliderTop = data.detail.scrollTop;
       },
-      // 用户开始接触屏幕
+      // 用户开始接触屏幕时候的位置
       startSlider(data){
-        this.startPosition = data.changedTouches[0].pageY
+        this.startPosition = data.changedTouches[0].pageY;
       },
-      // 用户滑动结束判断上滑还是下滑
+      // 用户滑动结束判断上滑还是下滑,只有正在剪辑才会下拉刷新数据
       endSlider(e){
         if(this.currentType==1){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
-            console.log("上touch")
-            this.sliderStatus = true
+            // 下滑刷新隐藏
+            this.sliderStatus = true;
             this.page = 1;
             this.loadingDone = false;
+            this.sliderUp = true;
             this.selectTypeVideos();
           }
         }
