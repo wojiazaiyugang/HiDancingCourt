@@ -26,17 +26,24 @@ export default {
   },
   actions: {
     async getToken({commit,state}) {
-      uni.login({
-        provider: "weixin",
-        success: async ({code}) => {
-          await loginByCode(code).then(async value=>{
-            uni.setStorageSync("token",value.data.token)
-            commit("setUserId",value.data.user_id)
-            let {data} = await getUserInfo(value.data.user_id)
-            commit("setUserInfo",data)
-          })
-        }
-      });
+      return new Promise((resolve,reject)=>{
+        uni.login({
+          provider: "weixin",
+          success: async ({code}) => {
+            console.log("查看code",code)
+            await loginByCode(code).then(async value=>{
+              uni.setStorageSync("token",value.data.token)
+              commit("setUserId",value.data.user_id)
+              let {data} = await getUserInfo(value.data.user_id)
+              commit("setUserInfo",data)
+              return resolve()
+            })
+          },
+          fail: (error) => {
+            return reject()
+          }
+        });
+      })
     },
   },
 }

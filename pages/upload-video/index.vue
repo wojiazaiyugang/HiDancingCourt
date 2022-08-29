@@ -58,7 +58,7 @@
         
       </view>
     </scroll-view>
-    <view class="bawhite width-full heichixu85 absolute bottom0 flex justify-center alitem-center">
+    <view class="bawhite width-full heichixu70 absolute bottom0 flex justify-center alitem-center">
       <view
         @tap="openOrUpload"
         class="line-heichi80 heichiduan80  text-center boradiu50 white bapruple width60 ">
@@ -247,24 +247,22 @@
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
               that.videoAllNumber = that.uploadAarray.length;
-              console.log("查看视频列表继续",that.uploadAarray);
               return false;
             }
             // 一次性选择完事
             that.uploadAarray = res.tempFiles.map((item,index)=>{
               return item.tempFilePath;
             })
-            console.log("查看视频列表",that.uploadAarray)
             that.videoAllNumber = that.uploadAarray.length;
           },
           fail:(error)=>{
-            this.$showMsg("请您选择所要上传的视频！",2000,"error");
+            this.$showMsg(error,2000,"error");
+            
           }
         })
       },
       // 单个循环上传视频
       async uploadOneByOne(arrayData,count,length){
-        console.log("输出",arrayData)
         // 上传完一个进度归为0
         this.currentProcess = 0;
         this.currentVideo = count+1;
@@ -287,16 +285,18 @@
                   newArr = newArr.map(item=>{
                     return item.split("/").slice(-1)[0];
                   })
-                  await postKeyUpload(this.currentName,newArr);
+                  postKeyUpload(this.currentName,newArr);
                   this.uploadAarray = [...tempArray];
                 }
                 else{
+                  console.log("开始")
                   // 全部成功之后向后端发指令
                   let newArr = this.uploadAarray;
                   newArr = newArr.map(item=>{
                     return item.split("/").slice(-1)[0];
                   })
-                  await postKeyUpload(this.currentName,newArr)
+                  postKeyUpload(this.currentName,newArr)
+                  console.log("结束")
                   // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录
                   this.uploadAarray = [];
                   uni.navigateBack({
@@ -325,7 +325,7 @@
                 newArr = newArr.map(item=>{
                   return item.split("/").slice(-1)[0];
                 })
-                await postKeyUpload(this.currentName,newArr);
+                postKeyUpload(this.currentName,newArr);
                 this.uploadAarray = [...tempArray]
               }
               else{

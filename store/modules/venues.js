@@ -58,6 +58,11 @@ export default {
           commit("setAllVenues",list)
           uni.hideLoading()
         }
+        else{
+          commit("setLoginComplete",true)
+          commit("setAllVenues",list)
+          uni.hideLoading()
+        }
       })
     },
   }
