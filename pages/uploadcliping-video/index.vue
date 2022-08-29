@@ -160,16 +160,20 @@
         timeList:[],
         // 剪辑完成当前搜索日期
         currentClipType:0,
+        // 剪辑完成的开始时间
+        startTime:"",
+        // 剪辑完成的结束时间
+        endTime:"",
+        
       }
     },
     onLoad(options) {
+      this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
       this.currentId = options.venue_id;
       this.calTimeList();
     },
     onShow() {
-      this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
       this.currentType = 0;
-      this.videoList = [];
       this.clipingNumber = [];
       this.page = 1;
       this.loadingDone = false;
@@ -191,20 +195,20 @@
           this.currentClipType = -1;
           return false;
         }
-        this.videoList = [];
         this.page = 1;
         this.loadingDone = false;
         this.currentClipType = dataValue;
-        let end = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_23-59-59");
-        let start = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_00-00-00");
-        let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end);
+        this.endTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_23-59-59");
+        this.startTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_00-00-00");
+        let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
         this.sliderStatus = false;
         this.videoList = [...this.videoList,...data];
         this.loadingDone = data.length<this.per_page;
       },
       // 计算剪辑完成的时间列表
       calTimeList(){
-        let currentList = this.$dayjs(this.currentTime).format("YYYY-MM-DD");
+        this.startTime = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_00-00-00");
+        this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
         for(var i=0;i<=7;i++){
           this.timeList.push(this.$dayjs(this.currentTime).subtract(i,"day").format("YYYY-MM-DD"));
         }
@@ -218,6 +222,7 @@
       // 计算当前待剪辑视频名字
       async getTotalNames(){
         let {data} = await getAwaitClipingName(this.currentId);
+        this.videoList = [];
         this.videoList = data.video_names;
       },
       // 滑动底部加载数据,待剪辑不必下滑，没有分页
@@ -255,6 +260,8 @@
           let end = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
           let start = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_HH-mm-ss");
           await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end).then(async value=>{
+            this.videoList = [];
+            this.clipingNumber = [];
             this.videoList = [...this.videoList,...value.data];
             if(value.data.length!=0){
               this.clipingNumber = await Promise.all(value.data.map(async item=>{
@@ -284,10 +291,7 @@
         }
         // 剪辑完成
         if(this.currentType==2){
-          let end = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
-          console.log("时间",end)
-          let start = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_00-00-00");
-          let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end);
+          let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
           this.$hideLoading();
           this.sliderStatus = false;
           this.videoList = [...this.videoList,...data];
@@ -307,8 +311,6 @@
           return false
         }
         this.currentType = data;
-        this.videoList = [];
-        this.clipingNumber = [];
         this.page = 1;
         this.loadingDone = false;
         // 处于等待剪辑
@@ -324,7 +326,9 @@
         // 处于剪辑完成
         if(this.currentType==2){
           this.selectStatus = "CLIP_FINISHED";
-          currentClipType:0;
+          this.currentClipType = 0;
+          this.endTime = this.$dayjs(this.currentTime).subtract(0,"day").format("YYYY-MM-DD_23-59-59");
+          this.startTime = this.$dayjs(this.currentTime).subtract(0,"day").format("YYYY-MM-DD_00-00-00");
         }
         this.selectTypeVideos();
       },
@@ -343,8 +347,6 @@
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
             console.log("上touch")
             this.sliderStatus = true
-            this.videoList = [];
-            this.clipingNumber = [];
             this.page = 1;
             this.loadingDone = false;
             this.selectTypeVideos();

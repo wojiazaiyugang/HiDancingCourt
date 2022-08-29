@@ -77,9 +77,6 @@
         
       }
     },
-    created() {
-      console.log("asdksaf",this.clipType)
-    },
     computed:{
       // 计算是否显示进度条
       calShow(){
