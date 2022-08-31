@@ -100,7 +100,7 @@
                 v-for= "(item,index) in 4"
                 :key="index"
                 >
-                 <view>{{verfication[index]}}</view>
+                 <view>{{lastCourtPasswd.length!=0?lastCourtPasswd[index]:verfication[index]}}</view>
                  <view :class="['absolute top20 right20 heichi60 bawhite',currentIndex==index?'widchi2':'']">
                    
                  </view>
@@ -148,7 +148,7 @@
       </view>
     </view>
     <!-- Start选择场馆弹出层 -->
-    <uni-popup ref="popupVenues" :safeArea="false">
+    <uni-popup ref="popupVenues" :safeArea="false" :mask-click="false">
       <van-picker 
        show-toolbar
        cancel-button-text="请选择舞蹈房"
@@ -163,7 +163,7 @@
       
      
     <!-- Start 时间选择组件 -->
-    <uni-popup ref="popup" :safeArea="false">
+    <uni-popup ref="popup" :safeArea="false" :mask-click="false">
       <van-picker
        show-toolbar
        cancel-button-text="请选择日期"
@@ -193,7 +193,7 @@
 <script>
   import { mapMutations,mapState,mapActions } from "vuex";
   import { verifyCode } from "@/api/search.js";
-  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js";
+  import { postLastSearch, postSuccessSearch, getCourtPasswd } from "@/api/venues.js";
   import LongButton from "@/components/longButton";
   import Vue from "vue";
 	export default {
@@ -236,7 +236,7 @@
       this.getTimeData();
     },
     computed: {
-      ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
+      ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete","lastCourtPasswd"]),
       ...mapState("m_device",["locationInfo","deviceInfo"]),
       ...mapState("m_camera",["userFaceInfo"]),
       ...mapState("m_user",["userInfo",]),
@@ -277,6 +277,7 @@
       ...mapActions("m_venues",["getVenues",]),
       ...mapMutations("m_video",["setSearchData"]),
       ...mapMutations("m_user",["setFaceSelect"]),
+      ...mapMutations("m_venues",["setLastCourtPasswd"]),
       // 首页两个banner图点击跳转
       navSwiper(data){
         uni.navigateTo({
@@ -310,13 +311,27 @@
           this.$refs.popupVenues.open("bottom")
         }
         else{
-          this.permissionType = "位置"
-          this.$refs.permissionsPopup.open("center")
+          this.permissionType = "位置";
+          this.$refs.permissionsPopup.open("center");
         }
       },
       // 选择舞房点击确认
-      confirmHouse(){
-        this.$refs.popupVenues.close()
+      async confirmHouse(){
+        this.$refs.popupVenues.close();
+        this.setLastCourtPasswd([]);
+        this.verfication = [];
+        let courtId = this.allVenues.filter(item=>{
+          if(this.currentHourses==item.name){
+            return item;
+          }
+        })
+        let {data} = await getCourtPasswd(courtId[0].id)
+        if(data.passwd){
+          this.verfication = data.passwd;
+        }
+        else{
+          this.verfication = [];
+        }
       },
       // 滑动选择舞房
       selectHouse(data){
@@ -365,6 +380,7 @@
       // 输出查看键盘输入
       keyInput(data){
         this.verfication = data.target.value
+        console.log("输出",this.verfication)
         this.currentIndex = this.verfication.length-1
         // 若没有输入满则用空格填充
         if(this.verfication.length==4){
@@ -416,6 +432,11 @@
       },
       // 查找视频
       async SearchVideo() {
+        // 上次搜索的默认密码
+        if(this.lastCourtPasswd.length!=0){
+          this.verfication = this.lastCourtPasswd.join("");
+          console.log("修改",this.verfication)
+        }
         if(this.videoSearch){
           this.videoSearch = false
           this.$showLoading("页面正在跳转！")
@@ -482,7 +503,10 @@
                   url: "../search-report/index",
                 })
               }
-              await postLastSearch(selectId)
+              // 向后端发送上次登陆过的信息
+              await postLastSearch(selectId,this.verfication);
+              // 向后端发送成功登录过的信息
+              await postSuccessSearch(selectId,this.verfication)
             }
           })
         }
