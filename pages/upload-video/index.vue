@@ -199,6 +199,8 @@
         this.uploadStatus = true;
         // 点击开始上传，上传的是第几个视频
         this.currentVideo = 0;
+        // 待上传的视频总数量
+        this.videoAllNumber = 0;
         // 所有视频重新上传
         this.uploadAll = false;
         // 第一个参数是所要上传视频的临时路径，第二个参数是从第几个开始上传，第三个参数是所要上传的视频的长度
@@ -234,13 +236,12 @@
       },
       // 上传七牛云打开相册
       async uploadQiniu(){
-        var that = this
+        var that = this;
         uni.chooseMedia({
           count:9,
           sourceType:["album"],
           mediaType:["video"],
           success:async (res)=>{
-            console.log("查看res",res)
             // 继续上传
             if(that.continueUpload){
               that.continueUpload = false;
@@ -257,9 +258,13 @@
             })
             that.videoAllNumber = that.uploadAarray.length;
           },
-          fail:(error)=>{
-            this.$showMsg(error,2000,"error");
-            log.info("打开文件夹失败的原因",error)
+          fail:(Error)=>{
+            console.log("选择文件夹失败",Error);
+            // 不是取消上传的才是真正的错误
+            if(Error.errMsg!="chooseMedia:fail cancel"){
+              log.info("打开文件夹失败的原因",Error);
+              that.$showMsg("视频文件选择失败，请重新选择！",2000,"none");
+            }
           }
         })
       },
@@ -273,29 +278,31 @@
         this.totalByte = 0;
         // 第一个视频其值为 1
         this.currentVideo = count+1;
+        // 待上传的视频总数
+        this.videoAllNumber = length;
         await getQiNiuToken(this.courtId,arrayData[count].split("/").slice(-1)[0]).then(async value=>{
           await qiniuUploader.upload(arrayData[count],
             async res=>{
               count++
               if(count==length){
-                if(this.failList.length){
-                  // 上传失败不返回隐藏上传进度条，显示上传失败的
-                  this.uploadStatus = false;
-                  // 失败的数组重新赋值给上传数组重新上传
-                  let tempArray = [];
-                  this.failList.map(item=>{
-                    tempArray.push(this.uploadAarray[item]);
-                  })
-                  let newArr = this.uploadAarray.filter((item) => {
-                    return !tempArray.includes(item)
-                  });
-                  newArr = newArr.map(item=>{
-                    return item.split("/").slice(-1)[0];
-                  })
-                  postKeyUpload(this.currentName,newArr);
-                  this.uploadAarray = [...tempArray];
-                }
-                else{
+                // if(this.failList.length){
+                //   // 上传失败不返回隐藏上传进度条，显示上传失败的
+                //   this.uploadStatus = false;
+                //   // 失败的数组重新赋值给上传数组重新上传
+                //   let tempArray = [];
+                //   this.failList.map(item=>{
+                //     tempArray.push(this.uploadAarray[item]);
+                //   })
+                //   let newArr = this.uploadAarray.filter((item) => {
+                //     return !tempArray.includes(item)
+                //   });
+                //   newArr = newArr.map(item=>{
+                //     return item.split("/").slice(-1)[0];
+                //   })
+                //   postKeyUpload(this.currentName,newArr);
+                //   this.uploadAarray = [...tempArray];
+                // }
+                // else{
                   // 全部成功之后向后端发指令
                   let newArr = this.uploadAarray;
                   newArr = newArr.map(item=>{
@@ -304,41 +311,47 @@
                   postKeyUpload(this.currentName,newArr)
                   // 上传成功的视频删除不再重新上传,同时返回视频剪辑目录
                   this.uploadAarray = [];
+                  // 所有视频上传完成
+                  this.uploadAll = true;
                   uni.navigateBack({
                     delta:1,
                   })
-                }
+                // }
               }
               else{
                 // 递归一个一个进行视频上传
                 this.uploadOneByOne(arrayData,count,length)
               }
             },async error=>{
-              count++;
-              this.failList.push(count);
-              if(count==length){
-                // 上传失败不返回隐藏上传进度条，显示上传失败的
-                this.uploadStatus = false;
-                // 失败的数组重新赋值给上传数组重新上传
-                let tempArray = []
-                 this.failList.map(item=>{
-                  tempArray.push(this.uploadAarray[item])
-                })
-                let newArr = this.uploadAarray.filter((item) => {
-                  return !tempArray.includes(item)
-                });
-                // 上传给后端的名字必须是/后面纯纯的名字
-                newArr = newArr.map(item=>{
-                  return item.split("/").slice(-1)[0];
-                })
-                postKeyUpload(this.currentName,newArr);
-                // 将上传失败的数组归给待上传的列表显示
-                this.uploadAarray = [...tempArray]
-              }
-              else{
-                // 递归
-                this.uploadOneByOne(arrayData,count,length)
-              }
+              log.info("文件上传失败的原因",Error.errMsg);
+              this.$showMsg("当前视频文件上传失败，正在重新上传",3000,"none");
+              // this.failList.push(count);
+              // count++;
+              // if(count==length){
+              //   // 上传失败不返回隐藏上传进度条，显示上传失败的
+              //   this.uploadStatus = false;
+              //   // 失败的数组重新赋值给上传数组重新上传
+              //   let tempArray = [];
+              //    this.failList.map(item=>{
+              //     tempArray.push(this.uploadAarray[item])
+              //   })
+              //   let newArr = this.uploadAarray.filter((item) => {
+              //     return !tempArray.includes(item)
+              //   });
+              //   // 上传给后端的名字必须是/后面纯纯的名字
+              //   newArr = newArr.map(item=>{
+              //     return item.split("/").slice(-1)[0];
+              //   })
+              //   postKeyUpload(this.currentName,newArr);
+              //   // 将上传失败的数组归给待上传的列表显示
+              //   this.uploadAarray = [];
+              //   this.uploadAarray = [...tempArray];
+              //   this.failList = [];
+              // }
+              // else{
+              //   // 递归
+                this.uploadOneByOne(arrayData,count,length);
+              // }
             },
             {
               region: "ECN",
@@ -346,11 +359,6 @@
               uptoken: value.data.token,
             },
             progress=>{
-              console.log("上传进度",progress)
-              // 不论成功或者失败视频都上传完成
-              if(progress.progress==100&&this.videoAllNumber==this.currentVideo){
-                this.uploadAll = true;
-              }
               // 当前视频上传的进度
               this.currentProcess = progress.progress;
               // 当前视频已经上传的大小

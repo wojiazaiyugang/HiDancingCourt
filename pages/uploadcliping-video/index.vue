@@ -7,7 +7,7 @@
         v-for="(item,index) in textList"
         @tap="changeType(index)"
         :key="index"
-        :class="currentType==index?'black typeColor boradiu16':''"
+        :class="['width25 text-center heichi50 line-heichi50',currentType==index?'black typeColor boradiu16':'']"
         >
         {{item}}
       </view>
@@ -373,7 +373,7 @@
     content: "";
     display: block;
     width: 50rpx;
-    margin-left: 30rpx;
+    margin-left: 70rpx;
     margin-top: 5rpx;
     border-bottom: 4rpx solid #7E70F1;
   }

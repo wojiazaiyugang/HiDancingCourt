@@ -98,6 +98,9 @@
             filePath: filePath,
             name: 'file',
             formData: formData,
+            // 超时时间1分钟，默认就是1分钟,现在是10分钟
+            timeout:600000,
+            // timeout:10000,
             success: function (res) {
                 var dataString = res.data
                 //   // this if case is a compatibility with wechat server returned a charcode, but was fixed

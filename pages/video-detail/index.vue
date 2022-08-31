@@ -27,7 +27,7 @@
           
         </view>
         <view class="widchi120 text-center translatex-50 white">
-          点击”...“可以将视频分享至朋友圈~
+          点击“...”可以将视频分享至朋友圈~
         </view>
       </view>
       <view
