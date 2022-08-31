@@ -36,7 +36,7 @@
 </template>
 
 <script>
-  import { applyCoupons, checkoutCoupons, } from "@/api/venues.js"
+  import { applyCoupons, checkoutCoupons, } from "@/api/venues.js";
   export default {
     props:{
       venueId:{

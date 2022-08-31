@@ -25,6 +25,12 @@
 .fon60{
   font-size: 60rpx;
 }
+.fon80{
+  font-size: 80rpx;
+}
+.fon100{
+  font-size: 100rpx;
+}
 .fonweight{
   font-weight: 600;
 }
@@ -79,6 +85,12 @@
 .heichi20shi{
   height: 20vh;
 }
+.heichi18shi{
+  height: 18vh;
+}
+.heichi10shi{
+  height: 10vh;
+}
 .height-full{
   height: 100%;
 }
@@ -96,6 +108,9 @@
 }
 .height-65{
   height: 65%;
+}
+.height-40{
+  height: 40%;
 }
 .height-30{
   height: 30%;
@@ -162,6 +177,9 @@
 }
 .heichixu120{
   height: 120rpx;
+}
+.heichixu70{
+  height: 140rpx;
 }
 .heichixu80{
   height: 160rpx;
@@ -319,6 +337,9 @@
 .widchi160{
   width: 320rpx;
 }
+.widthchi200{
+  width: 400rpx;
+}
 .widthchi210{
   width: 420rpx;
 }
@@ -401,4 +422,14 @@
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+}
+.mask{
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }

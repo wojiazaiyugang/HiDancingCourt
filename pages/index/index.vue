@@ -2,26 +2,32 @@
   <view class=" background-cover "
    style="background-image: url(https://static.qiniuyun.highvenue.cn/image/DanceBgi.jpg);"
    :style="{height:calHeight}">
-    <view v-if="loginComplete" class=" height-full  width-full flex alitem-center justify-around flex-direction fon24 ">
-      <swiper class="heichi22shi width-full" 
+    <view v-if="loginComplete" 
+      class=" height-full  width-full flex alitem-center flex-direction justify-around fon24 ">
+      <swiper class="heichi18shi width-full" 
       :indicator-dots="true"
       :autoplay="true"
       :interval="3000"
       indicator-active-color="white"
       :vertical="false">
         <swiper-item 
-        @tap="navSwiper('share')"
-        class="width-full height-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban1.jpg);">
-          
+        @tap="navSwiper('share')">
+          <view class="width-full height-full background-cover"
+          style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban1.jpg);">
+            
+          </view>
         </swiper-item>
         <swiper-item
-         @tap="navSwiper('login')"
-         class="width-full height-full background-cover" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban2.jpg);">
-          
+         @tap="navSwiper('login')">
+          <view class="width-full height-full background-cover"
+          style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban2.jpg);">
+            
+          </view>
         </swiper-item>
       </swiper>
       <!-- Start 第一个Long-Button -->
-      <view class="width95 " @click="chooseVenues">
+      <view class="width95 "
+        @click="chooseVenues">
         <long-button>
           <template v-slot:icon >
           <image src="https://static.qiniuyun.highvenue.cn/image/DanceVL.png"
@@ -43,7 +49,7 @@
       <!-- End 第一个Long-Button -->
       
       <!-- Start 球馆图片 -->
-      <view class="heichi20shi babotton boradiu24 width80 flex flex-center background-cover " >
+      <view class="heichi22shi babotton boradiu24 width80 flex flex-center background-cover margtop20" >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"
          :style="{backgroundImage: `url(${currentBacimg?currentBacimg:calBaimg})`}">
           
@@ -52,7 +58,7 @@
       <!-- End 球馆图片 -->
       
       <!-- Start 第二个Long-Button -->
-      <view class="width95 " @click="showTimePopup">
+      <view class="width95 margtop20" @click="showTimePopup">
         <long-button>
           <template v-slot:icon>
             <image class="height-full width-full" src="https://static.qiniuyun.highvenue.cn/image/DanceClock.png" mode="aspectFit"></image>
@@ -69,12 +75,12 @@
       </view>
       <!-- End 第二个Long-Button -->
       <!-- Start hide第三个Long-Button -->
-      <view class="white width95">
+      <view class="white width95 margtop20">
         <view>
           <text style="color: red;letter-spacing: 1rpx;">*</text>请输入舞蹈房对应的匹配码
           <text class="white fon20 margleft10">(请向舞房前台或老师咨询密码)</text>
         </view>
-        <view class="relative" style="height: 174rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
+        <view class="relative" style="height: 170rpx;border-radius: 30rpx;margin: 40rpx 26rpx 0rpx 26rpx; border: 4rpx solid #14E9FC;">
           <view
            class=" heichixu85 opcity2 boradiu30 flex flex-center bagreinput " >
             <input
@@ -105,7 +111,7 @@
       </view>
       <!-- End 第三个Long-Button -->
       <!-- Start 透明层 -->
-      <view class="boradiu50 heichiduan80 width95  flex justify-end alitem-center babotton">
+      <view class="boradiu50 heichiduan80 width95 margtop20 flex justify-end alitem-center babotton">
         <view class="margright20 black">
           人脸查询开关
         </view>
@@ -121,18 +127,18 @@
            </view>
         </view>
         <!-- Start 相机按钮 -->
+        <!-- Start底部 -->
       </view>
-      
-      <!-- Start底部 -->
-      <view class=" width-full flex justify-between margright40" >
+      <view class=" width-full flex justify-between marginx10">
         <!-- 用于占位 -->
         <view style="width: 93rpx;" >
          
         </view>
-        <view class="letter-spacing1 widthchi210 heichiduan80 boradiu50 text-center line-heichi80 babotton" @click="SearchVideo">
+        <view class="letter-spacing1 widthchi210 heichiduan80 boradiu50 text-center line-heichi80 babotton" 
+        @click="SearchVideo">
           <text class="fon28 black fonweight">查找视频</text>
         </view>
-        <view class=" widchi35 heichi70 background-cover flex flex-center"
+        <view class=" widchi35 heichi70 background-cover flex flex-center margright40"
          style="background-image: url(https://static.qiniuyun.highvenue.cn/image/people.png);"
          @click="navigateMy">
           <view class="black fonweight fon16 margtop40">
@@ -185,11 +191,11 @@
 </template>
 
 <script>
-  import { mapMutations,mapState,mapActions } from "vuex"
-  import { verifyCode } from "@/api/search.js"
-  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js"
-  import LongButton from "@/components/longButton"
-  import Vue from "vue"
+  import { mapMutations,mapState,mapActions } from "vuex";
+  import { verifyCode } from "@/api/search.js";
+  import { checkoutLastSearch, postLastSearch } from "@/api/venues.js";
+  import LongButton from "@/components/longButton";
+  import Vue from "vue";
 	export default {
     components:{
       LongButton,
@@ -224,19 +230,16 @@
         permissionType:"",
         // 上次搜索的场馆名字
         lastSearchName:"",
-        // 暂时的场馆
-        tempCourt:"",
-        // 暂时的图片
-        tempImg:"",
 			}
 		},
     created() {
-      this.getTimeData()
+      this.getTimeData();
     },
     computed: {
       ...mapState("m_venues",["startTime","stopTime","allVenues","loginComplete"]),
       ...mapState("m_device",["locationInfo","deviceInfo"]),
       ...mapState("m_camera",["userFaceInfo"]),
+      ...mapState("m_user",["userInfo",]),
       calName(){
         var tempCourt = this.allVenues.filter(item=>{
           if(item.data.supprt_find){
@@ -291,37 +294,18 @@
       },
       // 打开选择场馆
       async chooseVenues() {
-        let {data} = await checkoutLastSearch()
-        console.log("查看上次搜索",data)
-        // 定位没有完成
         if(this.locationInfo.latitude){
-          this.columnsHouses = this.allVenues.filter(item=>{
-            if(item.data.supprt_find){
-              return item
-            }
-          })
-          // 若上次搜索为空，也就是从没有搜索过场馆
-          if(!data.last_venue){
-            this.columnsHouses = this.columnsHouses.map(item=>{
-              return item.name
-            })
-          }
-          // 上次搜索不为空
-          else{
-            this.columnsHouses.map(item=>{
-              if(item.id==data.last_venue){
-                this.lastSearchName = item.name
-              }
-            })
-            this.columnsHouses = this.columnsHouses.filter(item=>{
-              if(item.id!=data.last_venue){
+          // 项目运行执行一次
+          if(this.columnsHouses.length==0){
+            this.columnsHouses = this.allVenues.filter(item=>{
+              if(item.data.supprt_find){
                 return item
               }
             })
+            // 若上次搜索为空，也就是从没有搜索过场馆
             this.columnsHouses = this.columnsHouses.map(item=>{
               return item.name
             })
-            this.columnsHouses.unshift(this.lastSearchName)
           }
           this.$refs.popupVenues.open("bottom")
         }
@@ -340,10 +324,14 @@
           this.verfication = []
           this.currentIndex = -1
         }
-        this.tempCourt = this.columnsHouses[data.detail.index];
-        this.tempImg = this.allVenues[data.detail.index].data.thumbnail;
-        this.currentHourses = this.tempCourt?this.tempCourt:this.columnsHouses[0];
-        this.currentBacimg = this.tempImg?this.tempImg:this.allVenues[0].data.thumbnail;
+        // 选择的场馆名字
+        this.currentHourses = this.columnsHouses[data.detail.index]
+        // 选择的场馆图片
+        this.allVenues.map(item=>{
+          if(item.name==this.currentHourses){
+            this.currentBacimg = item.data.thumbnail
+          }
+        })
       },
       // 点击选择时段
       showTimePopup() {
@@ -398,6 +386,34 @@
           }
         })
       },
+      // 搜索之后重新排序场馆列表
+      sortList(value){
+        this.columnsHouses = this.allVenues.filter(item=>{
+          if(item.data.supprt_find){
+            return item
+          }
+        })
+        this.columnsHouses.map(item=>{
+          if(item.id==value){
+            this.lastSearchName = item.name
+          }
+        })
+        this.columnsHouses = this.columnsHouses.filter(item=>{
+          if(item.id!=value){
+            return item
+          }
+        })
+        this.columnsHouses = this.columnsHouses.map(item=>{
+          return item.name
+        })
+        this.columnsHouses.unshift(this.lastSearchName)
+        this.allVenues.map(item=>{
+          if(item.name==this.lastSearchName){
+            this.currentBacimg = item.data.thumbnail
+          }
+        })
+        console.log("查看名字",this.columnsHouses)
+      },
       // 查找视频
       async SearchVideo() {
         if(this.videoSearch){
@@ -430,10 +446,21 @@
               this.$showMsg("输入密码错误，联系舞房老师获取密码哦～",2000,"none")
             }
             else{
+              wx.reportEvent("enter_home", {
+                "user_id": this.userInfo.data.id,
+                "dancingroom_id": selectId,
+                "dancingroom_name": this.currentHourses?this.currentHourses:this.allVenues[0].name
+              })
               if(this.faceSearch){
                 if(this.userFaceInfo){
+                  wx.reportEvent("enter_room_face", {
+                    "user_id": this.userInfo.data.id,
+                    "dancingroom_id": selectId,
+                    "dancingroom_name": this.currentHourses?this.currentHourses:this.allVenues[0].name
+                  })
                   this.$hideLoading()
                   this.videoSearch = true
+                  this.sortList(selectId)
                   this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                   uni.navigateTo({
                     url: "../search-report/index",
@@ -449,6 +476,7 @@
               else{
                 this.$hideLoading()
                 this.videoSearch = true
+                this.sortList(selectId)
                 this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
                 uni.navigateTo({
                   url: "../search-report/index",
@@ -473,15 +501,12 @@
       confirmProp() {
         // 二次授权
         var that = this 
-        console.log("1")
          wx.openSetting({
           success (res) {
             that.$refs.permissionsPopup.close()
-            console.log("2")
             wx.getSetting({
               success: async response => {
                 if (response.authSetting["scope.userLocation"]) {
-                  console.log("3")
                   that.getLocation().finally(()=>{
                     that.getVenues()
                   })

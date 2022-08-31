@@ -134,9 +134,7 @@
       "style" :                                                                                    
       {
         "navigationBarTitleText": "上传视频",
-        "enablePullDownRefresh": false,
-        "navigationBarBackgroundColor":"#fff",
-        "navigationStyle":"default",
+        "navigationStyle":"custom",
         "disableScroll": true
       }
     },

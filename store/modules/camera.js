@@ -6,7 +6,7 @@ export default {
   },
   mutations: {
     setUserFaceInfo(state,payload){
-      state.userFaceInfo = payload
+      state.userFaceInfo = payload;
     }
   }
 }

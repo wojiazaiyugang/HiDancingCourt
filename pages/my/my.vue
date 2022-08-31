@@ -252,18 +252,19 @@
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
         立即开通
       </view>
-<!--      <view
+      <view
         @tap="navUploadVideos"
-        class="absolute bottom30 right20 white heichiduan90 widchi45">
-        <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi70"
+        v-show="isMaster"
+        class="absolute bottom30 right20 white heichixu100 widchi50">
+        <view class="absolute top0 left0 width80 height-80 bawhite boradiuoverall text-center line-heichi80"
           style="border: 8rpx solid #7E70F1;"
           >
-          <text class="iconfont icon-shipin pruple fon40"></text>
+          <text class="iconfont icon-shipin2 pruple fon50"></text>
         </view>
-        <view class="absolute bottom0 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
+        <view class="absolute bottom-4 width-full heichi30 bapruple white fon16 text-center line-heichi30 boradiu20" >
           视频管理
         </view>
-      </view> -->
+      </view>
       <view v-show="!isMaster" class="flex flex-direction alitem-center" >
          <view 
            class=" margtop30 heichifan160 background-cover width80" style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_wode.png);">
@@ -306,7 +307,6 @@
        cancel-button-text="请选择您的另一家舞蹈房"
        confirm-button-text="确认"
        active-class="selectStyle"
-       :isRecently="true"
        toolbar-class="changeToolbar"
        @confirm="confirmCourt"
        @change="selectCourt"
@@ -578,12 +578,19 @@
       async openAuthority(e){
         if(this.isAgree){
           if(e.detail.errMsg == "getPhoneNumber:ok") {
+            console.log("获取手机号信息",e)
             // 用户点击同意获取电话
             if(e.detail.code){
               let date = new Date()
               wx.setStorageSync("date",date)
               this.isShow = false
               await getPhone(e.detail.code)
+            }
+            else{
+              let date = new Date();
+              wx.setStorageSync("date",date);
+              this.isShow = false;
+              this.$showMsg("当前平台暂无法获取手机号，请前往手机小程序登录获取！",2000,"none");
             }
           }
           if(e.detail.errMsg == "getPhoneNumber:fail user deny"){

@@ -20,13 +20,13 @@
       class="widthchi210 heichi210 relative overflow-hidden margtop60 boradiuoverall"
     >
       <camera
-        class="height-full width-full z-index1"
+        class="height-full width-full z-inde1"
         device-position="front"
         flash="off"
       />
       <view 
         style="border: 200rpx solid #3F028B;"
-        class="width-full height-full z-index10 absolute top-half left-half translate--50 boradiuoverall">
+        class="width-full height-full z-inde10 absolute top-half left-half translate--50 boradiuoverall">
       </view>
     </view>
     <view class=" flex-direction margtop40 flex flex-center">

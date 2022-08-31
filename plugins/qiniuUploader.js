@@ -5,7 +5,6 @@
         qiniuRegion: '',
         // 七牛云bucket 外链前缀，外链在下载资源时用到
         qiniuBucketURLPrefix: '',
-
         // 获取uptoken方法三选一即可，执行优先级为：uptoken > uptokenURL > uptokenFunc。三选一，剩下两个置空。推荐使用uptokenURL，详情请见 README.md
         // 由其他程序生成七牛云uptoken，然后直接写入uptoken
         qiniuUploadToken: '',
@@ -13,7 +12,6 @@
         qiniuUploadTokenURL: '',
         // uptokenFunc 这个属性的值可以是一个用来生成uptoken的函数，详情请见 README.md
         qiniuUploadTokenFunction: function () { },
-
         // qiniuShouldUseQiniuFileName 如果是 true，则文件的 key 由 qiniu 服务器分配（全局去重）。如果是 false，则文件的 key 使用微信自动生成的 filename。出于初代sdk用户升级后兼容问题的考虑，默认是 false。
         // 微信自动生成的 filename较长，导致fileURL较长。推荐使用{qiniuShouldUseQiniuFileName: true} + "通过fileURL下载文件时，自定义下载名" 的组合方式。
         // 自定义上传key 需要两个条件：1. 此处shouldUseQiniuFileName值为false。 2. 通过修改qiniuUploader.upload方法传入的options参数，可以进行自定义key。（请不要直接在sdk中修改options参数，修改方法请见demo的index.js）
@@ -100,6 +98,9 @@
             filePath: filePath,
             name: 'file',
             formData: formData,
+            // 超时时间1分钟，默认就是1分钟,现在是10分钟
+            timeout:600000,
+            // timeout:10000,
             success: function (res) {
                 var dataString = res.data
                 //   // this if case is a compatibility with wechat server returned a charcode, but was fixed
