@@ -11,6 +11,8 @@ export default {
     siteInfos:[],
     // 场地获取完成登录的标志
     loginComplete:false,
+    // 上次浏览场馆的密码
+    lastCourtPasswd:[],
   },
   
   mutations: {
@@ -22,6 +24,9 @@ export default {
     },
     setLoginComplete(state,payload){
       state.loginComplete = payload
+    },
+    setLastCourtPasswd(state,payload){
+      state.lastCourtPasswd = payload
     }
   },
   actions: {
@@ -42,17 +47,21 @@ export default {
       var tempCourt = null
       await checkoutLastSearch().then(value=>{
         // 若上次搜索为空，也就是从没有搜索过场馆
-        if(value.data.last_venue){
+        if(value.data.venue_id){
           list.map(item=>{
-            if(item.id==value.data.last_venue){
+            if(item.id==value.data.venue_id){
               tempCourt = item
             }
           })
           list = list.filter(item=>{
-            if(item.id!=value.data.last_venue){
+            if(item.id!=value.data.venue_id){
               return item
             }
           })
+          if(value.data.passwd){
+            let data = [...value.data.passwd];
+            commit("setLastCourtPasswd",data);
+          }
           list.unshift(tempCourt)
           commit("setLoginComplete",true)
           commit("setAllVenues",list)

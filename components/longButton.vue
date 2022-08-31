@@ -29,7 +29,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 110rpx;
+    height: 100rpx;
     font-family: 微软雅黑;
     background-color: #fff;
     border-radius: 60rpx;

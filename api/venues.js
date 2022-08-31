@@ -42,9 +42,21 @@ export const checkoutLastSearch = () => {
   return request.get("/venues/last/browse/")
 }
 
-// 用户post后端是哪个场馆
-export const postLastSearch = (venue_id) => {
-  return request.post(`/venues/last/browse/?venue_id=${venue_id}`)
+// 用户post后端是哪个场馆,venue_id是场馆id,passwd是场馆密码
+export const postLastSearch = (venue_id,passwd) => {
+  let data = {venue_id,passwd};
+  return request.post(`/venues/last/browse/`,data)
+}
+
+// 记录每一次成功登录的舞房密码
+export const postSuccessSearch = (venue_id,passwd) => {
+  let data = {venue_id,passwd};
+  return request.post(`/venues/passwd/`,data)
+}
+
+// 根据场馆id获取每个场馆的密码
+export const getCourtPasswd = (venue_id) => {
+  return request.get(`/venues/passwd/?venue_id=${venue_id}`)
 }
 
 // 用户上传视频之后总的待剪辑数量
