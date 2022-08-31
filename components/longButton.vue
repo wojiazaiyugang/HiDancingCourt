@@ -33,7 +33,6 @@
     font-family: 微软雅黑;
     background-color: #fff;
     border-radius: 60rpx;
-    border-radius: 300rpx;
     background: linear-gradient(to right, #2de6f8 , #f76fed);
     .icon {
       display: flex;

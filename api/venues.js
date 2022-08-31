@@ -46,3 +46,19 @@ export const checkoutLastSearch = () => {
 export const postLastSearch = (venue_id) => {
   return request.post(`/venues/last/browse/?venue_id=${venue_id}`)
 }
+
+// 用户上传视频之后总的待剪辑数量
+export const getAwaitCliping = () => {
+  return request.get("/records/wait/num/")
+}
+
+// 根据场馆ID搜索待剪辑视频的名字
+export const getAwaitClipingName = (venue_id) => {
+  return request.get(`/records/wait/?venue_id=${venue_id}`)
+}
+
+// 用户上传完事之后post后端视频下载剪辑逻辑
+export const postKeyUpload = (venue_name,video_names) => {
+  let data = { venue_name, video_names };
+  return request.post("/records/download/",data);
+}

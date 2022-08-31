@@ -54,10 +54,15 @@ export default {
             }
           })
           list.unshift(tempCourt)
+          commit("setLoginComplete",true)
+          commit("setAllVenues",list)
+          uni.hideLoading()
         }
-        commit("setLoginComplete",true)
-        commit("setAllVenues",list)
-        uni.hideLoading()
+        else{
+          commit("setLoginComplete",true)
+          commit("setAllVenues",list)
+          uni.hideLoading()
+        }
       })
     },
   }
