@@ -251,7 +251,6 @@
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
               that.videoAllNumber = that.uploadAarray.length;
-              console.log("全部文件",this.uploadAarray);
               return false;
             }
             // 一次性选择完事
@@ -259,10 +258,8 @@
               return item.tempFilePath;
             })
             that.videoAllNumber = that.uploadAarray.length;
-            console.log("全部文件",this.uploadAarray);
           },
           fail:(Error)=>{
-            console.log("选择文件夹失败",Error);
             // 不是取消上传的才是真正的错误
             if(Error.errMsg!="chooseMedia:fail cancel"){
               log.info("打开文件夹失败的原因",Error);
@@ -329,7 +326,6 @@
                         fs.unlink({
                           filePath: basepath + "/" +val
                         });
-                        console.log("清楚",basepath + "/" +val)
                       })
                     },
                     fail(err){

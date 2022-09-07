@@ -133,7 +133,6 @@
       },
       keyInputNumber(data){
         this.cellPhone = data.detail.value
-        console.log("查看手机号",this.cellPhone,typeof(this.cellPhone))
       },
       // 导航用户隐私页面
       navService(){
@@ -170,7 +169,6 @@
       async submitApplication(){
         if(this.isAgree){
           if(this.danceRoom){
-            console.log("查看长度",this.cellPhone.length)
             if(this.cellPhone.length==11){
               await applyBossInfo(this.danceRoom,this.cellPhone).then(value=>{
                 if(value.code==0){
@@ -182,7 +180,7 @@
                   },2000)
                 }
                 else{
-                  console.log("cuowu")
+                  
                 }
               })
             }

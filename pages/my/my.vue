@@ -518,15 +518,12 @@
               }
             })
             // 获得充值的价格
-            let valuePrice = await getPrices()
-            this.dancPrice = valuePrice.data
-            let dataType = await getVenueInfo(this.currentId)
-            console.log("场馆详细数据",dataType)
+            let valuePrice = await getPrices();
+            this.dancPrice = valuePrice.data;
+            let dataType = await getVenueInfo(this.currentId);
             this.vipEndTime = dataType.data.data.vip_stop_time;
-            // this.payType = dataType.data.data.payment_model;
+            this.payType = dataType.data.data.payment_model;
             this.payEndTime = Boolean(dataType.data.data.vip);
-            this.payType = "annually";
-            console.log("查看支付类型",this.payType)
           }
         })
       },
@@ -618,7 +615,6 @@
       async openAuthority(e){
         if(this.isAgree){
           if(e.detail.errMsg == "getPhoneNumber:ok") {
-            console.log("获取手机号信息",e)
             // 用户点击同意获取电话
             if(e.detail.code){
               let date = new Date()

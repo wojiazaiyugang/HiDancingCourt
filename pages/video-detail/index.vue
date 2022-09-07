@@ -176,12 +176,10 @@
       ...mapMutations("m_video",["setAllSearchVideos","setVideoPages"]),
       // 上一个视频
       async selectPre(data){
-        console.log("上滑")
         this.sliderPosition = data.changedTouches[0].pageY
       },
       async selectNext(value){
         if(value.changedTouches[0].pageY>this.sliderPosition&&(value.changedTouches[0].pageY-this.sliderPosition)>=20){
-          console.log("上touch")
           this.tipInfo = true
           setTimeout(()=>{
             this.tipInfo = false
@@ -189,14 +187,12 @@
           this.preVideo()
         }
         if(value.changedTouches[0].pageY<this.sliderPosition&&(this.sliderPosition-value.changedTouches[0].pageY)>=20){
-          console.log("下touch")
           this.tipInfo = true
           setTimeout(()=>{
             this.tipInfo = false
           },2000)
           this.nextVideo()
         }
-        console.log("xiahua")
       },
       // 根据视频ID获得视频信息
       async getVideoDetail(){
@@ -232,7 +228,6 @@
         else{
           this.playVideo = this.currentVideo
         }
-        console.log("chakandangqianshi",this.playVideo)
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
         this.nextPage = this.videoPages.curPage
