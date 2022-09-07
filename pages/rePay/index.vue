@@ -10,15 +10,15 @@
       <view class="fonweight">
         账号名称：{{contractInfo.name}}
       </view>
-      <view class="margtop40 relative">
-        <text>账户号码：</text>
+      <view class="margtop60 relative fonweight">
+        <text >账户号码：</text>
         <text class="pruple "
         style="text-decoration: underline;"
         >{{contractInfo.account}}</text>
         <view
          @tap="copyAccount"
-         class="absolute right0 bottom0 flex flex-center white flex-direction text-center translate-50 letter-spacing1 fon20 heichiduan80 widchi40"
-         style="border-radius: 0rpx 40rpx 40rpx 40rpx;  background: linear-gradient(to right, #7e70f1 , #1a1640);"
+         class="absolute flex flex-center white flex-direction text-center translate-50 letter-spacing1 fon20 heichiduan80 widchi40"
+         style="right: -20rpx;bottom: -20rpx; border-radius: 0rpx 40rpx 40rpx 40rpx;  background: linear-gradient(to right, #7e70f1 , #1a1640);"
          >
          <view>
            一键
@@ -28,17 +28,17 @@
          </view>
         </view>
       </view>
-      <view class="margtop40 fonweight">
+      <view class="margtop60 fonweight">
         地址：{{contractInfo.address}}
       </view>
-      <view class="margtop40 fonweight">
+      <view class="margtop60 fonweight">
         联系方式：{{contractInfo.phone_num}}
       </view>
-      <view class="margtop40 fonweight">
+      <view class="margtop60 fonweight">
         开户行：{{contractInfo.bank}}
       </view>
     </view>
-    <view class="margtop150 flex flex-direction alitem-center fon24">
+    <view class="margtop60 flex flex-direction alitem-center fon24">
       <view class="widchi80 heichixu80 background-cover"
       style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2FofficialAccountCode.png);"
       >
@@ -70,11 +70,12 @@
     computed:{
       ...mapState("m_device",["deviceInfo"]),
       calHeight(){
-        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+        return this.deviceInfo&&(this.deviceInfo.screenHeight)*2 + 'rpx'
       },
     },
     created() {
       this.getInfo();
+      console.log("输出设备信息",this.deviceInfo)
     },
     methods:{
       // 获得合同具体得信息
