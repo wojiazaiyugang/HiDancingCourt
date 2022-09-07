@@ -170,43 +170,6 @@
       }
     },
     onLoad(options) {
-      
-      
-      
-      
-      
-      
-      let fs = wx.getFileSystemManager()
-      const basepath = `${wx.env.USER_DATA_PATH}`
-      fs.readdir({
-        dirPath: basepath,/// 获取文件列表
-        success(res) {
-          console.log("所有列表数据",res)
-          res.files.forEach((val) => { // 遍历文件列表里的数据
-            fs.unlink({
-              filePath: basepath + "/" +val,
-              success(value){
-                console.log("清楚成功",value);
-              },
-              fail(data){
-                console.log("清楚失败",data)
-              }
-            });
-          })
-        },
-        fail(err){
-          
-        }
-      })
-      
-      
-      
-      
-      
-      
-      
-      
-      
       this.courtId = options.venue_id;
       this.allVenues.map(item=>{
         if(this.courtId==item.id){
@@ -278,6 +241,7 @@
           count:9,
           sourceType:["album"],
           mediaType:["video"],
+          sizeType:["original"],
           success:async (res)=>{
             // 继续上传
             if(that.continueUpload){

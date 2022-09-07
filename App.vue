@@ -50,7 +50,6 @@
       async getDeviceInfo(){
         await uni.getSystemInfo({
           success:async(res)=> {
-            console.log(res)
             // 得到胶囊位置信息
             let menuInfo = await uni.getMenuButtonBoundingClientRect()
             this.setDeviceInfo(Object.assign({}, res, {menuInfo}))

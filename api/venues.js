@@ -5,6 +5,11 @@ export const getVenues = () => {
   return request.get(`/venues/?applet=HiDancing`)
 }
 
+// 获得某一个场馆的具体场馆信息
+export const getVenueInfo = (venue_id) => {
+  return request.get(`/venues/${venue_id}/`)
+}
+
 // 根据场馆id获得对应得场地信息
 export const getSites = (venue_id) => {
   return request.get(`/sites/${venue_id}`)
@@ -73,4 +78,9 @@ export const getAwaitClipingName = (venue_id) => {
 export const postKeyUpload = (venue_name,video_names) => {
   let data = { venue_name, video_names };
   return request.post("/records/download/",data);
+}
+
+// 获取舞蹈合同相关得数据
+export const getContractInfo = () => {
+  return request.get("/contract/");
 }

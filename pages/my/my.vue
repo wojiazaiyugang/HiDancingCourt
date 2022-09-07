@@ -133,7 +133,37 @@
       <view v-show="isMaster" class="text-center width-full margtop20 gray fon20">
         *快去分享给学员让他们查看自己的专属C位视频吧~
       </view>
-      <view v-show="isMaster" class="heichi50 flex margtop30 alitem-center" >
+      <!-- 按年收费 -->
+      <view v-show="isMaster&&payType=='annually'" class="heichi50 flex margtop30 alitem-center" >
+        <view class="heichi36 widchi6  boradiu8 bapruple">
+          
+        </view>
+        <view class="margleft10 white fonweight fon32 line-heichi40 heichi40">
+          会员服务
+        </view>
+      </view>
+      <view v-show="isMaster&&payType=='annually'"
+        style="border: 4rpx dashed #7e70f1;background:rgba(79,73,149,0.3);"
+        class="height-8 margtop30 width-full flex justify-center alitem-center boradiu8 relative" >
+        <view class="">
+          <text class="iconfont icon-naozhong fon32 moneycolor margright20"></text>
+          <text class="moneycolor fon28">服务到期时间：{{vipEndTime}}到期</text>
+        </view>
+        <view 
+        v-show="payEndTime"
+        style="border-radius: 8rpx 0rpx 8rpx 0rpx;top: -4rpx;left: -4rpx;"
+        class="absolute vipback heichi40 widchi40 fonweight line-heichi40 text-center fon20 vipcolor">
+          年VIP
+        </view>
+        <view
+        v-show="!payEndTime"
+        style="border-radius: 0rpx 8rpx 0rpx 8rpx;top: -4rpx;right: -4rpx;"
+        class="absolute vipback heichi40 widchi40 fonweight line-heichi40 text-center fon20 vipcolor">
+          已过期
+        </view>
+      </view>
+      <!-- 按次收费 -->
+      <view v-show="isMaster&&payType=='single'" class="heichi50 flex margtop30 alitem-center" >
         <view class="heichi36 widchi6  boradiu8 bapruple">
           
         </view>
@@ -141,7 +171,7 @@
           我的余额
         </view>
       </view>
-      <view v-show="isMaster" 
+      <view v-show="isMaster&&payType=='single'" 
         style="border: 4rpx dashed #7e70f1;background:rgba(79,73,149,0.3);"
         class="height-12 margtop30 width-full flex flex-direction alitem-center boradiu8" >
         <view class="height-20 margtop10">
@@ -173,7 +203,7 @@
           </view>
         </view>
       </view>
-      <view v-show="isMaster" class="heichi50 flex margtop30 alitem-center" >
+      <view v-show="isMaster&&payType=='single'" class="heichi50 flex margtop30 alitem-center" >
         <view class="heichi36 widchi6  boradiu8 bapruple">
           
         </view>
@@ -181,7 +211,7 @@
           余额充值
         </view>
       </view>
-      <view v-show="isMaster" class="height-8 flex margtop30 justify-between alitem-center " >
+      <view v-show="isMaster&&payType=='single'" class="height-8 flex margtop30 justify-between alitem-center " >
         <view 
         @tap="selectType('one')"
         class="height-full width30 flex flex-center boradiu8 moneycolor fon40 bapruple fonweight" 
@@ -224,7 +254,7 @@
           </view>
         </view>
       </view>
-      <view v-show="isMaster" class="flex justify-center margtop20 flex heichi40 line-heichi40 alitem-center">
+      <view v-show="isMaster&&payType=='single'" class="flex justify-center margtop20 flex heichi40 line-heichi40 alitem-center">
         <view
          @tap="confirmPrivacy"
          :class="['heichi30 widchi15 text-center line-heichi30 boradiu8 ',isConfirm?'bapruple':'bawhite']">
@@ -250,7 +280,7 @@
         v-show="isMaster"
         @tap="openBoss"
         class="absolute bottom30 left-half fonweight translatex-50 babotton fon28 widthchi210 heichiduan80 line-heichi80 text-center boradiu50">
-        立即开通
+        {{payType=="annually"?"立即续费":"立即开通"}}
       </view>
       <view
         @tap="navUploadVideos"
@@ -318,7 +348,7 @@
 <script>
   import { mapMutations,mapState } from "vuex";
   import { updateInfo, getPhone } from "@/api/user.js";
-  import { getPassword, getIsBoss, checkoutCoupons } from "@/api/venues.js";
+  import { getPassword, getIsBoss, checkoutCoupons, getVenueInfo } from "@/api/venues.js";
   import { getPrices, getBalance, createOrders, isPayDone, postOrder, postRecords } from "@/api/pay.js";
   import nvgBar from "@/components/nvgBar";
   export default {
@@ -368,6 +398,12 @@
         },
         // 视频失败的数组列表
         failList:[],
+        // 场馆主选择按年收费还是按次收费,single表示按次收费，annually表示按年收费
+        payType:"",
+        // 会员到期时间
+        vipEndTime:"",
+        // 按年续费的场馆会员是否到期
+        payEndTime:false,
       };
     },
     components: {
@@ -388,7 +424,6 @@
     created() {
       this.calShowPrivacy()
       this.selectBoss()
-      this.getCharge()
     },
     methods: {
       ...mapMutations("m_user",["setUserInfo"]),
@@ -454,6 +489,7 @@
       // 查看该用户是否是场馆老板
       async selectBoss(){
         await getIsBoss().then(async value=>{
+          // 数据不为0，表示是场馆主
           if(value.data.length!=0){
             this.isMaster = true
             this.columnsCourts = value.data.map(item=>{
@@ -477,18 +513,22 @@
                 this.trialTime = tempCoupon.data.expire_date
               }
               if(tempCoupon.code==-1){
-                this.isTrial = false
-                this.$showMsg("尊敬的场馆主，您尚未使用优惠券，请您先使用优惠券！")
+                this.isTrial = false;
+                this.$showMsg("尊敬的场馆主，您尚未使用优惠券，请您先使用优惠券！");
               }
             })
-            
+            // 获得充值的价格
+            let valuePrice = await getPrices()
+            this.dancPrice = valuePrice.data
+            let dataType = await getVenueInfo(this.currentId)
+            console.log("场馆详细数据",dataType)
+            this.vipEndTime = dataType.data.data.vip_stop_time;
+            // this.payType = dataType.data.data.payment_model;
+            this.payEndTime = Boolean(dataType.data.data.vip);
+            this.payType = "annually";
+            console.log("查看支付类型",this.payType)
           }
         })
-      },
-      // 获得充值的价格
-      async getCharge(){
-        let {data} = await getPrices()
-        this.dancPrice = data
       },
       // 拒绝授权之后重新登陆
       reLogin(){
@@ -610,38 +650,47 @@
       },
       // 充值开通
       async openBoss(){
-        if(this.isConfirm){
-          if(!this.rechargeData.number){
-            this.$showMsg("请您选择充值金额！",1500)
-            return false
-          }
-          var dataOrder = await createOrders(this.rechargeData.number)
-          wx.requestPayment(
-            Object.assign({}, dataOrder.data, {
-              success: async (res) => {
-                var timer = setInterval(()=>{
-                  isPayDone(dataOrder.data.nonceStr)
-                  .then(async res => {
-                    if(res.code==0){
-                      clearInterval(timer)
-                      this.$showMsg("付款成功",1500,"none")
-                      await postRecords(this.currentId,this.rechargeData.number).then(async ()=>{
-                        let value = await getBalance(this.currentId)
-                        this.bossMoney = value.data.surplus_amount/100
-                      })
-                      postOrder(dataOrder.data.nonceStr,this.currentId)
-                    }
-                  })
-                },1000)
-              },
-              fail: () => {
-                this.$showMsg("付款失败",1500,"none")
-              },
-            })
-          );
+        // 按年收费
+        if(this.payType=="annually"){
+          uni.navigateTo({
+            url: `../rePay/index`
+          })
         }
+        // 按次收费
         else{
-          this.$showMsg("请您先同意服务协议才能充值使用哦~",2000)
+          if(this.isConfirm){
+            if(!this.rechargeData.number){
+              this.$showMsg("请您选择充值金额！",1500)
+              return false
+            }
+            var dataOrder = await createOrders(this.rechargeData.number)
+            wx.requestPayment(
+              Object.assign({}, dataOrder.data, {
+                success: async (res) => {
+                  var timer = setInterval(()=>{
+                    isPayDone(dataOrder.data.nonceStr)
+                    .then(async res => {
+                      if(res.code==0){
+                        clearInterval(timer)
+                        this.$showMsg("付款成功",1500,"none")
+                        await postRecords(this.currentId,this.rechargeData.number).then(async ()=>{
+                          let value = await getBalance(this.currentId)
+                          this.bossMoney = value.data.surplus_amount/100
+                        })
+                        postOrder(dataOrder.data.nonceStr,this.currentId)
+                      }
+                    })
+                  },1000)
+                },
+                fail: () => {
+                  this.$showMsg("付款失败",1500,"none")
+                },
+              })
+            );
+          }
+          else{
+            this.$showMsg("请您先同意服务协议才能充值使用哦~",2000)
+          }
         }
       },
       // 选择充值的类型
