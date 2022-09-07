@@ -57,8 +57,7 @@
       {
         "navigationBarTitleText": "续费合同",
         "enablePullDownRefresh": false,
-        "navigationStyle":"default",
-        "disableScroll": true
+        "navigationStyle":"default"
       }
     },
     // 场馆主的账单流水页面
