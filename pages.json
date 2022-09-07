@@ -50,6 +50,17 @@
         "disableScroll": true
       }
     },
+    // 优惠券页面
+    {
+      "path" : "pages/rePay/index",
+      "style" :                                                                                    
+      {
+        "navigationBarTitleText": "续费合同",
+        "enablePullDownRefresh": false,
+        "navigationStyle":"default",
+        "disableScroll": true
+      }
+    },
     // 场馆主的账单流水页面
     {
       "path" : "pages/boss-money/index",
