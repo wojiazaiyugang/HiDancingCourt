@@ -134,11 +134,9 @@
       endScrol(e){
         if(this.allVideos.length<this.perPage&&this.allVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
-            console.log("上touch")
             this.scroolTop(true)
           }
           if(e.changedTouches[0].pageY<this.startPosition&&(this.startPosition-e.changedTouches[0].pageY)>=10){
-            console.log("下touch")
             this.scroolBottom(true)
           }
         }

@@ -44,7 +44,6 @@
     methods:{
       // 取消上传
       deleteChoose(){
-        console.log("删除当前视频",this.videoName)
         // 删除当前视频则视频重新加载
         this.playVideo = false;
         this.$emit("deleteVideo",this.videoName)

@@ -46,7 +46,6 @@
       ...mapMutations("m_video",["setCurrentAllVideos"]),
       // 跳转剪辑视频页面
       clickVideo() {
-        console.log("chakan",this.videoAll)
         this.setCurrentAllVideos(this.videoAll)
         if(this.isPlay){
           uni.navigateTo({

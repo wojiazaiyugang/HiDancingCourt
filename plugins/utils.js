@@ -67,7 +67,6 @@ Vue.prototype.$download = ({url, name, video_id}) => {
               filePath: basepath + '/' +val
             });
           })
-          // console.log("输出",res);
         },
       })
       wx.downloadFile({
@@ -77,7 +76,6 @@ Vue.prototype.$download = ({url, name, video_id}) => {
           wx.saveVideoToPhotosAlbum({
             filePath: res.filePath,
             success: async res => {
-              console.log("123")
               await addDownload(video_id)
               uni.hideLoading()
               uni.showToast({
@@ -87,7 +85,6 @@ Vue.prototype.$download = ({url, name, video_id}) => {
               })
             },
             fail: error => {
-              console.log("123456")
               uni.showToast({
                 title:"您已取消下载！",
                 duration:1500,
@@ -97,7 +94,6 @@ Vue.prototype.$download = ({url, name, video_id}) => {
           })
         },
         fail: error => {
-          console.log("789")
           uni.showToast({
             title:"下载失败，请您检查网络重新下载！",
             duration:1500,

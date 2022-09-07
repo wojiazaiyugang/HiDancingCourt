@@ -379,7 +379,6 @@
       // 输出查看键盘输入
       keyInput(data){
         this.verfication = data.target.value
-        console.log("输出",this.verfication)
         this.currentIndex = this.verfication.length-1
         // 若没有输入满则用空格填充
         if(this.verfication.length==4){
@@ -427,14 +426,12 @@
             this.currentBacimg = item.data.thumbnail
           }
         })
-        console.log("查看名字",this.columnsHouses)
       },
       // 查找视频
       async SearchVideo() {
         // 上次搜索的默认密码
         if(this.lastCourtPasswd.length!=0){
           this.verfication = this.lastCourtPasswd.join("");
-          console.log("修改",this.verfication)
         }
         if(this.videoSearch){
           this.videoSearch = false

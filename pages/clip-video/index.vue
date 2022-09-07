@@ -84,7 +84,6 @@
       }
       this.setAllSearchVideos([])
       this.getClipVideos()
-      console.log("chushihua",this.currentAllVideos)
     },
 		methods: {
       ...mapMutations("m_video",
@@ -93,12 +92,10 @@
       ]),
       // 上滑
       startScrol(data){
-        console.log("开始",data.changedTouches[0].pageY)
         this.startPosition = data.changedTouches[0].pageY
       },
       // 滑动结束
       endScrol(e){
-        console.log("结束",e.changedTouches[0].pageY)
         if(this.clipVideos.length<this.perPage&&this.clipVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
             this.scroolTop(true)
@@ -131,13 +128,11 @@
       // 上拉刷新新的小视频
       async scroolTop(status){
         if(this.clipVideos.length>=this.perPage||JSON.parse(status)){
-          console.log("shanghua")
           var upPage = 1
           if(this.requestOne){
             this.requestOne = false
             this.$showLoading("加载中！","none")
             let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
-            console.log("shanghua",data)
             this.$hideLoading()
             this.requestOne = true
             // 上滑数组筛选

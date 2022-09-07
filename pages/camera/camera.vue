@@ -77,7 +77,6 @@
       },
       // 获取用户的人脸信息进行校验
       async valiateFace(){
-        console.log("查看人脸信息",this.userFaceInfo)
         if(!this.userFaceInfo){
           this.$showMsg("您目前还没有拍摄过照片请您先拍照！",3000)
           this.isRePhoto = true
@@ -98,7 +97,6 @@
           cmr.takePhoto({
             quality: "high",
             success: async (res) => {
-              console.log("chakanres",res)
               var tempSrc = ""
               tempSrc = res.tempImagePath
               this.isRePhoto = false

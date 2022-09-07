@@ -166,7 +166,6 @@
     methods:{
       // 年份的滑动时间选取
       selectYears(data){
-        console.log("年份时间",data)
         this.showTime = data.detail.value
         this.startTime = data.detail.value + "-01-01_00-00-00"
         this.endTime = data.detail.value + "-12-31_23-59-59"
@@ -235,7 +234,6 @@
         if(this.currentTitle=="充值记录"){
           let {data} = await getRechargeRecords(this.venue_id,this.startTime,this.endTime,this.page,this.perpage)
           this.timeList = [...this.timeList,...data]
-          console.log("chakan",this.timeList)
           if(data.length<this.perpage){
             this.loadingDone = true
             this.$hideLoading()
@@ -271,7 +269,6 @@
           this.$refs.popupYear.close()
           this.timeType = "year-month"
           let tempTime = this.currentTime.split(" ")[0].split("-")[0]+"-"+this.currentTime.split(" ")[0].split("-")[1]
-          console.log("zhuanhuan时间",tempTime)
           this.startTime = this.$dayjs(tempTime).startOf("month").format("YYYY-MM-DD_HH-mm-ss")
           this.endTime = this.$dayjs(tempTime).endOf("month").format("YYYY-MM-DD_HH-mm-ss")
           this.showTime = this.currentTime.split(" ")[0].split("-")[0]+"年"+this.currentTime.split(" ")[0].split("-")[1]+"月"

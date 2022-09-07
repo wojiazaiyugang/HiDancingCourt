@@ -18,7 +18,7 @@
         <view
          @tap="copyAccount"
          class="absolute flex flex-center white flex-direction text-center translate-50 letter-spacing1 fon20 heichiduan80 widchi40"
-         style="right: -20rpx;bottom: -20rpx; border-radius: 0rpx 40rpx 40rpx 40rpx;  background: linear-gradient(to right, #7e70f1 , #1a1640);"
+         style="right: 30rpx;bottom: -20rpx; border-radius: 0rpx 40rpx 40rpx 40rpx;  background: linear-gradient(to right, #7e70f1 , #1a1640);"
          >
          <view>
            一键
@@ -75,7 +75,6 @@
     },
     created() {
       this.getInfo();
-      console.log("输出设备信息",this.deviceInfo)
     },
     methods:{
       // 获得合同具体得信息
