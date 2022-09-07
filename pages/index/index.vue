@@ -47,7 +47,6 @@
         </long-button>
       </view>
       <!-- End 第一个Long-Button -->
-      
       <!-- Start 球馆图片 -->
       <view class="heichi22shi babotton boradiu24 width80 flex flex-center background-cover margtop20" >
         <view class="boradiu24 background-cover" style="width: 97%;height: 96%;"

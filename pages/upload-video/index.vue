@@ -170,6 +170,43 @@
       }
     },
     onLoad(options) {
+      
+      
+      
+      
+      
+      
+      let fs = wx.getFileSystemManager()
+      const basepath = `${wx.env.USER_DATA_PATH}`
+      fs.readdir({
+        dirPath: basepath,/// 获取文件列表
+        success(res) {
+          console.log("所有列表数据",res)
+          res.files.forEach((val) => { // 遍历文件列表里的数据
+            fs.unlink({
+              filePath: basepath + "/" +val,
+              success(value){
+                console.log("清楚成功",value);
+              },
+              fail(data){
+                console.log("清楚失败",data)
+              }
+            });
+          })
+        },
+        fail(err){
+          
+        }
+      })
+      
+      
+      
+      
+      
+      
+      
+      
+      
       this.courtId = options.venue_id;
       this.allVenues.map(item=>{
         if(this.courtId==item.id){
@@ -250,6 +287,7 @@
               })
               that.uploadAarray = [...that.uploadAarray,...tempList];
               that.videoAllNumber = that.uploadAarray.length;
+              console.log("全部文件",this.uploadAarray);
               return false;
             }
             // 一次性选择完事
@@ -257,6 +295,7 @@
               return item.tempFilePath;
             })
             that.videoAllNumber = that.uploadAarray.length;
+            console.log("全部文件",this.uploadAarray);
           },
           fail:(Error)=>{
             console.log("选择文件夹失败",Error);
@@ -315,6 +354,23 @@
                   this.uploadAll = true;
                   uni.navigateBack({
                     delta:1,
+                  });
+                  // 上传完毕，清楚零食路径
+                  let fs = wx.getFileSystemManager()
+                  const basepath = `${wx.env.USER_DATA_PATH}`
+                  fs.readdir({
+                    dirPath: basepath,/// 获取文件列表
+                    success(res) {
+                      res.files.forEach((val) => { // 遍历文件列表里的数据
+                        fs.unlink({
+                          filePath: basepath + "/" +val
+                        });
+                        console.log("清楚",basepath + "/" +val)
+                      })
+                    },
+                    fail(err){
+                      
+                    }
                   })
                 // }
               }

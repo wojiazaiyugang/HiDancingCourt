@@ -67,6 +67,7 @@ Vue.prototype.$download = ({url, name, video_id}) => {
               filePath: basepath + '/' +val
             });
           })
+          // console.log("输出",res);
         },
       })
       wx.downloadFile({
