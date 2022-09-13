@@ -10,27 +10,28 @@ export default {
   },
   mutations: {
     setDeviceInfo(state, payload) {
-      state.deviceInfo = payload
+      state.deviceInfo = payload;
     },
     setLocationInfo(state, payload) {
-      state.locationInfo = payload
+      state.locationInfo = payload;
     },
     setServerTime(state,payload) {
-      state.currentTime = payload
+      state.currentTime = payload;
     }
   },
   actions:{
+    // 获得当前的位置权限信息
     getLocation({commit,state}){
       return new Promise((resolve,reject)=>{
         uni.getLocation({
         	type: "wgs84",
         	success: (res) => {
-        		commit("setLocationInfo",res)
-            return resolve()
+        		commit("setLocationInfo",res);
+            return resolve();
         	},
           fail: (error) => {
-            commit("setLocationInfo",error)
-            return reject()
+            commit("setLocationInfo",error);
+            return reject();
           }
         });
       })

@@ -1,13 +1,30 @@
 <template>
-  <view class="ba-f7"
+  <view class="ba-f7 "
     :style="{height:calHeight}"
     >
-    <view class="flex justify-around heichixu100 fon28 gray alitem-center">
+    <view 
+    @tap="chengeTime"
+    class="flex paddinf-top10 fon24 margleft10 heichi50 line-heichi50 marginbottom10">
+      <view class="fonweight margright20">
+        日期
+      </view>
+      <view 
+      style="border: 4rpx solid #7E70F1;"
+      class="widchi150 flex justify-between boradiu30 heichi50 line-heichi50 ">
+        <view class="gray margleft10{">
+          {{endTime.split("_")[0]}}
+        </view>
+        <view class="pruple margright20">
+          <text class="iconfont icon-rili-xianxing-xi fon36"></text>
+        </view>
+      </view>
+    </view>
+    <view class="flex justify-around heichixu100 fon28 gray alitem-center width80 margleftchi50 translatex-50">
       <view 
         v-for="(item,index) in textList"
         @tap="changeType(index)"
         :key="index"
-        :class="['width25 text-center heichi50 line-heichi50',currentType==index?'black typeColor boradiu16':'']"
+        :class="[' text-center heichi50 line-heichi50 relative',currentType==index?'black fonweight typeColor boradiu16':'']"
         >
         {{item}}
       </view>
@@ -23,10 +40,29 @@
       </view>
     </view>
     <view 
-      v-show="currentType==0&&videoList.length!=0"
+      v-show="currentType==1&&videoList.length!=0"
       class="width-full gray fon24 heichi50 line-heichi50 text-center">
       <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
       <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
+    </view>
+    <view 
+      v-show="currentType!=0"
+      class="fonweight margleft10 fon28">
+      {{calText}}
+    </view>
+    <view 
+    v-show="currentType!=0"
+    class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite">
+      <view class="">
+        <text class="iconfont icon-biaoqian pruple fon32 margright20"></text>
+        <text>老师/舞种</text>
+      </view>
+      <view class="">
+        视频名称
+      </view>
+      <view class="">
+        <text v-show="currentType>1">剪辑进度</text>
+      </view>
     </view>
     <scroll-view
       class="width-full height-full "
@@ -36,9 +72,8 @@
       @touchstart="startSlider"
       @touchend="endSlider"
       >
-
       <view 
-        v-if="videoList.length==0&&currentType!=2"
+        v-if="videoList.length==0&&currentType!=0"
         class="absolute left-half translatex-50 top100 width60 height-30 text-center" >
         <view 
           style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2Fnoclipingvideos.png);"
@@ -49,7 +84,7 @@
           暂无记录~
         </view>
       </view>
-      <view v-if="videoList.length!=0&&currentType!=2">
+      <view v-if="videoList.length!=0&&currentType!=0">
         <view v-for="(item,index) in videoList"
           :key="index">
           <clipCom
@@ -62,38 +97,7 @@
           </clipCom>
         </view>
       </view>
-      <view
-        v-else-if="currentType==2">
-        <view
-          v-for="(item,index) in timeList"
-          @tap="selectTimeList(index)"
-          :key="index"
-        >
-          <view style="margin: 0rpx 0rpx 20rpx 20rpx;">
-            <text class="margright10 fon28">{{item}}</text>
-            <text :class="['iconfont fon32',currentClipType==index?'icon-xiala1':'icon-xiala3']  "></text>
-          </view>
-         <view
-            v-for="(item,indexData) in videoList"
-            v-if="currentClipType == index&&videoList.length!=0"
-            :key="item.record_name">
-            <clipCom
-              :clipType="textList[currentType]"
-              :itemData="item"
-              :cliptext="clipingNumber[index]"
-              >
-              
-            </clipCom>
-          </view>
-          <view class=" width-full heichixu100 line-heichi100 text-center"
-            v-if="currentClipType == index&&videoList.length==0"
-          >
-            <view class="fon28 gray ">
-              暂无记录~
-            </view>
-          </view>
-        </view>
-      </view>
+      
       <view class="heichifan200">
         
       </view>
@@ -106,15 +110,33 @@
         <text>上传新视频</text>
       </view>
     </view>
+    <uni-popup ref="popupTime" :safeArea="false" :mask-click="false">
+      <van-datetime-picker
+       type="date"
+       :value="currentDate"
+       :min-date="minDate"
+       :formatter="formatter"
+       show-toolbar
+       cancel-button-text="请选择日期"
+       confirm-button-text="确认"
+       active-class="selectStyle"
+       :isToday="true"
+       toolbar-class="changeToolbar"
+       visible-item-count="5"
+       @confirm="confirmTimes"
+       @input="selectTimes"
+       item-height="40"/>
+    </uni-popup>
   </view>
 </template>
 
 <script>
   import { mapState, mapMutations } from "vuex";
-  import qiniuUploader from "@/plugins/qiniuUploader.js";
   import { getQiNiuToken } from "@/api/video.js";
   import { getClipingVideos, getClipingStatus } from "@/api/video.js";
   import { getAwaitCliping, getAwaitClipingName, } from "@/api/venues.js";
+  import qiniuUploader from "@/plugins/qiniuUploader.js";
+  // import * as echarts from "@/plugins/ec-canvas/ec-canvas.js";
   import clipCom from "@/components/clipCom.vue";
   import uploadCom from "@/components/uploadCom.vue";
   import nvgBar from "@/components/nvgBar";
@@ -129,7 +151,7 @@
         // 导航栏的背景色
         navColor:"bawhite",
         // 剪辑文字筛选
-        textList:["等待剪辑","正在剪辑","剪辑完成"],
+        textList:["总览","等待剪辑","正在剪辑","剪辑完成"],
         // 当前视频的种类,0表示等待剪辑，1表示正在剪辑，2表示剪辑完成
         currentType:0,
         // 当前场馆的id
@@ -166,6 +188,19 @@
         endTime:"",
         // 是否下拉显示加载中
         sliderUp:false,
+        // 时间选择器当前的时间
+        currentDate: new Date().getTime(),
+        // 时间选择器最小的时间
+        minDate: new Date(2022,1,1).getTime(),
+        // 将时间改换为带年月日的
+        formatter(type,value){
+          if (type === "year") {
+            return `${value}年`;
+          } else if (type === "month") {
+            return `${value}月`;
+          }
+          return `${value}日`;
+        },
       }
     },
     onLoad(options) {
@@ -189,8 +224,36 @@
       calHeight(){
         return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
       },
+      // 计算等待剪辑、正在剪辑与剪辑完成的数量
+      calText(){
+        // 等待剪辑
+        if(this.currentType==1){
+          return `等待剪辑视频数`;
+        }
+        // 正在剪辑
+        if(this.currentType==2){
+          return `正在剪辑视频数`;
+        }
+        // 剪辑完成
+        if(this.currentType==3){
+          return `剪辑完成视频数`;
+        }
+      }
     },
     methods:{
+      // 点击时间之后选择时间
+      confirmTimes(){
+        this.$refs.popupTime.close();
+      },
+      // 时间组件切换时输出的数据
+      selectTimes(data){
+        console.log("时间",data.detail);
+        console.log(this.$dayjs(data.detail).format("YYYY-MM-DD"));
+      },
+      // 页面上的修改时间，打开时间选择器
+      chengeTime(){
+        this.$refs.popupTime.open("bottom");
+      },
       // 点击剪辑完成时间选择各个剪辑时间段的完成列表
       async selectTimeList(dataValue){
         // 自己点击自己收起来
@@ -314,7 +377,7 @@
         this.sliderStatus = false;
         // 例如处在等待剪辑，再次点击等待剪辑不响应事件
         if(data==this.currentType){
-          return false
+          return false;
         }
         this.videoList = [];
         this.clipingNumber = [];
@@ -322,17 +385,17 @@
         this.page = 1;
         this.loadingDone = false;
         // 处于等待剪辑
-        if(this.currentType==0){
+        if(this.currentType==1){
           this.getTotalNumber();
           this.getTotalNames();
           return false
         }
         // 处于正在剪辑
-        if(this.currentType==1){
+        if(this.currentType==2){
           this.selectStatus = "CLIPING";
         }
         // 处于剪辑完成
-        if(this.currentType==2){
+        if(this.currentType==3){
           this.selectStatus = "CLIP_FINISHED";
           this.currentClipType = 0;
           this.endTime = this.$dayjs(this.currentTime).subtract(0,"day").format("YYYY-MM-DD_23-59-59");
@@ -348,7 +411,7 @@
       startSlider(data){
         this.startPosition = data.changedTouches[0].pageY;
       },
-      // 用户滑动结束判断上滑还是下滑,只有正在剪辑才会下拉刷新数据
+      // 用户滑动结束判断上滑还是下滑,只有正在剪辑才会下拉刷新数据，其它不用下拉刷新
       endSlider(e){
         if(this.currentType==1){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
@@ -366,14 +429,17 @@
 </script>
 
 <style lang="scss">
+  @import "@/static/style/vantprop";
   ::-webkit-scrollBar{
     display: none;
   }
   .typeColor::after{
+    position: absolute;
+    width: 50rpx;
+    left: 50%;
+    transform: translateX(-50%);
     content: "";
     display: block;
-    width: 50rpx;
-    margin-left: 70rpx;
     margin-top: 5rpx;
     border-bottom: 4rpx solid #7E70F1;
   }
