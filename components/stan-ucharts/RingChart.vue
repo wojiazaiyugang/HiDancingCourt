@@ -1,6 +1,15 @@
 <template>
-	<view class="ring_chart">
-		<canvas :canvasId="canvasId" id="canvasId" :style="{ width: cWidth + 'px', height: cHeight + 'px' }" @touchstart="touchstart" />
+	<view class="ring_chart relative" >
+		<canvas :canvasId="canvasId" id="canvasId" 
+    class="z-inde1"
+    :style="{ width: cWidth + 'px', height: cHeight + 'px' }" 
+    @touchstart="touchstart">
+
+    </canvas>
+    <view class="absolute z-inde10 left-half top-half translate--50 background-cover widchi50 heichixu100"
+     style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2Fyuanxingtu.png); margin-top: -18rpx;">
+       
+     </view>
 		<slot />
 	</view>
 </template>
@@ -72,9 +81,9 @@ export default {
 			//通用基础项设置 basicAs
 			$this: this, //this实例组件内使用图表，必须传入this实例
 			canvasId: this.canvasId, //页面组件canvas-id，支付宝中为id
-			type: 'ring', //图表类型，可选值为pie、line、column、area、ring、radar、arcbar、gauge、candle、bar、mix、rose、word
+			type: "ring", //图表类型，可选值为pie、line、column、area、ring、radar、arcbar、gauge、candle、bar、mix、rose、word
 			padding: [15, 15, 0, 15], //画布填充边距，顺序为上右下左，同css，但必须4位
-			colors: ['#1890ff', '#2fc25b', '#facc14', '#f04864', '#8543e0', '#90ed7d'], //图表配色方案，不传则使用系统默认配置
+			colors: ["#70F1AA", "#7E70F1", "#F17070"], //图表配色方案，不传则使用系统默认配置
 			rotate: false, //是否横屏展示
 			rotateLock: true, //	锁定横屏模式，如果在支付宝和百度小程序中使用横屏模式，请赋值true，否则每次都会旋转90度。跨端使用通过uni-app的条件编译来赋值
 			animation: true, //是否动画展示
@@ -85,15 +94,13 @@ export default {
 			pixelRatio: 1, //像素比，默认为1，仅支付宝小程序需要大于1，其他平台必须为1
 			width: this.cWidth, //canvas宽度，单位为px，支付宝高分屏需要乘像素比(pixelRatio)
 			height: this.cHeight, //canvas高度，单位为px，支付宝高分屏需要乘像素比
-
 			//数据列表配置项 dataAS
 			series: this.dataAs[this.valueKey], //数据列表
-
 			//图列配置 legendAs
 			legend: {
 				show: true, //是否显示各类别的图例标识
-				position: 'top',
-				float: 'left',
+				position: "bottom",
+				float: "center",
 				padding: 10,
 				margin: 0
 			},

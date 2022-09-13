@@ -452,7 +452,7 @@
         let value = await getBalance(this.currentId)
         this.bossMoney = value.data.surplus_amount/100
         // 查看优惠券使用与否
-        await checkoutCoupons(this.currentId).then(tempCoupon=>{
+        await checkoutCoupons(this.currentId).then(async tempCoupon=>{
           if(tempCoupon.code==0){
             this.isTrial = tempCoupon.data.coupon_status
             this.trialTime = tempCoupon.data.expire_date
@@ -461,6 +461,12 @@
             this.isTrial = false
             this.$showMsg("尊敬的场馆主，您尚未使用优惠券，请您先使用优惠券！")
           }
+          let valuePrice = await getPrices();
+          this.dancPrice = valuePrice.data;
+          let dataType = await getVenueInfo(this.currentId);
+          this.vipEndTime = dataType.data.data.vip_stop_time;
+          this.payType = dataType.data.data.payment_model;
+          this.payEndTime = Boolean(dataType.data.data.vip);
         })
         this.$refs.popupCourt.close()
       },

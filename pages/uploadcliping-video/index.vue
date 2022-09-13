@@ -11,7 +11,7 @@
       <view 
       style="border: 4rpx solid #7E70F1;"
       class="widchi150 flex justify-between boradiu30 heichi50 line-heichi50 ">
-        <view class="gray margleft10{">
+        <view class="gray margleft10">
           {{endTime.split("_")[0]}}
         </view>
         <view class="pruple margright20">
@@ -46,12 +46,12 @@
       <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
     </view>
     <view 
-      v-show="currentType!=0"
+      v-show="currentType!=0&&videoList.length!=0"
       class="fonweight margleft10 fon28">
       {{calText}}
     </view>
     <view 
-    v-show="currentType!=0"
+    v-show="currentType!=0&&videoList.length!=0"
     class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite">
       <view class="">
         <text class="iconfont icon-biaoqian pruple fon32 margright20"></text>
@@ -97,7 +97,19 @@
           </clipCom>
         </view>
       </view>
-      
+      <view v-show="currentType==0">
+      	<!-- 环状图 -->
+      	<view class="width-full heichi240">
+      		<ring-chart
+      			:dataAs="pieData"
+      			canvasId="index_ring_1"
+            v-show="currentType==0"
+      		/>
+      	</view>
+        <view class="margtop50 text-center fon24 fonweight">
+          上传视频总条数:<text class="pruple">{{videoTotalNumber}}</text>条
+        </view>
+      </view>
       <view class="heichifan200">
         
       </view>
@@ -135,19 +147,23 @@
   import { getQiNiuToken } from "@/api/video.js";
   import { getClipingVideos, getClipingStatus } from "@/api/video.js";
   import { getAwaitCliping, getAwaitClipingName, } from "@/api/venues.js";
+  import { getSearchNumber } from "@/api/search.js";
   import qiniuUploader from "@/plugins/qiniuUploader.js";
-  // import * as echarts from "@/plugins/ec-canvas/ec-canvas.js";
   import clipCom from "@/components/clipCom.vue";
   import uploadCom from "@/components/uploadCom.vue";
   import nvgBar from "@/components/nvgBar";
+  import RingChart from "@/components/stan-ucharts/RingChart.vue";
   export default {
     components:{
       nvgBar,
       clipCom,
       uploadCom,
+      RingChart,
     },
     data(){
       return {
+        // 当前视频的总条数
+        videoTotalNumber:0,
         // 导航栏的背景色
         navColor:"bawhite",
         // 剪辑文字筛选
@@ -178,10 +194,6 @@
         sliderTop:0,
         // 当前总共待剪辑多少个视频
         currentClipVideos:0,
-        // 剪辑完成的时间列表
-        timeList:[],
-        // 剪辑完成当前搜索日期
-        currentClipType:0,
         // 剪辑完成的开始时间
         startTime:"",
         // 剪辑完成的结束时间
@@ -201,13 +213,32 @@
           }
           return `${value}日`;
         },
+        pieData: {
+        	//饼状图数据
+        	series: [
+        		{
+        			name: "等待剪辑",
+        			data: 0
+        		},
+        		{
+        			name: "正在剪辑",
+        			data: 0
+        		},
+        		{
+        			name: "剪辑完成",
+        			data: 0
+        		}
+        	]
+        }
       }
     },
     onLoad(options) {
       this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
       // 获得当前的场馆id
       this.currentId = options.venue_id;
-      this.calTimeList();
+      this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
+      this.startTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_00-00-00");
+      this.getVideoNumber();
     },
     onShow() {
       // 上传完视频或者刚进页面显示待剪辑
@@ -215,8 +246,6 @@
       this.clipingNumber = [];
       this.page = 1;
       this.loadingDone = false;
-      this.getTotalNumber();
-      this.getTotalNames();
     },
     computed:{
       ...mapState("m_device",["deviceInfo","currentTime"]),
@@ -228,56 +257,40 @@
       calText(){
         // 等待剪辑
         if(this.currentType==1){
-          return `等待剪辑视频数`;
+          return `等待剪辑视频数: ${this.pieData.series[0].data}`;
         }
         // 正在剪辑
         if(this.currentType==2){
-          return `正在剪辑视频数`;
+          return `正在剪辑视频数: ${this.pieData.series[1].data}`;
         }
         // 剪辑完成
         if(this.currentType==3){
-          return `剪辑完成视频数`;
+          return `剪辑完成视频数: ${this.pieData.series[2].data}`;
         }
       }
     },
     methods:{
+      // 拉取视频总览数据
+      async getVideoNumber(){
+        let {data} = await getSearchNumber(this.currentId,this.startTime,this.endTime);
+        this.videoTotalNumber = data.total_num;
+        this.pieData.series[0].data=data.wait_clip_num;
+        this.pieData.series[1].data=data.cliping_num;
+        this.pieData.series[2].data=data.clip_finished_num;
+      },
       // 点击时间之后选择时间
       confirmTimes(){
         this.$refs.popupTime.close();
+        this.getVideoNumber();
       },
       // 时间组件切换时输出的数据
       selectTimes(data){
-        console.log("时间",data.detail);
-        console.log(this.$dayjs(data.detail).format("YYYY-MM-DD"));
+        this.startTime = this.$dayjs(data.detail).format("YYYY-MM-DD") + "_00-00-00";
+        this.endTime = this.$dayjs(data.detail).format("YYYY-MM-DD") + "_23-59-59";
       },
       // 页面上的修改时间，打开时间选择器
       chengeTime(){
         this.$refs.popupTime.open("bottom");
-      },
-      // 点击剪辑完成时间选择各个剪辑时间段的完成列表
-      async selectTimeList(dataValue){
-        // 自己点击自己收起来
-        if(this.currentClipType == dataValue){
-          this.currentClipType = -1;
-          return false;
-        }
-        this.page = 1;
-        this.videoList = [];
-        this.loadingDone = false;
-        this.currentClipType = dataValue;
-        this.endTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_23-59-59");
-        this.startTime = this.$dayjs(this.currentTime).subtract(dataValue,"day").format("YYYY-MM-DD_00-00-00");
-        let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
-        this.videoList = [...this.videoList,...data];
-        this.loadingDone = data.length<this.per_page;
-      },
-      // 计算剪辑完成的时间列表，显示最近七天的
-      calTimeList(){
-        this.startTime = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_00-00-00");
-        this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
-        for(var i=0;i<=7;i++){
-          this.timeList.push(this.$dayjs(this.currentTime).subtract(i,"day").format("YYYY-MM-DD"));
-        }
       },
       // 计算当前待剪辑视频总数
       async getTotalNumber(){
@@ -292,7 +305,7 @@
       // 滑动底部加载数据,待剪辑不必下滑，没有分页
       toEnd(){
         var that = this;
-        if(that.currentType!=0){
+        if(that.currentType!=0&&that.currentType!=1){
           if(that.timer){
             clearTimeout(that.timer)
           }
@@ -313,13 +326,13 @@
       // 根据条件查询视频
       async selectTypeVideos(){
         // 待剪辑
-        if(this.currentType==0){
+        if(this.currentType==1){
           this.getTotalNumber();
           this.getTotalNames();
           return false;
         }
         // 正在剪辑
-        if(this.currentType==1){
+        if(this.currentType==2){
           let end = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
           let start = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_HH-mm-ss");
           await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end).then(async value=>{
@@ -358,7 +371,7 @@
           return false;
         }
         // 剪辑完成
-        if(this.currentType==2){
+        if(this.currentType==3){
           let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
           this.$hideLoading();
           this.videoList = [...this.videoList,...data];
@@ -384,6 +397,11 @@
         this.currentType = data;
         this.page = 1;
         this.loadingDone = false;
+        // 处于总览数据
+        if(this.currentType==0){
+          this.getVideoNumber();
+          return false
+        }
         // 处于等待剪辑
         if(this.currentType==1){
           this.getTotalNumber();
@@ -397,9 +415,6 @@
         // 处于剪辑完成
         if(this.currentType==3){
           this.selectStatus = "CLIP_FINISHED";
-          this.currentClipType = 0;
-          this.endTime = this.$dayjs(this.currentTime).subtract(0,"day").format("YYYY-MM-DD_23-59-59");
-          this.startTime = this.$dayjs(this.currentTime).subtract(0,"day").format("YYYY-MM-DD_00-00-00");
         }
         this.selectTypeVideos();
       },
