@@ -104,6 +104,14 @@
       			:dataAs="pieData"
       			canvasId="index_ring_1"
             v-show="currentType==0"
+            :titleAs="{
+            					title: {
+            						name: '数据统计'
+            					},
+            					subtitle: {
+            						name: ''
+            					}
+            				}"
       		/>
       	</view>
         <view class="margtop50 text-center fon24 fonweight">

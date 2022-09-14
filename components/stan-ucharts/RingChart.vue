@@ -6,10 +6,10 @@
     @touchstart="touchstart">
 
     </canvas>
-    <view class="absolute z-inde10 left-half top-half translate--50 background-cover widchi50 heichixu100"
+<!--    <view class="absolute z-inde10 left-half top-half translate--50 background-cover widchi50 heichixu100"
      style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2Fyuanxingtu.png); margin-top: -18rpx;">
        
-     </view>
+     </view> -->
 		<slot />
 	</view>
 </template>
