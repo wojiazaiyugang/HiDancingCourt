@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "7159311",
+      "name": "标签",
+      "font_class": "biaoqian",
+      "unicode": "e60d",
+      "unicode_decimal": 58893
+    },
+    {
+      "icon_id": "1866720",
+      "name": "234日历-线性-细",
+      "font_class": "rili-xianxing-xi",
+      "unicode": "e915",
+      "unicode_decimal": 59669
+    },
+    {
       "icon_id": "2076264",
       "name": "闹钟",
       "font_class": "naozhong",

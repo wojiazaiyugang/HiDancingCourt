@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "@escook/request-miniprogram": "^0.2.1",
-    "dayjs": "^1.11.2",
+    "dayjs": "^1.11.5",
     "miniprogram-file-uploader": "^1.0.0",
     "moment": "^2.29.3",
     "qs": "^6.10.3"

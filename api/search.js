@@ -16,3 +16,9 @@ export const getAllvideos = (site_ids,start_time,stop_time,page,per_page,face_se
 export const getVideoLabel = (venue_id,start_time,end_time)=>{
   return request.get(`/videos/label/?venue_id=${venue_id}&start_time=${start_time}&end_time=${end_time}`)
 }
+
+// 获取所有待剪辑、正在剪辑、剪辑完成等数据
+export const getSearchNumber = (venue_id,start,end)=>{
+  let data = {venue_id,start,end};
+  return request.get("/nodes/num/",data);
+}

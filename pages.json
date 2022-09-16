@@ -157,7 +157,12 @@
         "enablePullDownRefresh": false,
         "navigationBarBackgroundColor":"#fff",
         "navigationStyle":"default",
-        "disableScroll": true
+        "disableScroll": true,
+        "usingComponents":{
+          "van-picker": "/wxcomponents/vant/picker/index",
+          "van-datetime-picker": "/wxcomponents/vant/datetime-picker/index"
+          // "ec-canvas":"/plugins/ec-canvas/ec-canvas.js"
+        }
       }
     }
   ],
