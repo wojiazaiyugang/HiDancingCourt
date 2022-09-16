@@ -20,7 +20,7 @@
         <swiper-item
          @tap="navSwiper('login')">
           <view class="width-full height-full background-cover"
-          style="background-image: url(https://static.qiniuyun.highvenue.cn/image/hidancing_ban2.jpg);">
+          style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2Fswiperinfo.jpg);">
             
           </view>
         </swiper-item>

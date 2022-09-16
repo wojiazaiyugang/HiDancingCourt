@@ -2,79 +2,89 @@
   <view class="ba-f7 "
     :style="{height:calHeight}"
     >
-    <view 
-    @tap="chengeTime"
-    class="flex paddinf-top10 fon24 margleft10 heichi50 line-heichi50 marginbottom10">
-      <view class="fonweight margright20">
-        日期
-      </view>
-      <view 
-      style="border: 4rpx solid #7E70F1;"
-      class="widchi150 flex justify-between boradiu30 heichi50 line-heichi50 ">
-        <view class="gray margleft10">
-          {{endTime.split("_")[0]}}
+    <view class="fixed top0 left0 ba-f7 width-full heichi100">
+      <view
+      @tap="chengeTime"
+      class="flex fon24 heichi50 margleft10 line-heichi50 marginbottom10 margtop20"
+      >
+        <view class="fonweight margright20">
+          日期
         </view>
-        <view class="pruple margright20">
-          <text class="iconfont icon-rili-xianxing-xi fon36"></text>
+        <view 
+        style="border: 4rpx solid #7E70F1;"
+        class="widchi150 flex justify-between boradiu30 heichi50 line-heichi50 ">
+          <view class="gray margleft10">
+            {{endTime.split("_")[0]}}
+          </view>
+          <view class="pruple margright20">
+            <text class="iconfont icon-rili-xianxing-xi fon36"></text>
+          </view>
         </view>
       </view>
-    </view>
-    <view class="flex justify-around heichixu100 fon28 gray alitem-center width80 margleftchi50 translatex-50">
-      <view 
-        v-for="(item,index) in textList"
-        @tap="changeType(index)"
-        :key="index"
-        :class="[' text-center heichi50 line-heichi50 relative',currentType==index?'black fonweight typeColor boradiu16':'']"
-        >
-        {{item}}
-      </view>
-    </view>
-    <view 
-      v-show="sliderStatus"
-      class="width-full heichi50 bawhite flex alitem-center justify-center">
-      <view class="slider">
-        
-      </view>
-      <view class="height-full fon24 gray margleft10 line-heichi50">
-        加载中~
-      </view>
-    </view>
-    <view 
-      v-show="currentType==1&&videoList.length!=0"
-      class="width-full gray fon24 heichi50 line-heichi50 text-center">
-      <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
-      <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
-    </view>
-    <view 
-      v-show="currentType!=0&&videoList.length!=0"
-      class="fonweight margleft10 fon28">
-      {{calText}}
-    </view>
-    <view 
-    v-show="currentType!=0&&videoList.length!=0"
-    class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite">
-      <view class="">
-        <text class="iconfont icon-biaoqian pruple fon32 margright20"></text>
-        <text>老师/舞种</text>
-      </view>
-      <view class="">
-        视频名称
-      </view>
-      <view class="">
-        <text v-show="currentType>1">剪辑进度</text>
+      <view class="flex justify-around heichixu100 fon28 gray alitem-center width80 margleftchi50 translatex-50">
+        <view 
+          v-for="(item,index) in textList"
+          @tap="changeType(index)"
+          :key="index"
+          :class="[' text-center heichi50 line-heichi50 relative',currentType==index?'black fonweight typeColor boradiu16':'']"
+          >
+          {{item}}
+        </view>
       </view>
     </view>
     <scroll-view
-      class="width-full height-full "
+      class="width-full height-70"
+      style="margin-top: 200rpx;"
       :scroll-y="true"
       @scroll="calTop"
       @scrolltolower="toEnd"
       @touchstart="startSlider"
+      @touchmove="conMoving"
       @touchend="endSlider"
       >
+      <view style="height: 10rpx;width: 100%; margin-top: 30rpx;">
+        
+      </view>
+      <view
+        v-show="sliderShow"
+        class="width-full heichi50 ba-f7 flex alitem-center justify-center"
+        >
+        <view class="slider">
+          
+        </view>
+        <view class="height-full fon24 gray margleft10 line-heichi50">
+          松开立即刷新数据
+        </view>
+      </view>
+      <view 
+        v-show="currentType==1&&videoList.length!=0"
+        class="width-full gray fon24 heichi50 line-heichi50 text-center">
+        <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
+        <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
+      </view>
+      <view 
+        v-show="currentType!=0&&videoList.length!=0"
+        class="fonweight margleft10 fon28">
+        {{calText}}
+      </view>
+      <view 
+        v-show="currentType!=0&&videoList.length!=0"
+        class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite">
+        <view class="">
+          <text class="iconfont icon-biaoqian pruple fon32 margright20"></text>
+          <text>老师/舞种</text>
+        </view>
+        <view class="">
+          视频名称
+        </view>
+        <view class="">
+          <text v-show="currentType>1">剪辑进度</text>
+        </view>
+      </view>
       <view 
         v-if="videoList.length==0&&currentType!=0"
-        class="absolute left-half translatex-50 top100 width60 height-30 text-center" >
+        class="absolute left-half translatex-50 top200 width60 height-30 text-center"
+         >
         <view 
           style="background-image: url(https://static.qiniuyun.highvenue.cn/image%2Fnoclipingvideos.png);"
           class="width-full height-80 background-cover">
@@ -99,7 +109,7 @@
       </view>
       <view v-show="currentType==0">
       	<!-- 环状图 -->
-      	<view class="width-full heichi240">
+      	<view class="width-full heichi240 ">
       		<ring-chart
       			:dataAs="pieData"
       			canvasId="index_ring_1"
@@ -182,8 +192,6 @@
         currentId:0,
         // 开始滑动时的用户接触的位置
         startPosition:0,
-        // 滑动拉取接口
-        sliderStatus:false,
         // 查询所要剪辑的状态,默认是查询待剪辑的，WAIT_CLIP待剪辑，CLIPING正在剪辑，CLIP_FINISHED剪辑完成，CLIP_FAIL剪辑失败
         selectStatus:"WAIT_CLIP",
         // 当前显示的视频数量及状态
@@ -237,11 +245,14 @@
         			data: 0
         		}
         	]
-        }
+        },
+        // 下拉刷新数据的标志
+        sliderShow:false,
       }
     },
     onLoad(options) {
       this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
+      console.log("输出下拉信息",this.deviceInfo);
       // 获得当前的场馆id
       this.currentId = options.venue_id;
       this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
@@ -259,7 +270,7 @@
       ...mapState("m_device",["deviceInfo","currentTime"]),
       // 返回当前用户设备的高度
       calHeight(){
-        return this.deviceInfo&&this.deviceInfo.screenHeight + 'px'
+        return this.deviceInfo&&this.deviceInfo.screenHeight-this.deviceInfo.statusBarHeight + 'px'
       },
       // 计算等待剪辑、正在剪辑与剪辑完成的数量
       calText(){
@@ -281,6 +292,7 @@
       // 拉取视频总览数据
       async getVideoNumber(){
         let {data} = await getSearchNumber(this.currentId,this.startTime,this.endTime);
+        this.sliderShow = false;
         this.videoTotalNumber = data.total_num;
         this.pieData.series[0].data=data.wait_clip_num;
         this.pieData.series[1].data=data.cliping_num;
@@ -374,7 +386,6 @@
               }))
               this.clipingNumber = [...this.clipingNumber,...numberArr]
             }
-            this.sliderStatus = false;
           })
           return false;
         }
@@ -394,8 +405,6 @@
       },
       // 切换视频的种类
       async changeType(data){
-        // 只要切换剪辑的状态种类，下滑刷新的标志隐藏
-        this.sliderStatus = false;
         // 例如处在等待剪辑，再次点击等待剪辑不响应事件
         if(data==this.currentType){
           return false;
@@ -434,13 +443,22 @@
       startSlider(data){
         this.startPosition = data.changedTouches[0].pageY;
       },
-      // 用户滑动结束判断上滑还是下滑,只有正在剪辑才会下拉刷新数据，其它不用下拉刷新
+      // 手指接触之后不断发生的事件
+      conMoving(){
+        this.sliderShow = true;
+        console.log("123")
+      },
+      // 用户滑动结束判断上滑还是下滑,
       endSlider(e){
-        if(this.currentType==1){
+        if(this.currentType==0){
+          this.getVideoNumber();
+        }
+        // 拉取等待剪辑以及正在剪辑、剪辑完成的数据
+        if(this.currentType!=0){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
             // 下滑刷新隐藏
-            this.sliderStatus = true;
             this.page = 1;
+            this.sliderShow = true;
             this.loadingDone = false;
             this.sliderUp = true;
             this.selectTypeVideos();

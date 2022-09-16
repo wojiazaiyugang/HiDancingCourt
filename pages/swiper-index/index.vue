@@ -23,10 +23,10 @@
       </view>
     </view>
     <view v-show="pageStatus=='login'" class="flex flex-direction alitem-center">
-      <view class="margtop35zhi text-center white fon24">
+<!--      <view class="margtop35zhi text-center white fon24">
         仅需2步，免费加入舞蹈直拍，为学员带来更好的体验~
-      </view>
-      <view class=" width80 white marginbottom20 margtop40">
+      </view> -->
+      <view class=" width80 white marginbottom20 margtop35zhi">
         <text style="color: red;">*</text> 场馆名称
       </view>
       <view 
