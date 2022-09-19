@@ -5,7 +5,7 @@
     <view class="fixed top0 left0 ba-f7 width-full heichi100">
       <view
       @tap="chengeTime"
-      class="flex fon24 heichi50 margleft10 line-heichi50 marginbottom10 margtop20"
+      class="flex fon24 heichi50 margleft10 line-heichi50 marginbottom10 "
       >
         <view class="fonweight margright20">
           日期
@@ -21,12 +21,13 @@
           </view>
         </view>
       </view>
-      <view class="flex justify-around heichixu100 fon28 gray alitem-center width80 margleftchi50 translatex-50">
+      <view 
+      class="flex justify-around heichiduan80 line-heichi80 fon28 margtop50 gray alitem-center width80 margleftchi50 translatex-50">
         <view 
           v-for="(item,index) in textList"
           @tap="changeType(index)"
           :key="index"
-          :class="[' text-center heichi50 line-heichi50 relative',currentType==index?'black fonweight typeColor boradiu16':'']"
+          :class="[' text-center heichi30 line-heichi30 relative',currentType==index?'black fonweight typeColor boradiu16':'']"
           >
           {{item}}
         </view>
@@ -42,12 +43,11 @@
       @touchmove="conMoving"
       @touchend="endSlider"
       >
-<!--      <view style="height: 10rpx;width: 100%; margin-top: 30rpx;background-color: #0077AA;">
+     <view style="width: 100%; margin-top: 30rpx;">
         
-      </view> -->
+      </view>
       <view
         v-if="sliderShow"
-        style="margin-top: 10rpx;"
         class="width-full heichi50 ba-f7 flex alitem-center justify-center"
         >
         <view class="slider">
@@ -65,10 +65,11 @@
       </view>
     <view 
         v-show="currentType!=0"
-        class="fonweight margleft10 fon28">
+        style="margin-top: -20rpx;"
+        class="fonweight margleft10 fon28 marginbottom10">
         {{calText}}
       </view>
-      <view 
+<!--      <view 
         v-if="videoList.length!=0&&currentType!=0"
         class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite marginbottom20">
         <view class="">
@@ -81,7 +82,7 @@
         <view class="">
           <text v-show="currentType>0">剪辑进度</text>
         </view>
-      </view>
+      </view> -->
       <view 
         v-if="videoList.length==0&&currentType!=0"
         class="absolute left-half translatex-50 top200 width60 height-30 text-center"
@@ -113,7 +114,6 @@
       		<ring-chart
       			:dataAs="pieData"
       			canvasId="index_ring_1"
-            v-show="currentType==0"
             :titleAs="{
             					title: {
             						name: '数据统计'
@@ -256,7 +256,6 @@
       this.currentId = options.venue_id;
       this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
       this.startTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_00-00-00");
-      this.getVideosNumber();
     },
     onShow() {
       // 上传完视频或者刚进页面显示待剪辑
@@ -265,6 +264,7 @@
       this.page = 1;
       this.loadingDone = false;
       this.selectTypeVideos();
+      this.getVideosNumber();
     },
     computed:{
       ...mapState("m_device",["deviceInfo","currentTime"]),
