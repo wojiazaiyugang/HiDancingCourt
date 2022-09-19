@@ -42,11 +42,12 @@
       @touchmove="conMoving"
       @touchend="endSlider"
       >
-      <view style="height: 10rpx;width: 100%; margin-top: 30rpx;">
+<!--      <view style="height: 10rpx;width: 100%; margin-top: 30rpx;background-color: #0077AA;">
         
-      </view>
+      </view> -->
       <view
-        v-show="sliderShow"
+        v-if="sliderShow"
+        style="margin-top: 10rpx;"
         class="width-full heichi50 ba-f7 flex alitem-center justify-center"
         >
         <view class="slider">
@@ -57,19 +58,19 @@
         </view>
       </view>
       <view 
-        v-show="currentType==1&&videoList.length!=0"
+        v-if="videoList.length!=0&&currentType==1"
         class="width-full gray fon24 heichi50 line-heichi50 text-center">
         <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
         <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
       </view>
-      <view 
-        v-show="currentType!=0&&videoList.length!=0"
+    <view 
+        v-show="currentType!=0"
         class="fonweight margleft10 fon28">
         {{calText}}
       </view>
       <view 
-        v-show="currentType!=0&&videoList.length!=0"
-        class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite">
+        v-if="videoList.length!=0&&currentType!=0"
+        class="flex justify-between fon28 margtop30 heichixu100 paddingx10 line-heichi100 bawhite marginbottom20">
         <view class="">
           <text class="iconfont icon-biaoqian pruple fon32 margright20"></text>
           <text>老师/舞种</text>
@@ -78,7 +79,7 @@
           视频名称
         </view>
         <view class="">
-          <text v-show="currentType>1">剪辑进度</text>
+          <text v-show="currentType>0">剪辑进度</text>
         </view>
       </view>
       <view 
@@ -107,8 +108,7 @@
           </clipCom>
         </view>
       </view>
-      <view v-show="currentType==0">
-      	<!-- 环状图 -->
+    <view v-show="currentType==0">
       	<view class="width-full heichi240 ">
       		<ring-chart
       			:dataAs="pieData"
@@ -163,7 +163,7 @@
 <script>
   import { mapState, mapMutations } from "vuex";
   import { getQiNiuToken } from "@/api/video.js";
-  import { getClipingVideos, getClipingStatus } from "@/api/video.js";
+  import { getClipingVideos, getClipingStatus, getNumbers } from "@/api/video.js";
   import { getAwaitCliping, getAwaitClipingName, } from "@/api/venues.js";
   import { getSearchNumber } from "@/api/search.js";
   import qiniuUploader from "@/plugins/qiniuUploader.js";
@@ -252,12 +252,11 @@
     },
     onLoad(options) {
       this.$showMsg("下拉刷新各类剪辑状态！",3000,"none");
-      console.log("输出下拉信息",this.deviceInfo);
       // 获得当前的场馆id
       this.currentId = options.venue_id;
       this.endTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
       this.startTime = this.$dayjs(this.currentTime).format("YYYY-MM-DD_00-00-00");
-      this.getVideoNumber();
+      this.getVideosNumber();
     },
     onShow() {
       // 上传完视频或者刚进页面显示待剪辑
@@ -265,6 +264,7 @@
       this.clipingNumber = [];
       this.page = 1;
       this.loadingDone = false;
+      this.selectTypeVideos();
     },
     computed:{
       ...mapState("m_device",["deviceInfo","currentTime"]),
@@ -290,8 +290,8 @@
     },
     methods:{
       // 拉取视频总览数据
-      async getVideoNumber(){
-        let {data} = await getSearchNumber(this.currentId,this.startTime,this.endTime);
+      async getVideosNumber(){
+        let {data} = await getNumbers(this.currentId,this.startTime,this.endTime);
         this.sliderShow = false;
         this.videoTotalNumber = data.total_num;
         this.pieData.series[0].data=data.wait_clip_num;
@@ -301,7 +301,8 @@
       // 点击时间之后选择时间
       confirmTimes(){
         this.$refs.popupTime.close();
-        this.getVideoNumber();
+        this.getVideosNumber();
+        this.selectTypeVideos();
       },
       // 时间组件切换时输出的数据
       selectTimes(data){
@@ -314,18 +315,19 @@
       },
       // 计算当前待剪辑视频总数
       async getTotalNumber(){
-        let {data} = await getAwaitCliping();
-        this.currentClipVideos = data.wait_clip_num;
-      },
-      // 计算当前待剪辑视频名字
-      async getTotalNames(){
-        let {data} = await getAwaitClipingName(this.currentId);
-        this.videoList = data.video_names;
+        await getAwaitCliping().then(async value=>{
+          this.currentClipVideos = value.data.wait_clip_num;
+          // 计算当前待剪辑视频名字
+          let {data} = await getAwaitClipingName(this.currentId);
+          this.sliderShow = false;
+          this.videoList = data.video_names;
+        })
       },
       // 滑动底部加载数据,待剪辑不必下滑，没有分页
       toEnd(){
+        console.log("下滑到底");
         var that = this;
-        if(that.currentType!=0&&that.currentType!=1){
+        if(that.currentType!=0){
           if(that.timer){
             clearTimeout(that.timer)
           }
@@ -340,23 +342,24 @@
                 that.selectTypeVideos()
               }
             }
+            else{
+              that.$showMsg("数据已加载完成！",2000,"none");
+            }
           },200)
         }
       },
       // 根据条件查询视频
       async selectTypeVideos(){
         // 待剪辑
-        if(this.currentType==1){
+        if(this.currentType==0){
           this.getTotalNumber();
-          this.getTotalNames();
           return false;
         }
         // 正在剪辑
-        if(this.currentType==2){
-          let end = this.$dayjs(this.currentTime).format("YYYY-MM-DD_HH-mm-ss");
-          let start = this.$dayjs(this.currentTime).subtract(7,"day").format("YYYY-MM-DD_HH-mm-ss");
-          await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,start,end).then(async value=>{
+        if(this.currentType==1){
+          await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime).then(async value=>{
             // 只有下拉刷新才会在请求完成之后拉取数据
+            this.sliderShow = false;
             if(this.sliderUp){
               this.videoList = [];
               this.clipingNumber = [];
@@ -390,12 +393,10 @@
           return false;
         }
         // 剪辑完成
-        if(this.currentType==3){
-          let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
-          this.$hideLoading();
-          this.videoList = [...this.videoList,...data];
-          this.loadingDone = data.length<this.per_page;
-        }
+        let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
+        this.videoList = [...this.videoList,...data];
+        this.loadingDone = data.length<this.per_page;
+        this.sliderShow = false;
       },
       // 若用户没有待上传的则是打开相册进行选取视频，若用户已有待上传的则用户将待上传的上传到七牛云
       openOrUpload(){
@@ -416,21 +417,15 @@
         this.loadingDone = false;
         // 处于总览数据
         if(this.currentType==0){
-          this.getVideoNumber();
-          return false
-        }
-        // 处于等待剪辑
-        if(this.currentType==1){
-          this.getTotalNumber();
-          this.getTotalNames();
+          this.getVideosNumber();
           return false
         }
         // 处于正在剪辑
-        if(this.currentType==2){
+        if(this.currentType==1){
           this.selectStatus = "CLIPING";
         }
         // 处于剪辑完成
-        if(this.currentType==3){
+        if(this.currentType==2){
           this.selectStatus = "CLIP_FINISHED";
         }
         this.selectTypeVideos();
@@ -446,24 +441,69 @@
       // 手指接触之后不断发生的事件
       conMoving(){
         this.sliderShow = true;
-        console.log("123")
       },
       // 用户滑动结束判断上滑还是下滑,
-      endSlider(e){
+      async endSlider(e){
         if(this.currentType==0){
-          this.getVideoNumber();
+          this.getVideosNumber();
         }
-        // 拉取等待剪辑以及正在剪辑、剪辑完成的数据
-        if(this.currentType!=0){
+        // // 拉取等待剪辑以及正在剪辑、剪辑完成的数据
+        // if(this.currentType!=0){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10&&this.sliderTop<=5){
             // 下滑刷新隐藏
             this.page = 1;
-            this.sliderShow = true;
             this.loadingDone = false;
             this.sliderUp = true;
-            this.selectTypeVideos();
+            // 待剪辑
+            if(this.currentType==1){
+              this.getTotalNumber();
+            }
+            // 正在剪辑
+            if(this.currentType==2){
+              await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime).then(async value=>{
+                // 只有下拉刷新才会在请求完成之后拉取数据
+                this.sliderShow = false;
+                if(this.sliderUp){
+                  this.videoList = [];
+                  this.clipingNumber = [];
+                  this.sliderUp = false;
+                }
+                this.videoList = [...value.data];
+                this.loadingDone = value.data.length<this.per_page;
+                if(value.data.length!=0){
+                  let numberArr = await Promise.all(value.data.map(async item=>{
+                    // 一个视频需要处理10分钟算，剪辑占90%，上传占10%
+                    let {data} = await getClipingStatus(item.id);
+                    let curClip = data.current_index||0;
+                    let totalClip = data.total_num||0;
+                    let curUpload = data.current_upload_index||0;
+                    let totalUpload = data.total_upload_num||0;
+                    // 视频正在预处理，所有数值都为0；
+                    if(!curClip&&!totalClip&&!curUpload&&!totalUpload){
+                      return 0;
+                    }
+                    // 正在剪辑，没有上传，上传的数值为null
+                    if(!curUpload&&!totalUpload){
+                      let number = curClip/totalClip*0.9;
+                      return number;
+                    }
+                    let number = curClip/totalClip*0.9+curUpload/totalUpload*0.1;
+                    return number;
+                  }))
+                  this.clipingNumber = [...numberArr];
+                }
+              })
+            }
+            // 剪辑完成
+            if(this.currentType==3){
+              // 剪辑完成
+              let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
+              this.videoList = [...data];
+              this.loadingDone = data.length<this.per_page;
+              this.sliderShow = false;
+            }
           }
-        }
+        // }
       },
     },
   }

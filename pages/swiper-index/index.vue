@@ -110,7 +110,7 @@
         // 转介绍的背景图片
         shareBackImg:"https://static.qiniuyun.highvenue.cn/image/hidancing_zhuanjieshao.jpg",
         // 登陆场馆主的背景图片
-        loginBackImg:"https://static.qiniuyun.highvenue.cn/image/hidancing_xainshihuodong.jpg",
+        loginBackImg:"https://static.qiniuyun.highvenue.cn/image%2Fcourtlogin.jpg",
         // 联系电话
         connectNumber:18151641785,
         // 点击进来的是转介绍页面还是申请称为场馆主页面,取值为share与login
