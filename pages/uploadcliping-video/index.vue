@@ -420,12 +420,16 @@
           this.getVideosNumber();
           return false
         }
-        // 处于正在剪辑
+        // 处于剪辑完成
         if(this.currentType==1){
+          this.selectStatus = "WAIT_CLIP";
+        }
+        // 处于正在剪辑
+        if(this.currentType==2){
           this.selectStatus = "CLIPING";
         }
         // 处于剪辑完成
-        if(this.currentType==2){
+        if(this.currentType==3){
           this.selectStatus = "CLIP_FINISHED";
         }
         this.selectTypeVideos();
