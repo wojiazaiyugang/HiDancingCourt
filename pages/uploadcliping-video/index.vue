@@ -43,6 +43,12 @@
       @touchmove="conMoving"
       @touchend="endSlider"
       >
+      <view
+        v-if="videoList.length!=0&&currentType==1"
+        class="width-full gray fon24 heichi50 line-heichi50 text-center">
+        <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
+        <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
+      </view>
      <view style="width: 100%; margin-top: 30rpx;">
         
       </view>
@@ -56,12 +62,6 @@
         <view class="height-full fon24 gray margleft10 line-heichi50">
           松开立即刷新数据
         </view>
-      </view>
-      <view 
-        v-if="videoList.length!=0&&currentType==1"
-        class="width-full gray fon24 heichi50 line-heichi50 text-center">
-        <text class="iconfont icon-shengyin_shiti margright10 fon28"></text>
-        <text>当前处于视频剪辑高峰期，共有{{currentClipVideos}}个视频待剪辑~</text>
       </view>
     <view 
         v-show="currentType!=0"
@@ -234,15 +234,15 @@
         	series: [
         		{
         			name: "等待剪辑",
-        			data: 0
+        			data: -1
         		},
         		{
         			name: "正在剪辑",
-        			data: 0
+        			data: -1
         		},
         		{
         			name: "剪辑完成",
-        			data: 0
+        			data: -1
         		}
         	]
         },
@@ -291,12 +291,28 @@
     methods:{
       // 拉取视频总览数据
       async getVideosNumber(){
+        console.log("查看wei改变",this.pieData);
         let {data} = await getNumbers(this.currentId,this.startTime,this.endTime);
         this.sliderShow = false;
         this.videoTotalNumber = data.total_num;
         this.pieData.series[0].data=data.wait_clip_num;
         this.pieData.series[1].data=data.cliping_num;
         this.pieData.series[2].data=data.clip_finished_num;
+        // var temp = this.pieData.series.map((item,index)=>{
+        //   // console.log("进来吗",data);
+        //   if(index==0){
+        //     item.data=data.wait_clip_num;
+        //     return item;
+        //   }
+        //   if(index==1){
+        //     item.data=data.cliping_num;
+        //     return item;
+        //   }
+        //   if(index==2){
+        //     item.data=data.clip_finished_num;
+        //     return item;
+        //   }
+        // })
       },
       // 点击时间之后选择时间
       confirmTimes(){
@@ -432,6 +448,7 @@
         if(this.currentType==3){
           this.selectStatus = "CLIP_FINISHED";
         }
+        this.getVideosNumber();
         this.selectTypeVideos();
       },
       // 计算滑动条到顶部的距离
@@ -461,9 +478,11 @@
             // 待剪辑
             if(this.currentType==1){
               this.getTotalNumber();
+              this.getVideosNumber();
             }
             // 正在剪辑
             if(this.currentType==2){
+              this.getVideosNumber();
               await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime).then(async value=>{
                 // 只有下拉刷新才会在请求完成之后拉取数据
                 this.sliderShow = false;
@@ -501,6 +520,7 @@
             // 剪辑完成
             if(this.currentType==3){
               // 剪辑完成
+              this.getVideosNumber();
               let {data} = await getClipingVideos(this.selectStatus,this.page,this.per_page,this.currentId,this.startTime,this.endTime);
               this.videoList = [...data];
               this.loadingDone = data.length<this.per_page;
