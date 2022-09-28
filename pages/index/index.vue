@@ -478,7 +478,7 @@
                   this.$hideLoading()
                   this.videoSearch = true
                   this.sortList(selectId)
-                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
+                  this.setSearchData({houseId:selectId,startTime:this.currentTimes+ "_" + "00-00-00",stopTime:this.currentTimes+ "_" + "23-59-59"})
                   uni.navigateTo({
                     url: "../search-report/index",
                   })
@@ -494,7 +494,7 @@
                 this.$hideLoading()
                 this.videoSearch = true
                 this.sortList(selectId)
-                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ " " + "00:00:00",stopTime:this.currentTimes+ " " + "23:59:59"})
+                this.setSearchData({houseId:selectId,startTime:this.currentTimes+ "_" + "00-00-00",stopTime:this.currentTimes+ "_" + "23-59-59"})
                 uni.navigateTo({
                   url: "../search-report/index",
                 })

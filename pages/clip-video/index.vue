@@ -47,10 +47,10 @@
         clipVideos:[],
         // 检索的舞房ID数组
         sitesList:[],
-        // 每页检索多少个视频
-        perPage:12,
-        // 当前是第几页
-        currentPage:1,
+        // 每一页拉取的视频数量
+        count:10,
+        // 最后的进球时间
+        lastGoalTime:"",
         // 查询视频得种类
         videoType:"child",
         // 防止同一接口多次请求
@@ -96,7 +96,7 @@
       },
       // 滑动结束
       endScrol(e){
-        if(this.clipVideos.length<this.perPage&&this.clipVideos){
+        if(this.clipVideos.length<this.count&&this.clipVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
             this.scroolTop(true)
           }
@@ -115,26 +115,28 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
-          this.requestOne = true
-          this.$hideLoading()
-          this.loadingNone = data.length<this.perPage
+          const {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.count,this.lastGoalTime,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
+          this.requestOne = true;
+          this.lastGoalTime = data.length>0&&data[data.length-1].goal_time;
+          this.$hideLoading();
+          this.loadingNone = data.length<this.count
           this.clipVideos = [...this.clipVideos,...data]
           this.clipVideos = this.clipVideos
           this.setAllSearchVideos([this.currentAllVideos,...this.clipVideos])
-          this.setVideoPages({curPage:this.currentPage,perPage:this.perPage})
+          this.setVideoPages({curTime:this.lastGoalTime,count:this.count})
         }
       },
       // 上拉刷新新的小视频
       async scroolTop(status){
-        if(this.clipVideos.length>=this.perPage||JSON.parse(status)){
-          var upPage = 1
+        if(this.clipVideos.length>=this.count||JSON.parse(status)){
+          this.lastGoalTime = "";
           if(this.requestOne){
             this.requestOne = false
             this.$showLoading("加载中！","none")
-            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
-            this.$hideLoading()
-            this.requestOne = true
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.count,this.lastGoalTime,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
+            this.$hideLoading();
+            this.requestOne = true;
+            this.lastGoalTime = data.length>0&&data[data.length-1].goal_time;
             // 上滑数组筛选
             this.clipVideos = this.clipVideos.filter((item,index)=>{
               if(data[index]&&data[index].id!=item.id){
@@ -151,8 +153,7 @@
       },
       // 下滑刷新新的小视频
       async scroolBottom(status){
-        if(this.clipVideos.length>=this.perPage||JSON.parse(status)){
-          this.currentPage++
+        if(this.clipVideos.length>=this.count||JSON.parse(status)){
           this.getClipVideos()
         }
       }

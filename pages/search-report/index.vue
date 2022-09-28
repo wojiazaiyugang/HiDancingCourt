@@ -78,10 +78,10 @@
         siteArray:[],
         // 根据人脸以及时间信息获得的所有视频
         allVideos:[],
-        // 搜索初始的页码数
-        currentPage:1,
-        // 每个页码所存放的视频数
-        perPage:0,
+        // 可以搜索的视频数量
+        currentNumber:0,
+        // 每次搜索的最新的进球时间
+        perTime:"",
         // 数据是否加载完毕
         loadingDone:false,
         // 所选舞房ID
@@ -121,7 +121,6 @@
     },
 		methods: {
       ...mapMutations("m_video",[
-      "setSearchData",
       "setSelectSite",
       "setSiteId",
       ]),
@@ -132,7 +131,7 @@
       },
       // 滑动结束
       endScrol(e){
-        if(this.allVideos.length<this.perPage&&this.allVideos){
+        if(this.allVideos.length<this.currentNumber&&this.allVideos){
           if(e.changedTouches[0].pageY>this.startPosition&&(e.changedTouches[0].pageY-this.startPosition)>=10){
             this.scroolTop(true)
           }
@@ -145,11 +144,11 @@
       async getRooms(){
         if(this.faceSelect){
           this.videoType = "child"
-          this.perPage = 12
+          this.currentNumber = 12
         }
         else{
           this.videoType = "parent"
-          this.perPage = 5
+          this.currentNumber = 5
         }
         await getSites(this.searchData.houseId).then(data=>{
           this.setSiteInfos(data.data)
@@ -182,7 +181,6 @@
         }
         this.allVideos = []
         this.timeIndex = data.index
-        this.currentPage = 1
         this.loadingDone = false
         if(data.index==0){
           this.selectLabel = ""
@@ -199,7 +197,6 @@
         }
         this.allVideos = []
         this.houseIndex = data.index
-        this.currentPage = 1
         this.loadingDone = false
         if(data.index==0){
           this.setSelectSite(false)
@@ -228,10 +225,11 @@
             return false
           }
           this.$showLoading("加载中！","none")
-          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
-          this.requestDone = true
+          let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentNumber,this.perTime,this.faceSelect,this.videoType,this.selectLabel)
+          this.requestDone = true;
+          this.perTime = data.length>0&&data[data.length-1].goal_time;
           this.$hideLoading()
-          this.loadingDone = data.length<this.perPage
+          this.loadingDone = data.length<this.currentNumber
           this.allVideos = [...this.allVideos,...data]
         }
       },
@@ -241,8 +239,7 @@
           clearTimeout(this.downTimer)
         }
         this.downTimer = setTimeout(()=>{
-          if(this.allVideos.length>=this.perPage||JSON.parse(status)){
-            this.currentPage++
+          if(this.allVideos.length>=this.currentNumber||JSON.parse(status)){
             this.getVideosByFace()
           }
         },500)
@@ -253,13 +250,14 @@
             clearTimeout(this.upTimer)
           }
           this.upTimer = setTimeout(async ()=>{
-            if(this.allVideos.length>=this.perPage||JSON.parse(status)){
-              var upPage = 1
+            if(this.allVideos.length>=this.currentNumber||JSON.parse(status)){
+              this.perTime = "";
               if(this.requestDone){
                 this.requestDone = false
-                this.$showLoading("加载中！","none")
-                let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,upPage,this.perPage,this.faceSelect,this.videoType,this.selectLabel)
-                this.$hideLoading()
+                this.$showLoading("加载中！","none");
+                let {data} = await getAllvideos(this.siteArray,this.startTime,this.stopTime,this.currentNumber,this.perTime,this.faceSelect,this.videoType,this.selectLabel)
+                this.$hideLoading();
+                this.perTime = data.length>0&&data[data.length-1].goal_time;
                 this.requestDone = true
                 // 上滑数组筛选
                 this.allVideos = this.allVideos.filter((item,index)=>{

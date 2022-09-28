@@ -88,10 +88,10 @@
         playVideo:null,
         // 当前视频所在全部视频的索引号
         numberId:0,
-        // 下一个视频当前的页数
-        nextPage:0,
-        // 每一页请求的视频
-        perPage:12,
+        // 每一页拉取的视频数量
+        count:10,
+        // 最后的进球时间
+        lastGoalTime:"",
         // 最后一个视频的标志
         lastVideoStatus:false,
         // 当前微信创建的播放对象
@@ -230,7 +230,7 @@
         }
         this.isTotal = this.playVideo.name.split(".")[0].includes("group")
         // 当前页面接收传过来的视频页数
-        this.nextPage = this.videoPages.curPage
+        this.lastGoalTime = this.videoPages.curTime;
         // we分析统计观看视频的次数
         wx.reportEvent("watch_video", {
           "dancingroom_name": this.playVideo.venue_name,
@@ -288,7 +288,7 @@
       // 下一个视频
       async nextVideo(){
         if(this.lastVideoStatus){
-          this.$showMsg("当前视频已是最后一个视频！")
+          this.$showMsg("当前视频已是最后一个视频！");
         }
         else{
           this.allSearchVideos.map((item,index)=>{
@@ -298,8 +298,7 @@
           })
           // 下一个是最后一个视频
           if(this.numberId==this.allSearchVideos.length-1){
-            this.nextPage++
-            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.nextPage,this.perPage,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
+            let {data} = await getAllvideos(this.sitesList,this.searchData.startTime,this.searchData.stopTime,this.count,this.lastGoalTime,this.faceSelect,this.videoType,"",this.currentAllVideos.data.record_name)
             if(data.length==0){
               uni.showToast({
                 icon:"none",
@@ -310,7 +309,7 @@
             }
             else{
               this.setAllSearchVideos([...this.allSearchVideos,...data])
-              this.setVideoPages({curPage:this.nextPage,perPage:this.perPage})
+              this.setVideoPages({curTime:this.lastGoalTime,count:this.count})
               this.playVideo = this.allSearchVideos[this.numberId+1]
             }
           }
