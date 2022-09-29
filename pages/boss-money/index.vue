@@ -45,12 +45,12 @@
       </view>
       <view 
         @tap="filterTime"
-        class="width95 heichi60 line-heichi60 flex alitem-center margtop20">
+        class="width95 heichi60 line-heichi60 flex alitem-center margtop20 fonweight">
         <view class="fon32">
           {{showTime}}
         </view>
         <view class="margleft5">
-          <text class="iconfont icon-xiala black fon40"></text>
+          <text class="iconfont icon-xiala black fon40 fonweight"></text>
         </view>
       </view>
       <scroll-view v-if="timeList!=0" 
@@ -69,8 +69,10 @@
           </view>
         </view>
       </scroll-view>
-      <view v-else class="fon40 gray margtop50zhi" >
-        暂无{{currentTitle}}
+      <view v-else class="fon40 heichifan175 width80 margtop200 background-cover"
+       :style="{backgroundImage: currentTitle=='消费记录'?`url(https://static.qiniuyun.highvenue.cn/image%2Fxiaofeikong.png)`:`url(https://static.qiniuyun.highvenue.cn/image%2Fchongzhikong.png)`}"
+       >
+        
       </view>
     </view>
     <uni-popup ref="popupTime" :safeArea="false" :mask-click="false">
